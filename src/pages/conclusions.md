@@ -32,9 +32,6 @@ Developers are actually negotiators! We negotiate more than we develop. We negot
 
 ## Motto
 
-- It's not what you are, it's what you do
-- It's not what you do, it's how you do it
-- It's not how you do it, it's why you do it
-- It's not where you came from, it's where you are now
-- It's not where you are now, it's where you're going
-- It's not where you're going, it's how you'll get there
+:::duck
+Changing the world, one line of code at a time.
+:::
