@@ -2,6 +2,5 @@
   "origins": [
     "https://davidpine.dev"
   ],
-  "defaultCommentOrder": "newest",
-  "theme": "preferred_color_scheme"
+  "defaultCommentOrder": "newest"
 }
