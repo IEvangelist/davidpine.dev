@@ -6,6 +6,7 @@ import Tags from '~/components/Tags.astro'
 import PostInfo from '~/components/PostInfo.astro'
 import type { Collation } from '~/types'
 import { TagsGroup } from '~/utils'
+import { Image } from 'astro:assets'
 
 interface Props {
   post: CollectionEntry<'posts'>
@@ -25,14 +26,29 @@ const articleLink = samePage ? `#${post.id}` : `/posts/${post.id}`
 ---
 
 <article class="w-full py-5 my-1 md:my-4 border-accent/10">
-  <h1 class="mb-3 text-2xl text-heading1 font-semibold">
-    <a href={articleLink}># {post.data.title}</a>
-  </h1>
-  <PostInfo post={post} class="mb-3 mt-4" />
-  {description && <p class="pl-0.5 my-4 text-base/7 text-foreground">{description}</p>}
+  <div class="flex gap-4">
+    {
+      post.data.coverImage && (
+        <a href={articleLink} class="flex-shrink-0">
+          <Image
+            src={post.data.coverImage.src}
+            alt={post.data.coverImage.alt}
+            class="w-64 md:w-72 h-auto rounded-lg"
+          />
+        </a>
+      )
+    }
+    <div class="flex-1 min-w-0">
+      <h1 class="mb-3 text-2xl text-heading1 font-semibold">
+        <a href={articleLink}># {post.data.title}</a>
+      </h1>
+      <PostInfo post={post} class="mb-3 mt-4" />
+      {description && <p class="pl-0.5 my-4 text-base/7 text-foreground line-clamp-3">{description}</p>}
+    </div>
+  </div>
   {
     tags && (
-      <div class="mb-6">
+      <div class="mb-6 mt-4">
         <Tags tags={tags} />
       </div>
     )
