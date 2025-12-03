@@ -182,7 +182,7 @@ const config: SiteConfig = {
   // IMPORTANT: Update giscus.json in the root of the project with your own website URL
   // If you don't want to use Giscus, set this to undefined.
   giscus: {
-    repo: 'IEvangelist/multiterm-astro',
+    repo: 'IEvangelist/davidpine.dev',
     repoId: 'R_kgDOQhkTdg',
     category: 'General',
     categoryId: 'DIC_kwDOQhkTds4CzVKh',
