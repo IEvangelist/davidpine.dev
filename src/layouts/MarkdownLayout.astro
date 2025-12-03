@@ -1,5 +1,6 @@
 ---
 import Layout from '~/layouts/Layout.astro'
+import PageHeader from '~/components/PageHeader.astro'
 import ScrollUpButton from '~/components/ScrollUpButton.astro'
 import type { MarkdownLayoutProps } from 'astro'
 
@@ -15,10 +16,8 @@ const { frontmatter } = Astro.props
 ---
 
 <Layout title={frontmatter.title} description={frontmatter.description}>
+  <PageHeader title={frontmatter.title} />
   <div class="max-w-full py-7.5">
-    <h1 class="md:mx-2 mb-3 text-[1.75rem] text-heading1 font-semibold">
-      # {frontmatter.title}
-    </h1>
     <div class="mb-5 prose">
       <slot />
     </div>
