@@ -29,6 +29,9 @@ export default defineConfig({
   site: siteConfig.site,
   trailingSlash: siteConfig.trailingSlashes ? 'always' : 'never',
   prefetch: true,
+  redirects: {
+    "/blog/[...slug]": "/posts/[...slug]",
+  },
   markdown: {
     remarkPlugins: [
       [remarkDescription, { maxChars: 200 }],
