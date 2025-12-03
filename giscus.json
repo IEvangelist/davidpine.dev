@@ -1,3 +1,7 @@
 {
-  "origins": ["https://davidpine.dev"]
+  "origins": [
+    "https://davidpine.dev"
+  ],
+  "defaultCommentOrder": "newest",
+  "theme": "preferred_color_scheme"
 }
