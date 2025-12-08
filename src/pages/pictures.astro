@@ -19,13 +19,12 @@ const imageList = Object.values(images).map((img) => img.default)
 
   <div class="container">
     <p class="intro">
-      A collection of photos from my speaking engagements, conferences, and tech community
-      events.
+      Click any image to explore the gallery! Here's a collection of photos from my speaking engagements, conferences, and tech community events.
     </p>
   </div>
 
   <LightGallery
-    class="mygallery-container"
+    class="gallery"
     options={{
       thumbnail: true,
       autoplay: true,
@@ -34,11 +33,27 @@ const imageList = Object.values(images).map((img) => img.default)
     addPlugins={['zoom']}
   >
     {
-      imageList.map((img) => (
-        <a class="mygallery-one-img" href={img.src}>
-          <img src={img.src} />
-        </a>
-      ))
+      imageList.map((img, i) => {
+        const aspectRatio = img.width / img.height
+        const isWide = aspectRatio > 1.5
+        const isTall = aspectRatio < 0.7
+        const isLarge = aspectRatio > 1.2 && aspectRatio < 1.5
+        
+        let imgClass = 'gallery-img'
+        if (isLarge) {
+          imgClass += ' four-grid-cells'
+        } else if (isWide) {
+          imgClass += ' wide-image'
+        } else if (isTall) {
+          imgClass += ' tall-image'
+        }
+        
+        return (
+          <a class={imgClass} href={img.src}>
+            <Image src={img} alt={`Image ${i + 1} of ${imageList.length}`} />
+          </a>
+        )
+      })
     }
   </LightGallery>
 
@@ -47,39 +62,94 @@ const imageList = Object.values(images).map((img) => img.default)
 
 <style>
   .container {
-    max-width: 1400px;
     margin: 0 auto;
-    padding: 1rem;
+    max-width: var(--container-5xl);
   }
 
   .intro {
     font-size: 1.125rem;
     text-align: center;
-    margin-bottom: 3rem;
     color: var(--theme-text-light);
-    max-width: 800px;
     margin-left: auto;
     margin-right: auto;
     padding-top: 1rem;
   }
 
-  .mygallery-container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    flex-shrink: 0;
-    flex-grow: 1;
-    justify-content: space-between;
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+    grid-auto-rows: 8rem;
+    grid-auto-flow: dense;
+    gap: 0.375rem;
+    margin: 2rem -1.5rem;
+    width: calc(100% + 3rem);
+    padding: 1.5rem;
   }
 
-  .mygallery-one-img {
-    margin: 5px;
-    height: 100px;
-    border: 1px solid black;
-    min-width: 0; /* Don't use more space than available */
+  @media (min-width: 64rem) {
+    .gallery {
+      margin: 2rem -3rem;
+      width: calc(100% + 6rem);
+    }
   }
 
-  .mygallery-one-img img {
+  .gallery-img {
+    position: relative;
+    overflow: hidden;
+    border: 0.0625rem solid var(--theme-divider);
+    border-radius: 0.25rem;
+    transition: transform 0.2s ease;
+  }
+
+  .gallery-img:hover {
+    transform: scale(1.02);
+    z-index: 1;
+  }
+
+  .gallery-img :global(img) {
+    width: 100%;
     height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .four-grid-cells {
+    grid-row: span 2;
+    grid-column: span 2;
+  }
+
+  .wide-image {
+    grid-column: span 2;
+  }
+
+  .tall-image {
+    grid-row: span 2;
+  }
+
+  /* Responsive breakpoints */
+  @media (max-width: 48rem) {
+    .gallery {
+      grid-template-columns: repeat(auto-fill, minmax(9.375rem, 1fr));
+      grid-auto-rows: 9.375rem;
+      gap: 0.25rem;
+    }
+    
+    .four-grid-cells {
+      grid-row: span 2;
+      grid-column: span 2;
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .gallery {
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: 7.5rem;
+    }
+    
+    .four-grid-cells,
+    .wide-image {
+      grid-column: span 1;
+      grid-row: span 1;
+    }
   }
 </style>
