@@ -3,6 +3,8 @@ layout: '~/layouts/MarkdownLayout.astro'
 title: "Hi, I'm David 👋🏽"
 ---
 
+import { Image } from 'astro:assets'
+
 You may have noticed my [GitHub tag, **IEvangelist**](https://github.com/IEvangelist). If you see this as an interface it would look something like the following (I'd be more or less a placeholder interface, but I'd impose many other contracts).
 
 ```csharp
@@ -59,25 +61,32 @@ David is deeply involved in the developer community—sharing knowledge through 
 
 Follow David on X (Twitter) at [@davidpine7](https://twitter.com/davidpine7) 🤘🏽.
 
-## GitHub
-
-Consider [sponsoring my work on GitHub](https://github.com/sponsors/IEvangelist).
-
 ## GitHub contributions
 
 ::github{user="IEvangelist"}
 
+Consider [sponsoring my work on GitHub](https://github.com/sponsors/IEvangelist).
+
 ## Stack Overflow
 
-[![Stack Overflow profile](https://stackoverflow.com/users/flair/2410379.png)](https://stackoverflow.com/users/2410379/david-pine)
+<a href="https://stackoverflow.com/users/2410379/david-pine" target="_blank">
+  <Image src='https://stackoverflow.com/users/flair/2410379.png'
+   height={58} width={208} alt="Stack Overflow logo" style={'margin:0'} />
+</a>
 
 ## LinkedIn
 
-[![LinkedIn profile](https://static.licdn.com/scds/common/u/img/webpromo/btn_myprofile_160x33.png)](https://www.linkedin.com/in/dpine)
+<a href="https://www.linkedin.com/in/dpine" target="_blank">
+  <Image src='https://static.licdn.com/scds/common/u/img/webpromo/btn_myprofile_160x33.png'
+   height={33} width={160} alt="LinkedIn logo" style={'margin:0'}  />
+</a>
 
 ## Holopin
 
-[![An image of @ievangelist's Holopin badges, which is a link to view their full Holopin profile](https://holopin.me/ievangelist)](https://holopin.io/@ievangelist)
+<a href="https://holopin.io/@ievangelist" target="_blank">
+  <Image src='https://holopin.me/ievangelist'
+   height={641} width={2039} alt="An image of @ievangelist's Holopin badges, which is a link to view their full Holopin profile" style={'margin:0'} />
+</a>
 
 ## What people are saying
 
