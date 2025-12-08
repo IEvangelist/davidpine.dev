@@ -1,6 +1,7 @@
 ---
 import Layout from '~/layouts/Layout.astro'
 import PageHeader from '~/components/PageHeader.astro'
+import ScrollUpButton from '~/components/ScrollUpButton.astro'
 
 const videos = [
   { id: '1K5riRctUIg', title: 'Introduction to Azure Key Vault and Aspire' },
@@ -175,7 +176,8 @@ const fridayFive = [
     description="Various media, podcasts, webcasts and publication appearances"
   />
 
-  <div class="container">
+  <article class="max-w-full py-7.5">
+    <div class="container prose">
     <img
       src="/media/media.jpg"
       alt="Media Attention"
@@ -334,7 +336,9 @@ const fridayFive = [
         }
       </div>
     </section>
-  </div>
+    </div>
+  </article>
+  <ScrollUpButton />
 </Layout>
 
 <style>

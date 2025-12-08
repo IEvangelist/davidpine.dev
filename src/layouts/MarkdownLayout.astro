@@ -17,10 +17,10 @@ const { frontmatter } = Astro.props
 
 <Layout title={frontmatter.title} description={frontmatter.description}>
   <PageHeader title={frontmatter.title} />
-  <div class="max-w-full py-7.5">
+  <article class="max-w-full py-7.5">
     <div class="mb-5 prose">
       <slot />
     </div>
-  </div>
+  </article>
   <ScrollUpButton />
 </Layout>

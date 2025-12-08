@@ -1,10 +1,31 @@
 ---
 import IconChevronUp from '~/icons/chevron-up.svg'
+
+interface Props {
+  /**
+   * CSS selector for the element to scroll to when clicked.
+   * If not provided, scrolls to the first h1 element or top of page.
+   * Use "top" to always scroll to the very top of the page.
+   */
+  scrollToSelector?: string
+  /**
+   * CSS selector for the element to observe for showing/hiding the button.
+   * Defaults to 'article div.prose'.
+   */
+  observeSelector?: string
+}
+
+const { 
+  scrollToSelector,
+  observeSelector = 'article div.prose'
+} = Astro.props
 ---
 
 <button
   hidden
   class="scroll-up size-11 fixed flex items-center justify-center bg-background z-100 bottom-3 right-3 rounded-full border-2 border-accent/20 hover:bg-accent/10 md:size-12 md:bottom-5 md:right-5 lg:size-13 lg:bottom-6 lg:right-6"
+  data-scroll-to={scrollToSelector}
+  data-observe={observeSelector}
 >
   <IconChevronUp class="text-accent/50 size-8 lg:size-9" />
 </button>
@@ -38,19 +59,34 @@ import IconChevronUp from '~/icons/chevron-up.svg'
 
   function init() {
     const button = document.querySelector('button.scroll-up') as HTMLButtonElement
-    const topHeading = document.querySelector('h1')
-    const topOffset = topHeading ? topHeading.offsetTop : 0
     if (!button) {
       console.warn('Scroll up button not found in the document.')
       return
     }
+
+    const scrollToSelector = button.dataset.scrollTo
+    const observeSelector = button.dataset.observe || 'article div.prose'
+
+    // Determine scroll target
+    let scrollToOffset = 0
+    if (scrollToSelector === 'top') {
+      scrollToOffset = 0
+    } else if (scrollToSelector) {
+      const targetElement = document.querySelector(scrollToSelector)
+      scrollToOffset = targetElement ? (targetElement as HTMLElement).offsetTop : 0
+    } else {
+      const topHeading = document.querySelector('h1')
+      scrollToOffset = topHeading ? topHeading.offsetTop : 0
+    }
+
     button.addEventListener('click', () => {
-      window.scrollTo({ top: topOffset, behavior: 'smooth' })
+      window.scrollTo({ top: scrollToOffset, behavior: 'smooth' })
     })
+
     // Use IntersectionObserver to show/hide the button
-    const prose = document.querySelector('article div.prose')
-    if (!prose) {
-      console.warn('Prose element not found in the article.')
+    const observeElement = document.querySelector(observeSelector)
+    if (!observeElement) {
+      console.warn(`Observe element not found: ${observeSelector}`)
       return
     }
 
@@ -69,7 +105,7 @@ import IconChevronUp from '~/icons/chevron-up.svg'
       // Only consider the top 5% of the viewport
       { rootMargin: `0px 0px -95% 0px` },
     )
-    observer.observe(prose)
+    observer.observe(observeElement)
   }
 
   init()
