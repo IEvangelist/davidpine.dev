@@ -122,7 +122,7 @@ Finally, we landed on:
 
 Here's the `AppHost` code today:
 
-```csharp
+```csharp title="C#"
 var builder = DistributedApplication.CreateBuilder(args);
 
 if (builder.ExecutionContext.IsRunMode)

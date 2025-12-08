@@ -28,6 +28,7 @@
     "@types/react-dom": "^19.2.3",
     "astro": "^5.16.3",
     "astro-expressive-code": "^0.41.3",
+    "astro-lightgallery": "^2.0.1",
     "color": "^5.0.3",
     "date-fns": "^4.1.0",
     "emoji-regex": "^10.6.0",
