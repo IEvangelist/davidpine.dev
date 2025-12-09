@@ -6,6 +6,13 @@ import type Reveal from "reveal.js";
 import "reveal.js/dist/reveal.css";
 import "reveal.js/plugin/highlight/monokai.css";
 
+// Helper function to decode HTML entities that may have been escaped during build
+function decodeHtmlEntities(text: string): string {
+  const textarea = document.createElement("textarea");
+  textarea.innerHTML = text;
+  return textarea.value;
+}
+
 // Theme configuration for slide cards
 const SLIDE_THEME_CONFIG: Record<
   string,
@@ -101,6 +108,7 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
   const [isClient, setIsClient] = useState(false);
   const [themeLoaded, setThemeLoaded] = useState(false);
   const [stylesInjected, setStylesInjected] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const uniqueId = useId();
 
   useEffect(() => {
@@ -168,6 +176,9 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
   useEffect(() => {
     if (!deckRef.current || !isClient || !themeLoaded || (preview && !stylesInjected)) return;
 
+    const startTime = Date.now();
+    const MIN_LOADING_TIME = 750; // Minimum loading time in ms for smooth UX
+
     // Add a small random delay to prevent multiple instances from initializing simultaneously
     const initDelay = Math.random() * 200 + 50; // 50-250ms random delay
 
@@ -177,6 +188,17 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
 
     const initializeReveal = async () => {
       try {
+        // Ensure minimum loading time for smooth UX
+        const elapsed = Date.now() - startTime;
+        const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsed);
+        
+        if (remainingTime > 0) {
+          await new Promise(resolve => setTimeout(resolve, remainingTime));
+        }
+
+        // Check ref is still valid after delay
+        if (!deckRef.current || revealRef.current) return;
+
         // Dynamically import reveal.js and plugins only on client side
         const { default: Reveal } = await import("reveal.js");
         const { default: Highlight } = await import("reveal.js/plugin/highlight/highlight.esm.js");
@@ -184,35 +206,37 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
         const { default: Notes } = await import("reveal.js/plugin/notes/notes.esm.js");
 
         // Create HTML structure for reveal.js
+        // Decode HTML entities that may have been escaped during Astro's build process
+        const decodedContent = decodeHtmlEntities(content);
         const backgroundAttrs = preview ? getThemeBackgroundAttrs(theme) : "";
         const slidesHtml = `\
-          <section data-markdown ${backgroundAttrs}>
+          <section data-markdown data-separator="^---$" data-separator-vertical="^--$" ${backgroundAttrs}>
             <script type="text/template">
-              ${content}
+${decodedContent}
             </script>
           </section>`;
 
         // Set the HTML content
-        if (deckRef.current && !revealRef.current) {
-          // Add unique class to container for CSS isolation
-          deckRef.current.className = `reveal reveal-${uniqueId.replace(/:/g, "-")}`;
-          deckRef.current.innerHTML = `<div class="slides">${slidesHtml}</div>`;
+        // Add unique class to container for CSS isolation
+        deckRef.current.className = `reveal reveal-${uniqueId.replace(/:/g, "-")}`;
+        deckRef.current.innerHTML = `<div class="slides">${slidesHtml}</div>`;
 
-          // Initialize reveal.js in embedded mode
-          revealRef.current = new Reveal(deckRef.current, {
-            hash: false,
-            controls,
-            progress,
-            transition: transition as "none" | "fade" | "slide" | "convex" | "concave" | "zoom",
-            plugins: [RevealMarkdown, Highlight, Notes],
-            markdown: { smartypants: true },
-            embedded: true,
-            width: "100%",
-            height: "100%",
-          });
+        // Initialize reveal.js in embedded mode
+        revealRef.current = new Reveal(deckRef.current, {
+          hash: false,
+          controls,
+          progress,
+          transition: transition as "none" | "fade" | "slide" | "convex" | "concave" | "zoom",
+          plugins: [RevealMarkdown, Highlight, Notes],
+          markdown: { smartypants: true },
+          embedded: true,
+          width: "100%",
+          height: "100%",
+        });
 
-          await revealRef.current.initialize();
-        }
+        await revealRef.current.initialize();
+        
+        setIsInitialized(true);
       } catch (error) {
         console.error(`Failed to initialize reveal.js for ${uniqueId}:`, error);
       }
@@ -220,6 +244,14 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
 
     return () => {
       clearTimeout(timer);
+      // Only destroy if we're actually unmounting, not on re-renders
+      // The revealRef check prevents double-cleanup
+    };
+  }, [content, theme, transition, controls, progress, preview, isClient, themeLoaded, stylesInjected, uniqueId]);
+
+  // Cleanup reveal.js on unmount only
+  useEffect(() => {
+    return () => {
       if (revealRef.current) {
         try {
           revealRef.current.destroy();
@@ -229,23 +261,23 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
         revealRef.current = null;
       }
     };
-  }, [content, theme, transition, controls, progress, preview, isClient, themeLoaded, stylesInjected, uniqueId]);
+  }, []);
 
   return (
-    <div
-      className={`reveal reveal-container-${uniqueId.replace(/:/g, "-")}`}
-      ref={deckRef}
-      style={{ width: "100%", height: "100%" }}
-    >
-      {!isClient && (
+    <div style={{ width: "100%", height: "100%", position: "relative" }}>
+      {/* Loading overlay - managed by React */}
+      {!isInitialized && (
         <div
           style={{
+            position: "absolute",
+            inset: 0,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            height: "100%",
             gap: "1rem",
+            zIndex: 10,
+            background: "var(--theme-background, #191919)",
           }}
         >
           <svg
@@ -286,7 +318,12 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
           </p>
         </div>
       )}
-      {/* Slides will be injected here */}
+      {/* Reveal.js container - managed outside React via ref */}
+      <div
+        className={`reveal reveal-container-${uniqueId.replace(/:/g, "-")}`}
+        ref={deckRef}
+        style={{ width: "100%", height: "100%" }}
+      />
     </div>
   );
 };
