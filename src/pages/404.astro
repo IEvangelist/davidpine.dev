@@ -1,7 +1,643 @@
 ---
 import Layout from '~/layouts/Layout.astro'
+
+const devJokes = [
+  "Looks like this page took a mass exodus... to /dev/null",
+  "This page is as missing as semicolons in JavaScript",
+  "Error 404: Page not found. But hey, at least it's not a 500!",
+  "This page went to get coffee and never came back",
+  "Segmentation fault (core dumped)... just kidding, it's a 404",
+  "This page is undefined, just like my weekend plans",
+  "The page you're looking for is in another castle 🏰",
+  "git checkout -- this-page.html (failed)",
+  "This page was mass migrated to a better place",
+  "Oops! Someone forgot to await this page",
+  "This page has mass: none (display: none)",
+  "404: File not found. Also, your car warranty has expired.",
+  "The page exists in a quantum superposition until observed... and you just collapsed it to 'not found'",
+  "This page is like my code comments: non-existent",
+  "sudo find / -name 'this-page' returned nothing",
+  "This page is NaN (Not a Navigable)",
+  "The page you seek / Does not exist here, friend / Like tears in rain",
+  "throw new PageNotFoundException('lol');",
+  "This page failed the vibe check",
+  "Task failed successfully: Page not found",
+  "This page was mass migrated to Azure... or was it AWS? 🤔",
+  "rm -rf this-page was a success! Wait, that's bad.",
+  "This page is experiencing an existential crisis",
+  "Have you tried wrapping this URL in a try-catch?",
+  "This page yeeted itself into the void",
+  "The page was mass migrated during a mass transit incident",
+  "Error: Cannot read property 'page' of undefined",
+  "This page is on a mass hiatus",
+  "docker run page:latest → image not found",
+  "This page ghosted you harder than your last Tinder match",
+  "SELECT * FROM pages WHERE url = ? → 0 rows returned",
+  "The page factory is experiencing supply chain issues",
+  "This page took a mass sabbatical to find itself",
+  "git blame: Nobody wants to take responsibility for this",
+  "This page is currently mass meditating in /dev/null",
+  "The page was mass decommissioned. RIP 🪦",
+  "npm install this-page → package not found",
+  "This page is buffering... forever",
+  "Kernel panic: Page not found. Don't panic though.",
+  "The page has mass evacuated the premises",
+]
+
+const randomJoke = devJokes[Math.floor(Math.random() * devJokes.length)]
+
+const httpCodes = [
+  { code: "100", meaning: "Continue" },
+  { code: "200", meaning: "OK" },
+  { code: "201", meaning: "Created" },
+  { code: "204", meaning: "No Content" },
+  { code: "301", meaning: "Moved Permanently" },
+  { code: "302", meaning: "Found" },
+  { code: "304", meaning: "Not Modified" },
+  { code: "400", meaning: "Bad Request" },
+  { code: "401", meaning: "Unauthorized" },
+  { code: "403", meaning: "Forbidden" },
+  { code: "404", meaning: "Not Found ← You are here" },
+  { code: "418", meaning: "I'm a teapot 🫖" },
+  { code: "429", meaning: "Too Many Requests" },
+  { code: "500", meaning: "Internal Server Error" },
+  { code: "502", meaning: "Bad Gateway" },
+  { code: "503", meaning: "Service Unavailable" },
+]
 ---
 
-<Layout>
-  <h1 class="inline-block m-auto p-4 text-accent text-4xl">404</h1>
+<Layout title="404 - Page Not Found" description="The page you're looking for doesn't exist">
+  <div class="error-page">
+    <div class="glitch-container">
+      <h1 class="glitch" data-text="404">404</h1>
+    </div>
+    
+    <p class="error-subtitle">Page Not Found</p>
+    
+    <div class="joke-container">
+      <p class="joke">{randomJoke}</p>
+      <button id="new-joke" class="joke-btn" title="Get another joke">🎲 Another one</button>
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-header">
+        <span class="terminal-btn red"></span>
+        <span class="terminal-btn yellow"></span>
+        <span class="terminal-btn green"></span>
+        <span class="terminal-title">bash</span>
+      </div>
+      <div class="terminal-body">
+        <p><span class="prompt">$</span> curl -I {Astro.url.pathname}</p>
+        <p class="response">HTTP/1.1 404 Not Found</p>
+        <p class="response">X-Powered-By: Astro</p>
+        <p class="response">X-Developer: David Pine</p>
+        <p class="response">X-Coffee-Level: Low</p>
+        <p class="response">X-Humor: Enabled</p>
+        <p><span class="prompt">$</span> <span class="cursor">_</span></p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a href="/" class="btn primary">
+        <span class="btn-icon">🤓</span>
+        Go Home
+      </a>
+      <a href="/posts" class="btn secondary">
+        <span class="btn-icon">📚</span>
+        Read Blog
+      </a>
+      <button id="copy-error" class="btn secondary">
+        <span class="btn-icon">📋</span>
+        Copy Stack Trace
+      </button>
+    </div>
+
+    <details class="stack-trace">
+      <summary>📜 View "Stack Trace" (for debugging purposes)</summary>
+      <pre><code>PageNotFoundException: The requested resource was not found
+    at Router.resolve(/universe/internet/davidpine.dev{Astro.url.pathname})
+    at Browser.navigate(user-action:click)
+    at Human.clickLink(curiosity.js:42)
+    at Developer.browseInternet(procrastination.ts:∞)
+    at Coffee.needMore(always.java:1)
+    
+Caused by: Mass Exodus to /dev/null
+    at Page.migrate(somewhere-else.rs:404)
+    at Content.disappear(magic.py:🎩)
+    
+Suggested fixes:
+    1. Check if the URL is correct (it probably isn't)
+    2. The page might have mass migrated (like the Aspire docs)
+    3. Try turning it off and on again
+    4. Have you tried using Astro? It's pretty great.
+    5. Accept that entropy comes for us all</code></pre>
+    </details>
+
+    <div class="http-codes">
+      <h3>HTTP Status Code Reference <span class="subtitle">(since you're here anyway)</span></h3>
+      <div class="codes-grid">
+        {httpCodes.map((item) => (
+          <div class:list={["code-item", { highlight: item.code === "404" }]}>
+            <span class="code">{item.code}</span>
+            <span class="meaning">{item.meaning}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="easter-egg">
+      <p>🥚 Psst... try the Konami code</p>
+    </div>
+  </div>
 </Layout>
+
+<script>
+  const jokes = [
+    "Looks like this page took a mass exodus... to /dev/null",
+    "This page is as missing as semicolons in JavaScript",
+    "Error 404: Page not found. But hey, at least it's not a 500!",
+    "This page went to get coffee and never came back",
+    "Segmentation fault (core dumped)... just kidding, it's a 404",
+    "This page is undefined, just like my weekend plans",
+    "The page you're looking for is in another castle 🏰",
+    "git checkout -- this-page.html (failed)",
+    "This page was mass migrated to a better place",
+    "Oops! Someone forgot to await this page",
+    "This page has mass: none (display: none)",
+    "404: File not found. Also, your car warranty has expired.",
+    "The page exists in a quantum superposition until observed... and you just collapsed it to 'not found'",
+    "This page is like my code comments: non-existent",
+    "sudo find / -name 'this-page' returned nothing",
+    "This page is NaN (Not a Navigable)",
+    "The page you seek / Does not exist here, friend / Like tears in rain",
+    "throw new PageNotFoundException('lol');",
+    "This page failed the vibe check",
+    "Task failed successfully: Page not found",
+    "This page was mass migrated to Azure... or was it AWS? 🤔",
+    "rm -rf this-page was a success! Wait, that's bad.",
+    "This page is experiencing an existential crisis",
+    "Have you tried wrapping this URL in a try-catch?",
+    "This page yeeted itself into the void",
+    "The page was mass migrated during a mass transit incident",
+    "Error: Cannot read property 'page' of undefined",
+    "This page is on a mass hiatus",
+    "docker run page:latest → image not found",
+    "This page ghosted you harder than your last Tinder match",
+    "SELECT * FROM pages WHERE url = ? → 0 rows returned",
+    "The page factory is experiencing supply chain issues",
+    "This page took a mass sabbatical to find itself",
+    "git blame: Nobody wants to take responsibility for this",
+    "This page is currently mass meditating in /dev/null",
+    "The page was mass decommissioned. RIP 🪦",
+    "npm install this-page → package not found",
+    "This page is buffering... forever",
+    "Kernel panic: Page not found. Don't panic though.",
+    "The page has mass evacuated the premises",
+  ];
+
+  document.getElementById('new-joke')?.addEventListener('click', () => {
+    const jokeEl = document.querySelector('.joke');
+    if (jokeEl) {
+      const currentJoke = jokeEl.textContent;
+      let newJoke = currentJoke;
+      // Keep picking until we get a different joke
+      while (newJoke === currentJoke && jokes.length > 1) {
+        newJoke = jokes[Math.floor(Math.random() * jokes.length)];
+      }
+      jokeEl.textContent = newJoke;
+      jokeEl.classList.add('joke-change');
+      setTimeout(() => jokeEl.classList.remove('joke-change'), 300);
+    }
+  });
+
+  document.getElementById('copy-error')?.addEventListener('click', async () => {
+    const stackTrace = document.querySelector('.stack-trace pre code')?.textContent || '';
+    try {
+      await navigator.clipboard.writeText(stackTrace);
+      const btn = document.getElementById('copy-error');
+      if (btn) {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span class="btn-icon">✅</span> Copied!';
+        setTimeout(() => btn.innerHTML = originalText, 2000);
+      }
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  });
+
+  // Konami code easter egg
+  const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+  let konamiIndex = 0;
+  
+  document.addEventListener('keydown', (e) => {
+    if (e.key === konamiCode[konamiIndex]) {
+      konamiIndex++;
+      if (konamiIndex === konamiCode.length) {
+        konamiIndex = 0;
+        document.body.classList.add('party-mode');
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdH2JkYyIgHRwaHB4gIuRkI2Hf3ZwbnF4gImPkI2IgHdycHJ4gIiOj42HgHdxcHN5gYiNjo2Hf3dxcXR5gYeMjYyGf3ZxcnV6gYaLjIuFfnZxc3Z7gYWKi4qEfXVyc3d7gYSJioqDfHVydHh8gYOIiYmCe3RydXl9gYKHiIiBeXRzdnp+gIGGh4eBd3RzeHuAgICFhoaAd3N0eXyAf3+EhYV/dnN1en2AfoCDhIR+dXN2e36AfX+Cg4N9dHN3fH+AfH6BgoJ8c3N4fYCAe32AgYF7cnN5foGAen2Af4B5cXN6f4GAeXx+fnx3cXR7gIGAdnt9fXp2cXV8gYGAdXp8fHh0cXZ9gYGAdHl7e3dzcHd+gYF/c3h6endxcHh/gYF+c3d5eXZxcHl/gYF9cnZ4eHVwcHqAgYB8cXV3d3RwcHuAgX97cHR2dnNwcXyAgH56b3N1dXJwcX2Af356bnJ0dHFwcn6Afn14bXFzc3Bwc3+Afn13bHByc29wdH+Bfn12a28ycm5wdYCBfnx1amx');
+        audio.play().catch(() => {});
+        
+        // Add confetti
+        for (let i = 0; i < 100; i++) {
+          const confetti = document.createElement('div');
+          confetti.className = 'confetti';
+          confetti.style.left = Math.random() * 100 + 'vw';
+          confetti.style.animationDelay = Math.random() * 3 + 's';
+          confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 80%, 60%)`;
+          document.body.appendChild(confetti);
+          setTimeout(() => confetti.remove(), 4000);
+        }
+        
+        setTimeout(() => document.body.classList.remove('party-mode'), 5000);
+      }
+    } else {
+      konamiIndex = 0;
+    }
+  });
+</script>
+
+<style>
+  .error-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .glitch-container {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .glitch {
+    font-size: 8rem;
+    font-weight: 900;
+    color: var(--theme-accent);
+    position: relative;
+    text-shadow: 
+      0.05em 0 0 rgba(255, 0, 0, 0.75),
+      -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
+      0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+    animation: glitch 500ms infinite;
+  }
+
+  @keyframes glitch {
+    0% {
+      text-shadow: 
+        0.05em 0 0 rgba(255, 0, 0, 0.75),
+        -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
+        0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+    }
+    14% {
+      text-shadow: 
+        0.05em 0 0 rgba(255, 0, 0, 0.75),
+        -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
+        0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+    }
+    15% {
+      text-shadow: 
+        -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+        0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
+        -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+    }
+    49% {
+      text-shadow: 
+        -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+        0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
+        -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+    }
+    50% {
+      text-shadow: 
+        0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
+        0.05em 0 0 rgba(0, 255, 0, 0.75),
+        0 -0.05em 0 rgba(0, 0, 255, 0.75);
+    }
+    99% {
+      text-shadow: 
+        0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
+        0.05em 0 0 rgba(0, 255, 0, 0.75),
+        0 -0.05em 0 rgba(0, 0, 255, 0.75);
+    }
+    100% {
+      text-shadow: 
+        -0.025em 0 0 rgba(255, 0, 0, 0.75),
+        -0.025em -0.025em 0 rgba(0, 255, 0, 0.75),
+        -0.025em -0.05em 0 rgba(0, 0, 255, 0.75);
+    }
+  }
+
+  .error-subtitle {
+    font-size: 1.5rem;
+    color: var(--theme-foreground);
+    opacity: 0.8;
+    margin-bottom: 2rem;
+  }
+
+  .joke-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .joke {
+    font-size: 1.25rem;
+    color: var(--theme-foreground);
+    max-width: 500px;
+    font-style: italic;
+    transition: opacity 0.3s ease;
+  }
+
+  .joke-change {
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .joke-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--theme-foreground);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+  }
+
+  .joke-btn:hover {
+    background: var(--theme-accent);
+    color: var(--theme-background);
+    border-color: var(--theme-accent);
+  }
+
+  .terminal {
+    background: #1e1e1e;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 2rem;
+    font-family: 'JetBrains Mono Variable', monospace;
+    text-align: left;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .terminal-header {
+    background: #323232;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .terminal-btn {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .terminal-btn.red { background: #ff5f56; }
+  .terminal-btn.yellow { background: #ffbd2e; }
+  .terminal-btn.green { background: #27c93f; }
+
+  .terminal-title {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: #888;
+  }
+
+  .terminal-body {
+    padding: 1rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .terminal-body p {
+    margin: 0.25rem 0;
+    color: #ccc;
+  }
+
+  .prompt {
+    color: #27c93f;
+    margin-right: 0.5rem;
+  }
+
+  .response {
+    color: #888;
+    padding-left: 1.5rem;
+  }
+
+  .cursor {
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  .actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+  }
+
+  .btn.primary {
+    background: var(--theme-accent);
+    color: var(--theme-background);
+  }
+
+  .btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .btn.secondary {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--theme-foreground);
+  }
+
+  .btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--theme-accent);
+  }
+
+  .stack-trace {
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 2rem;
+    text-align: left;
+  }
+
+  .stack-trace summary {
+    cursor: pointer;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
+    color: var(--theme-foreground);
+    list-style: none;
+  }
+
+  .stack-trace summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .stack-trace[open] summary {
+    border-radius: 0.5rem 0.5rem 0 0;
+    border-bottom: none;
+  }
+
+  .stack-trace pre {
+    background: #1e1e1e;
+    padding: 1rem;
+    border-radius: 0 0 0.5rem 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: none;
+    overflow-x: auto;
+    font-size: 0.75rem;
+    color: #e06c75;
+    margin: 0;
+  }
+
+  .http-codes {
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 2rem;
+  }
+
+  .http-codes h3 {
+    color: var(--theme-foreground);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .http-codes .subtitle {
+    font-weight: 400;
+    opacity: 0.6;
+    font-size: 0.875rem;
+  }
+
+  .codes-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .code-item {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.8rem;
+    color: var(--theme-foreground);
+  }
+
+  .code-item.highlight {
+    background: var(--theme-accent);
+    color: var(--theme-background);
+    border-color: var(--theme-accent);
+  }
+
+  .code-item .code {
+    font-weight: 700;
+    font-family: 'JetBrains Mono Variable', monospace;
+    min-width: 2.5rem;
+  }
+
+  .code-item .meaning {
+    opacity: 0.8;
+  }
+
+  .code-item.highlight .meaning {
+    opacity: 1;
+  }
+
+  .easter-egg {
+    margin-top: 2rem;
+    font-size: 0.75rem;
+    color: var(--theme-foreground);
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+  }
+
+  .easter-egg:hover {
+    opacity: 0.6;
+  }
+
+  :global(.party-mode) {
+    animation: rainbow 0.5s infinite;
+  }
+
+  @keyframes rainbow {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+  }
+
+  :global(.confetti) {
+    position: fixed;
+    top: -10px;
+    width: 10px;
+    height: 10px;
+    animation: fall 3s linear forwards;
+    z-index: 9999;
+  }
+
+  @keyframes fall {
+    to {
+      transform: translateY(100vh) rotate(720deg);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .glitch {
+      font-size: 5rem;
+    }
+
+    .joke {
+      font-size: 1rem;
+    }
+
+    .terminal {
+      font-size: 0.75rem;
+    }
+
+    .actions {
+      flex-direction: column;
+    }
+
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+

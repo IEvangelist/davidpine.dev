@@ -1,0 +1,62 @@
+---
+import { SlideViewer } from './slide-viewer'
+
+export interface Slide {
+  id: string
+  title: string
+  author?: string
+  description?: string
+  tags?: string[]
+  pubDate: Date
+  theme: string
+  transition: string
+}
+
+interface Props {
+  slide: Slide
+}
+
+const { slide } = Astro.props
+
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
+}
+
+// Use markdown format for preview - this is what reveal.js markdown plugin expects
+const slideContent = `## ${slide.title}${slide.author ? `\n\n*${slide.author}*` : ''}\n\n${formatDate(slide.pubDate)}`
+---
+
+<div
+  class="group hover:shadow-lg transition-all duration-300 cursor-pointer w-full flex flex-col rounded-2xl border border-[var(--theme-separator)] bg-[var(--theme-background)] shadow"
+>
+  <div
+    class="w-full h-48 p-0 relative rounded-2xl overflow-hidden slide-preview"
+  >
+    <SlideViewer
+      content={slideContent}
+      theme={slide.theme}
+      transition={slide.transition}
+      controls={false}
+      progress={false}
+      preview={true}
+      client:load
+    />
+  </div>
+</div>
+
+<style>
+  .slide-preview {
+    pointer-events: none;
+  }
+
+  .slide-preview :global(.reveal) {
+    transform: scale(0.35);
+    transform-origin: top left;
+    width: 285%;
+    height: 285%;
+  }
+</style>

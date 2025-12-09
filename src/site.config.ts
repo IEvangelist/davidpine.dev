@@ -49,6 +49,10 @@ const config: SiteConfig = {
       url: '/media',
     },
     {
+      name: 'Slides',
+      url: '/slides',
+    },
+    {
       name: 'Conclusions',
       url: '/conclusions',
     },

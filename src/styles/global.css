@@ -634,3 +634,52 @@ article img {
     @apply border-accent cursor-pointer;
   }
 }
+
+/* Reveal.js viewport styles */
+.reveal-viewport h2 {
+  font-size: 1.75em;
+}
+
+.reveal-viewport p,
+.reveal-viewport li {
+  font-size: 36px;
+}
+
+@media (max-width: 768px) {
+  .reveal-viewport h2 {
+    font-size: 1.5em;
+  }
+
+  .reveal-viewport p,
+  .reveal-viewport li {
+    font-size: 30px;
+  }
+}
+
+@media (max-width: 485px) {
+  .reveal-viewport h2 {
+    font-size: 1em;
+  }
+
+  .reveal-viewport p,
+  .reveal-viewport li {
+    font-size: 20px;
+  }
+}
+
+/* Reveal viewport code wrapping styles */
+.reveal-viewport pre code {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.reveal-viewport code span {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  display: inline-block;
+  max-width: 100%;
+}

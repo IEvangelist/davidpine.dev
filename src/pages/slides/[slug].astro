@@ -1,0 +1,375 @@
+---
+import Layout from '~/layouts/Layout.astro'
+import { SlideViewer } from '~/components/slide/slide-viewer'
+import { getCollection } from 'astro:content'
+
+export async function getStaticPaths() {
+  const slides = await getCollection('slides')
+  
+  return slides.map((slide) => {
+    // Extract just the filename without the folder path for cleaner URLs
+    const slugParts = slide.id.split('/')
+    const slug = slugParts[slugParts.length - 1]
+    
+    return {
+      params: { slug },
+      props: { slide },
+    }
+  })
+}
+
+const { slide } = Astro.props
+
+// Get the raw content (body) from the slide
+const rawContent = slide.body || ''
+
+// Create cover slide content
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
+}
+
+const coverMD = `## ${slide.data.title}${slide.data.author ? `\n\n*${slide.data.author}*` : ''}\n\n${formatDate(slide.data.pubDate)}`
+
+// Combine cover slide with content
+const fullContent = `${coverMD}\n---\n${rawContent}`
+---
+
+<Layout title={slide.data.title} description={slide.data.description}>
+  <div class="slide-viewer-page" id="slide-page">
+    <div class="slide-header" id="slide-header">
+      <div class="slide-header-left">
+        <a href="/slides" class="back-link">← Back to Slides</a>
+        <h1 class="slide-title">{slide.data.title}</h1>
+        {slide.data.author && <p class="slide-author">by {slide.data.author}</p>}
+      </div>
+      <button id="expand-btn" class="expand-button" title="Expand slides">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <polyline points="9 21 3 21 3 15"></polyline>
+          <line x1="21" y1="3" x2="14" y2="10"></line>
+          <line x1="3" y1="21" x2="10" y2="14"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="slide-container" id="slide-container">
+      <button id="collapse-btn" class="collapse-button" title="Exit expanded view">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4 14 10 14 10 20"></polyline>
+          <polyline points="20 10 14 10 14 4"></polyline>
+          <line x1="14" y1="10" x2="21" y2="3"></line>
+          <line x1="3" y1="21" x2="10" y2="14"></line>
+        </svg>
+      </button>
+      <SlideViewer
+        client:only="react"
+        content={fullContent}
+        theme={slide.data.theme}
+        transition={slide.data.transition}
+        controls={slide.data.controls}
+        progress={slide.data.progress}
+      />
+    </div>
+    <div class="slide-instructions" id="slide-instructions">
+      <p>Use arrow keys or click to navigate • Press <kbd>E</kbd> to expand • Press <kbd>Esc</kbd> to exit</p>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  function initExpandCollapse() {
+    const expandBtn = document.getElementById('expand-btn');
+    const collapseBtn = document.getElementById('collapse-btn');
+    const slideContainer = document.getElementById('slide-container');
+    const slidePage = document.getElementById('slide-page');
+    
+    if (!expandBtn || !collapseBtn || !slideContainer || !slidePage) return;
+    
+    function expandSlides() {
+      slideContainer.classList.add('expanded');
+      slidePage.classList.add('slides-expanded');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function collapseSlides() {
+      slideContainer.classList.remove('expanded');
+      slidePage.classList.remove('slides-expanded');
+      document.body.style.overflow = '';
+    }
+    
+    expandBtn.addEventListener('click', expandSlides);
+    collapseBtn.addEventListener('click', collapseSlides);
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Only handle if not in an input field
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      
+      if (e.key === 'e' || e.key === 'E') {
+        if (!slideContainer.classList.contains('expanded')) {
+          expandSlides();
+        }
+      } else if (e.key === 'Escape') {
+        if (slideContainer.classList.contains('expanded')) {
+          collapseSlides();
+        }
+      }
+    });
+  }
+  
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', initExpandCollapse);
+  document.addEventListener('astro:page-load', initExpandCollapse);
+</script>
+
+<style>
+  .slide-viewer-page {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 4rem);
+    padding: 0.5rem 1rem;
+    transition: padding 0.3s ease;
+  }
+
+  .slide-viewer-page.slides-expanded {
+    padding: 0;
+    min-height: 100vh;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: var(--theme-background);
+  }
+
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .slide-header-left {
+    flex: 1;
+  }
+
+  .slides-expanded .slide-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-100%);
+  }
+
+  .back-link {
+    color: var(--theme-accent);
+    text-decoration: none;
+    font-size: 0.875rem;
+    display: inline-block;
+    margin-bottom: 0.5rem;
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
+  }
+
+  .slide-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--theme-foreground);
+    margin: 0;
+  }
+
+  .slide-author {
+    font-size: 0.875rem;
+    color: var(--theme-foreground);
+    opacity: 0.7;
+    margin: 0.25rem 0 0 0;
+  }
+
+  .expand-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    background: transparent;
+    border: 2px solid var(--theme-accent);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .expand-button svg {
+    stroke: var(--theme-accent);
+    transition: stroke 0.2s ease;
+  }
+
+  .expand-button:hover {
+    background: var(--theme-accent);
+    transform: scale(1.05);
+  }
+
+  .expand-button:hover svg {
+    stroke: var(--theme-background);
+  }
+
+  .slides-expanded .expand-button {
+    display: none;
+  }
+
+  .slide-container {
+    width: 100%;
+    max-width: 1400px;
+    height: 60vh;
+    min-height: 400px;
+    max-height: 600px;
+    margin: 0 auto;
+    position: relative;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid var(--theme-separator);
+    transition: all 0.3s ease;
+  }
+
+  .slide-container.expanded {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: unset;
+    min-height: unset;
+    max-height: unset;
+    margin: 0;
+    border-radius: 0;
+    border: none;
+    z-index: 101;
+  }
+
+  .collapse-button {
+    display: none;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 102;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    backdrop-filter: blur(4px);
+  }
+
+  .collapse-button svg {
+    stroke: rgba(255, 255, 255, 0.9);
+    transition: stroke 0.2s ease;
+  }
+
+  .collapse-button:hover {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 255, 255, 0.7);
+    transform: scale(1.05);
+  }
+
+  .collapse-button:hover svg {
+    stroke: white;
+  }
+
+  .slide-container.expanded .collapse-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slide-container :global(.reveal) {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Theme-aware reveal.js controls */
+  .slide-container :global(.reveal .controls) {
+    color: var(--theme-accent);
+  }
+
+  .slide-container :global(.reveal .controls button) {
+    color: var(--theme-accent);
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+
+  .slide-container :global(.reveal .controls button:hover) {
+    opacity: 1;
+  }
+
+  .slide-container :global(.reveal .progress) {
+    background: var(--theme-separator);
+    height: 4px;
+  }
+
+  .slide-container :global(.reveal .progress span) {
+    background: var(--theme-accent);
+  }
+
+  .slide-container :global(.reveal .slide-number) {
+    color: var(--theme-accent);
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.75rem;
+    opacity: 0.8;
+  }
+
+  .slide-container :global(img) {
+    margin: 0 auto;
+    display: block;
+  }
+
+  .slide-instructions {
+    margin-top: 0.75rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--theme-foreground);
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+  }
+
+  .slides-expanded .slide-instructions {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .slide-instructions kbd {
+    padding: 0.125rem 0.5rem;
+    background: var(--theme-accent);
+    color: var(--theme-background);
+    border-radius: 0.25rem;
+    font-family: inherit;
+    font-weight: 600;
+  }
+
+  @media (max-width: 767px) {
+    .slide-viewer-page {
+      padding: 0.5rem;
+    }
+
+    .slide-container {
+      width: 100%;
+      height: 50vh;
+      min-height: 300px;
+      max-height: 450px;
+    }
+
+    .slide-header {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .expand-button {
+      align-self: flex-end;
+    }
+  }
+</style>

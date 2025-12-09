@@ -1,0 +1,61 @@
+---
+import Layout from '~/layouts/Layout.astro'
+import PageHeader from '~/components/PageHeader.astro'
+import ScrollUpButton from '~/components/ScrollUpButton.astro'
+import SlidesPage from '~/components/slide/SlidesPage.astro'
+import type { Slide } from '~/components/slide/SlideCard.astro'
+import { getCollection } from 'astro:content'
+
+// Get slides from content collection
+const slideEntries = await getCollection('slides')
+
+// Transform to the format SlideCard expects
+const slides: Slide[] = slideEntries.map((entry) => {
+  // Extract just the filename without the folder path for cleaner URLs
+  const slugParts = entry.id.split('/')
+  const slug = slugParts[slugParts.length - 1]
+  
+  return {
+    id: slug,
+    title: entry.data.title,
+    author: entry.data.author,
+    description: entry.data.description,
+    tags: entry.data.tags,
+    pubDate: entry.data.pubDate,
+    theme: entry.data.theme,
+    transition: entry.data.transition,
+  }
+})
+
+// Sort by date, newest first
+slides.sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime())
+
+// Get unique tags with counts
+const allTags = slides.flatMap((slide) => slide.tags || [])
+const tagCounts = allTags.reduce((acc, tag) => {
+  acc[tag] = (acc[tag] || 0) + 1
+  return acc
+}, {} as Record<string, number>)
+
+const tags = Object.entries(tagCounts)
+  .map(([tag, count]) => ({ tag, count, size: 1 }))
+  .sort((a, b) => b.count - a.count)
+
+// Get current tag from URL if any
+const currentTag = Astro.url.searchParams.get('tag') || ''
+---
+
+<Layout title="Slides" description="Presentation slides from David Pine's talks and sessions">
+  <PageHeader title="Slides" />
+  <article class="max-w-full py-7.5">
+    <div class="mb-8">
+      <p class="text-lg opacity-80">
+        Browse through presentation slides from my various talks and speaking engagements. 
+        Click on any slide deck to view the full presentation.
+      </p>
+    </div>
+    
+    <SlidesPage slides={slides} tags={tags} tag={currentTag} />
+  </article>
+  <ScrollUpButton />
+</Layout>
