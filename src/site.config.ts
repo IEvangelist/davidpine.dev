@@ -4,7 +4,7 @@ const config: SiteConfig = {
   // Absolute URL to the root of your published site, used for generating links and sitemaps.
   site: 'https://davidpine.dev',
   // The name of your site, used in the title and for SEO.
-  title: 'David Pine',
+  title: 'David Pine — @IEvangelist',
   // The description of your site, used for SEO and RSS feed.
   description:
     'Senior software engineer at Microsoft building aspire.dev, former Google Developer Expert in web technologies. Bestselling author, international speaker, and open source enthusiast.',

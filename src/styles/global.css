@@ -41,6 +41,21 @@
   --color-cyan: var(--theme-cyan);
   --default-font-family: var(--theme-font), monospace;
   --default-mono-font-family: var(--theme-font), monospace;
+
+  /* Animated border rotation */
+  --animate-rotate-border: border-rotate 3s linear infinite;
+  @keyframes border-rotate {
+    to {
+      --border-angle: 360deg;
+    }
+  }
+}
+
+/* CSS custom property for animated border */
+@property --border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
 }
 
 header {
@@ -115,6 +130,11 @@ article img {
 
 .prose {
   @apply text-base/7;
+
+  a.social-link {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
 
   code:not(.expressive-code code) {
     @apply text-sm text-foreground/90 bg-foreground/5 px-2 py-1 rounded-lg whitespace-nowrap;
@@ -320,6 +340,10 @@ article img {
         text-decoration: underline;
       }
     }
+  }
+
+  code {
+    @apply py-1 px-2 bg-accent/8 border-1 border-accent/15 text-accent/90 rounded-md;
   }
 
   button {

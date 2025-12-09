@@ -13,14 +13,18 @@ const { avatarImage } = Astro.props
 >
   {
     avatarImage && (
-      <Image
-        src={avatarImage.src}
-        alt={avatarImage.alt}
-        class="rounded-full border-8 border-accent/15 size-36 aspect-square box-content shrink-0"
-        widths={[288]}
-        height={144}
-        width={144}
-      />
+      <div class="shrink-0 bg-conic/[from_var(--border-angle)] from-accent/20 via-accent to-accent/20 from-30% to-60% animate-rotate-border rounded-full p-[6px]">
+        <div class="relative z-20 flex rounded-full bg-background">
+          <Image
+            src={avatarImage.src}
+            alt={avatarImage.alt}
+            class="rounded-full size-[211px] aspect-square"
+            widths={[422]}
+            height={211}
+            width={211}
+          />
+        </div>
+      </div>
     )
   }
   <div>
