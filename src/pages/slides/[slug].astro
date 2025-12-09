@@ -350,6 +350,172 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     display: block;
   }
 
+  /* Code block styling */
+  .slide-container :global(.reveal pre) {
+    position: relative;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    margin: 1rem 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .slide-container :global(.reveal pre code) {
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    padding-top: 2.25rem;
+    font-size: 0.8em;
+    line-height: 1.5;
+    max-height: 400px;
+    overflow: auto;
+  }
+
+  /* Language label for code blocks */
+  .slide-container :global(.reveal pre[data-language]::before) {
+    content: attr(data-language);
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.7em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--theme-accent);
+    color: var(--theme-background);
+    border-radius: 0 0.75rem 0 0.5rem;
+    z-index: 1;
+    opacity: 0.9;
+  }
+
+  /* Alternative: use class-based language detection */
+  .slide-container :global(.reveal pre code.hljs)::before {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.65em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--theme-accent);
+    color: var(--theme-background);
+    border-radius: 0 0.75rem 0 0.5rem;
+    z-index: 1;
+    opacity: 0.9;
+  }
+
+  /* Language-specific labels */
+  .slide-container :global(.reveal pre code.language-typescript)::before,
+  .slide-container :global(.reveal pre code.hljs.language-typescript)::before {
+    content: 'TypeScript';
+  }
+
+  .slide-container :global(.reveal pre code.language-javascript)::before,
+  .slide-container :global(.reveal pre code.hljs.language-javascript)::before {
+    content: 'JavaScript';
+  }
+
+  .slide-container :global(.reveal pre code.language-js)::before,
+  .slide-container :global(.reveal pre code.hljs.language-js)::before {
+    content: 'JS';
+  }
+
+  .slide-container :global(.reveal pre code.language-ts)::before,
+  .slide-container :global(.reveal pre code.hljs.language-ts)::before {
+    content: 'TS';
+  }
+
+  .slide-container :global(.reveal pre code.language-astro)::before,
+  .slide-container :global(.reveal pre code.hljs.language-astro)::before {
+    content: 'Astro';
+  }
+
+  .slide-container :global(.reveal pre code.language-bash)::before,
+  .slide-container :global(.reveal pre code.hljs.language-bash)::before {
+    content: 'Bash';
+  }
+
+  .slide-container :global(.reveal pre code.language-shell)::before,
+  .slide-container :global(.reveal pre code.hljs.language-shell)::before {
+    content: 'Shell';
+  }
+
+  .slide-container :global(.reveal pre code.language-csharp)::before,
+  .slide-container :global(.reveal pre code.hljs.language-csharp)::before {
+    content: 'C#';
+  }
+
+  .slide-container :global(.reveal pre code.language-cs)::before,
+  .slide-container :global(.reveal pre code.hljs.language-cs)::before {
+    content: 'C#';
+  }
+
+  .slide-container :global(.reveal pre code.language-json)::before,
+  .slide-container :global(.reveal pre code.hljs.language-json)::before {
+    content: 'JSON';
+  }
+
+  .slide-container :global(.reveal pre code.language-html)::before,
+  .slide-container :global(.reveal pre code.hljs.language-html)::before {
+    content: 'HTML';
+  }
+
+  .slide-container :global(.reveal pre code.language-css)::before,
+  .slide-container :global(.reveal pre code.hljs.language-css)::before {
+    content: 'CSS';
+  }
+
+  .slide-container :global(.reveal pre code.language-yaml)::before,
+  .slide-container :global(.reveal pre code.hljs.language-yaml)::before {
+    content: 'YAML';
+  }
+
+  .slide-container :global(.reveal pre code.language-xml)::before,
+  .slide-container :global(.reveal pre code.hljs.language-xml)::before {
+    content: 'XML';
+  }
+
+  .slide-container :global(.reveal pre code.language-markdown)::before,
+  .slide-container :global(.reveal pre code.hljs.language-markdown)::before {
+    content: 'Markdown';
+  }
+
+  .slide-container :global(.reveal pre code.language-md)::before,
+  .slide-container :global(.reveal pre code.hljs.language-md)::before {
+    content: 'MD';
+  }
+
+  .slide-container :global(.reveal pre code.language-python)::before,
+  .slide-container :global(.reveal pre code.hljs.language-python)::before {
+    content: 'Python';
+  }
+
+  .slide-container :global(.reveal pre code.language-rust)::before,
+  .slide-container :global(.reveal pre code.hljs.language-rust)::before {
+    content: 'Rust';
+  }
+
+  .slide-container :global(.reveal pre code.language-go)::before,
+  .slide-container :global(.reveal pre code.hljs.language-go)::before {
+    content: 'Go';
+  }
+
+  .slide-container :global(.reveal pre code.language-sql)::before,
+  .slide-container :global(.reveal pre code.hljs.language-sql)::before {
+    content: 'SQL';
+  }
+
+  .slide-container :global(.reveal pre code.language-powershell)::before,
+  .slide-container :global(.reveal pre code.hljs.language-powershell)::before {
+    content: 'PowerShell';
+  }
+
+  .slide-container :global(.reveal pre code.language-dockerfile)::before,
+  .slide-container :global(.reveal pre code.hljs.language-dockerfile)::before {
+    content: 'Dockerfile';
+  }
+
   .slide-instructions {
     margin-top: 0.5rem;
     margin-bottom: 0;
