@@ -13,20 +13,21 @@ const SLIDE_THEME_CONFIG: Record<
     background: string;
     textColor: string;
     titleColor: string;
+    accentColor: string;
   }
 > = {
-  black: { background: "#191919", textColor: "#fff", titleColor: "#fff" },
-  white: { background: "#fff", textColor: "#222", titleColor: "#222" },
-  league: { background: "#2b2b2b", textColor: "#eee", titleColor: "#eee" },
-  beige: { background: "#f7f3de", textColor: "#333", titleColor: "#333" },
-  sky: { background: "#add9e4", textColor: "#333", titleColor: "#333" },
-  night: { background: "#111", textColor: "#eee", titleColor: "#eee" },
-  serif: { background: "#f0f1eb", textColor: "#000", titleColor: "#000" },
-  simple: { background: "#fff", textColor: "#000", titleColor: "#000" },
-  solarized: { background: "#fdf6e3", textColor: "#657b83", titleColor: "#657b83" },
-  blood: { background: "#222", textColor: "#eee", titleColor: "#eee" },
-  moon: { background: "#002b36", textColor: "#93a1a1", titleColor: "#93a1a1" },
-  dracula: { background: "#282a36", textColor: "#f8f8f2", titleColor: "#f8f8f2" },
+  black: { background: "#191919", textColor: "#fff", titleColor: "#42affa", accentColor: "#42affa" },
+  white: { background: "#fff", textColor: "#222", titleColor: "#2a76dd", accentColor: "#2a76dd" },
+  league: { background: "#2b2b2b", textColor: "#eee", titleColor: "#eee", accentColor: "#13daec" },
+  beige: { background: "#f7f3de", textColor: "#333", titleColor: "#333", accentColor: "#8b743d" },
+  sky: { background: "#add9e4", textColor: "#333", titleColor: "#333", accentColor: "#3b759e" },
+  night: { background: "#111", textColor: "#eee", titleColor: "#e7ad52", accentColor: "#e7ad52" },
+  serif: { background: "#f0f1eb", textColor: "#000", titleColor: "#51483d", accentColor: "#51483d" },
+  simple: { background: "#fff", textColor: "#000", titleColor: "#000", accentColor: "#00008b" },
+  solarized: { background: "#fdf6e3", textColor: "#657b83", titleColor: "#586e75", accentColor: "#268bd2" },
+  blood: { background: "#222", textColor: "#eee", titleColor: "#eee", accentColor: "#a23" },
+  moon: { background: "#002b36", textColor: "#93a1a1", titleColor: "#eee8d5", accentColor: "#268bd2" },
+  dracula: { background: "#282a36", textColor: "#f8f8f2", titleColor: "#bd93f9", accentColor: "#ff79c6" },
 };
 
 function getThemeBackgroundAttrs(theme: string): string {
@@ -41,12 +42,17 @@ function generatePreviewStyles(theme: string, uniqueId: string): string {
   return `
     .reveal-${safeId} .slides section {
       background: ${config.background} !important;
-      padding-top: 30px;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      align-items: center !important;
+      text-align: center !important;
+      padding: 1rem !important;
     }
     .reveal-${safeId} .slides section h1,
     .reveal-${safeId} .slides section h2 {
-      color: ${config.titleColor} !important;
-      font-size: 32px !important;
+      color: var(--theme-accent) !important;
+      font-size: 1.25rem !important;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       line-clamp: 2;
@@ -54,13 +60,15 @@ function generatePreviewStyles(theme: string, uniqueId: string): string {
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 100%;
-      line-height: 1.2;
+      line-height: 1.3;
+      margin: 0 0 0.5rem 0 !important;
     }
     .reveal-${safeId} .slides section p,
     .reveal-${safeId} .slides section em {
       color: ${config.textColor} !important;
-      font-size: 20px !important;
-      line-height: 1.2 !important;
+      font-size: 0.875rem !important;
+      line-height: 1.3 !important;
+      margin: 0.25rem 0 !important;
     }
     .reveal-${safeId} .slides section em {
       font-style: normal !important;
@@ -233,13 +241,49 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
         <div
           style={{
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
             height: "100%",
-            color: "#666",
+            gap: "1rem",
           }}
         >
-          Loading...
+          <svg
+            style={{
+              width: "3rem",
+              height: "3rem",
+              animation: "rotate 2s linear infinite",
+            }}
+            viewBox="0 0 50 50"
+          >
+            <style>
+              {`
+                @keyframes rotate {
+                  100% { transform: rotate(360deg); }
+                }
+                @keyframes dash {
+                  0% { stroke-dasharray: 1, 150; stroke-dashoffset: 0; }
+                  50% { stroke-dasharray: 90, 150; stroke-dashoffset: -35; }
+                  100% { stroke-dasharray: 90, 150; stroke-dashoffset: -124; }
+                }
+              `}
+            </style>
+            <circle
+              cx="25"
+              cy="25"
+              r="20"
+              fill="none"
+              strokeWidth="4"
+              style={{
+                stroke: "var(--theme-accent)",
+                strokeLinecap: "round",
+                animation: "dash 1.5s ease-in-out infinite",
+              }}
+            />
+          </svg>
+          <p style={{ color: "var(--theme-foreground)", opacity: 0.7, fontSize: "0.95rem", margin: 0 }}>
+            Loading slides...
+          </p>
         </div>
       )}
       {/* Slides will be injected here */}

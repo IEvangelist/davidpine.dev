@@ -31,7 +31,7 @@ const slideContent = `## ${slide.title}${slide.author ? `\n\n*${slide.author}*` 
 ---
 
 <div
-  class="group hover:shadow-lg transition-all duration-300 cursor-pointer w-full flex flex-col rounded-2xl border border-[var(--theme-separator)] bg-[var(--theme-background)] shadow"
+  class="group hover:shadow-lg hover:border-[var(--theme-accent)] transition-all duration-300 cursor-pointer w-full flex flex-col rounded-2xl border border-[var(--theme-separator)] bg-[var(--theme-background)] shadow"
 >
   <div
     class="w-full h-48 p-0 relative rounded-2xl overflow-hidden slide-preview"
@@ -51,12 +51,27 @@ const slideContent = `## ${slide.title}${slide.author ? `\n\n*${slide.author}*` 
 <style>
   .slide-preview {
     pointer-events: none;
+    position: relative;
   }
 
   .slide-preview :global(.reveal) {
-    transform: scale(0.35);
-    transform-origin: top left;
-    width: 285%;
-    height: 285%;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .slide-preview :global(.reveal .slides) {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .slide-preview :global(.reveal .slides section) {
+    padding: 20px !important;
   }
 </style>

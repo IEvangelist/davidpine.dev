@@ -27,9 +27,11 @@ December 2025
 
 The JS ecosystem thrived while .NET docs tooling stagnated.
 
-- **DocFX**: Microsoft Learn's abandoned promise <!-- .element: class="fragment" -->
-- **Astro + Starlight**: The community's answer <!-- .element: class="fragment" -->
-- **aspire.dev**: Living proof it works <!-- .element: class="fragment" -->
+<ul>
+<li class="fragment"><strong>DocFX</strong> — Microsoft Learn's abandoned promise</li>
+<li class="fragment"><strong>Astro + Starlight</strong> — The community's answer</li>
+<li class="fragment"><strong>aspire.dev</strong> — Living proof it works</li>
+</ul>
 
 ---
 
@@ -84,21 +86,62 @@ The web moved forward. **Fast.**
 
 ---
 
-## Octoverse 2024 Highlights 📊
+## Octoverse 2025: Record Growth 📊
 
-- **Python** overtook JavaScript as #1 language <!-- .element: class="fragment" -->
-- **1 billion** contributions to open source <!-- .element: class="fragment" -->
-- **TypeScript** is #3, cutting into JS share <!-- .element: class="fragment" -->
-- JS ecosystem: **15% spike** in npm consumption <!-- .element: class="fragment" -->
+<ul>
+<li class="fragment"><strong>180M+</strong> developers now on GitHub</li>
+<li class="fragment"><strong>36M</strong> new developers joined in one year (+23% YoY)</li>
+<li class="fragment"><strong>630M</strong> total repositories</li>
+<li class="fragment"><strong>1 developer</strong> joins GitHub every second</li>
+</ul>
+
+---
+
+## TypeScript Takes #1 🏆
+
+For the first time ever, TypeScript overtook Python and JavaScript!
+
+<ul>
+<li class="fragment"><strong>+1M contributors</strong> in 2025 (+66% YoY)</li>
+<li class="fragment"><strong>2.6M+</strong> monthly contributors</li>
+<li class="fragment"><strong>78%</strong> growth in new repos</li>
+<li class="fragment">AI benefits from <strong>type safety</strong></li>
+</ul>
+
+---
+
+## Why TypeScript Won
+
+<ul>
+<li class="fragment">Type systems reduce ambiguity and catch LLM errors</li>
+<li class="fragment">Frameworks ship TypeScript by default</li>
+<li class="fragment"><strong>94%</strong> of LLM-generated errors are type-check failures</li>
+<li class="fragment">Low barrier: Vite, ts-node, Bun hide boilerplate</li>
+</ul>
+
+---
+
+## Astro's Meteoric Rise 🌟
+
+| Metric | Value |
+|--------|-------|
+| 📈 Growth | **+78% YoY** |
+| 👥 Contributors | **45,600+** |
+| 🏗️ Architecture | Islands |
+| 📦 Zero JS | By default |
+
+*One of the fastest-growing languages on GitHub!*
 
 ---
 
 ## Global Developer Growth
 
-- **India**: On track for #1 by 2028 <!-- .element: class="fragment" -->
-- **Brazil**: 27% YoY growth <!-- .element: class="fragment" -->
-- **Nigeria**: 28% YoY growth <!-- .element: class="fragment" -->
-- **1.4M** new first-time open source contributors <!-- .element: class="fragment" -->
+<ul>
+<li class="fragment"><strong>India</strong> — Added 5.2M devs, now #1 contributor base</li>
+<li class="fragment"><strong>Brazil</strong> — 6.89M developers (#4 globally)</li>
+<li class="fragment"><strong>Indonesia</strong> — 4.37M developers (up from 0.9M in 2020)</li>
+<li class="fragment"><strong>India projected #1</strong> by 2030 with 57.5M developers</li>
+</ul>
 
 ---
 
@@ -118,10 +161,12 @@ The web moved forward. **Fast.**
 
 ## Performance First
 
-- **Zero JS by default** <!-- .element: class="fragment" -->
-- Ship only what you need <!-- .element: class="fragment" -->
-- Content-focused optimization <!-- .element: class="fragment" -->
-- Lighthouse 100s out of the box <!-- .element: class="fragment" -->
+<ul>
+<li class="fragment"><strong>Zero JS by default</strong></li>
+<li class="fragment">Ship only what you need</li>
+<li class="fragment">Content-focused optimization</li>
+<li class="fragment">Lighthouse 100s out of the box</li>
+</ul>
 
 ---
 
@@ -146,9 +191,9 @@ Type-safe content. Built-in validation.
 
 I migrated .NET Aspire docs from Learn to Astro + Starlight.
 
-**Feature parity achieved.** <!-- .element: class="fragment" -->
+<p class="fragment"><strong>Feature parity achieved.</strong></p>
 
-**Plus so much more.** <!-- .element: class="fragment" -->
+<p class="fragment"><strong>Plus so much more.</strong></p>
 
 ---
 
@@ -166,21 +211,24 @@ I migrated .NET Aspire docs from Learn to Astro + Starlight.
 ## The Flexibility Factor
 
 Bring your own:
-- React, Vue, Svelte, Solid components <!-- .element: class="fragment" -->
-- Any CSS framework <!-- .element: class="fragment" -->
-- Custom remark/rehype plugins <!-- .element: class="fragment" -->
-- Your existing design system <!-- .element: class="fragment" -->
+
+<ul>
+<li class="fragment">React, Vue, Svelte, Solid components</li>
+<li class="fragment">Any CSS framework</li>
+<li class="fragment">Custom remark/rehype plugins</li>
+<li class="fragment">Your existing design system</li>
+</ul>
 
 ---
 
-## Environmental Impact 🌱
+## AI Era: TypeScript + Astro 🤖
 
-Less JavaScript = Less compute = Lower carbon
-
-- Smaller bundle sizes <!-- .element: class="fragment" -->
-- Faster page loads <!-- .element: class="fragment" -->
-- Reduced server processing <!-- .element: class="fragment" -->
-- Better for users on slow connections <!-- .element: class="fragment" -->
+<ul>
+<li class="fragment"><strong>1.1M+ repos</strong> now use LLM SDKs (+178% YoY)</li>
+<li class="fragment"><strong>80%</strong> of new devs use Copilot in week one</li>
+<li class="fragment">TypeScript's types help catch AI-generated errors</li>
+<li class="fragment">Astro's simplicity = easier AI-assisted development</li>
+</ul>
 
 ---
 
@@ -207,10 +255,12 @@ Less JavaScript = Less compute = Lower carbon
 
 Recent Astro partnerships:
 
-- **Webflow**: $150,000 donation <!-- .element: class="fragment" -->
-- **Cloudflare**: $150,000 donation <!-- .element: class="fragment" -->
-- **Netlify**: Official deployment partner <!-- .element: class="fragment" -->
-- **Stainless**: Astro-powered docs platform <!-- .element: class="fragment" -->
+<ul>
+<li class="fragment"><strong>Webflow</strong> — $150,000 donation</li>
+<li class="fragment"><strong>Cloudflare</strong> — $150,000 donation</li>
+<li class="fragment"><strong>Netlify</strong> — Official deployment partner</li>
+<li class="fragment"><strong>Stainless</strong> — Astro-powered docs platform</li>
+</ul>
 
 ---
 
@@ -218,7 +268,7 @@ Recent Astro partnerships:
 
 When the ecosystem you depend on stagnates...
 
-**Look to the thriving communities.** <!-- .element: class="fragment" -->
+<p class="fragment"><strong>Look to the thriving communities.</strong></p>
 
 ---
 
@@ -246,6 +296,6 @@ npm create astro@latest -- --template starlight
 
 Questions?
 
-**@davidpine7** | **davidpine.dev**
+**@IEvangelist** | **davidpine.dev**
 
-[aspire.dev Docs](https://aspire.dev) <!-- .element: style="text-align: left; display: block;" -->
+[aspire.dev](https://aspire.dev)
