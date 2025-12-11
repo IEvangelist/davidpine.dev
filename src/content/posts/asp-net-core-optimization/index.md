@@ -134,7 +134,7 @@ When static file middleware occurs before response compression, it returns the f
 
 - Client requests `main.css`
 - Static file middleware determines it can fully satisfy said request
-- The `main.css` file is [sent](https://github.com/aspnet/StaticFiles/blob/dev/src/Microsoft.AspNetCore.StaticFiles/StaticFileMiddleware.cs#L109) and the {{< url-link ""next"" "https://github.com/aspnet/StaticFiles/blob/dev/src/Microsoft.AspNetCore.StaticFiles/StaticFileMiddleware.cs#L126" >}} middleware in the pipeline is never executed
+- The `main.css` file is [sent](https://github.com/aspnet/StaticFiles/blob/dev/src/Microsoft.AspNetCore.StaticFiles/StaticFileMiddleware.cs#L109) and the [next](https://github.com/aspnet/StaticFiles/blob/dev/src/Microsoft.AspNetCore.StaticFiles/StaticFileMiddleware.cs#L126) middleware in the pipeline is never executed
 
 Now that we have these two pieces of middleware wired into out pipeline in the correct order, what else is left. There is one important thing that we forgot to do.
 While we do have static file middleware, we didn't know that "caching" is off by default. So we'll need to handle this with an instance of the the `StaticFileOptions`.

@@ -12,17 +12,20 @@ coverImage:
   src: ./blazorators.png
   alt: The Blazorators logo
 ---
+import { YouTube } from '@astro-community/astro-embed-youtube';
+import { Tweet } from '@astro-community/astro-embed-twitter';
+
 # Blazorators
 
-_Blazorators_ is a C# source generator that creates fully functioning Blazor JavaScript interop code, targeting either the `IJSInProcessRuntime` or `IJSRuntime` types. All of this code relies on the output of [one of my side projects named `blazorators`](https://github.com/IEvangelist/blazorators). While writing [my O'Reilly "Learning Blazor: Build Single-Page Apps with WebAssembly and C#" book](../learning-blazor), I discovered an impactful way to use both TypeScript type declarations from common JavaScript APIs and C# source generators to generate the JavaScript interop code. This is covered in chapter seven, so I don't want to spoil it too much, but rather entice you to want to [read the book](../learning-blazor). I've been using this approach in my Blazor apps for a while now and I'm excited to share it with you. Let's get started!
+_Blazorators_ is a C# source generator that creates fully functioning Blazor JavaScript interop code, targeting either the `IJSInProcessRuntime` or `IJSRuntime` types. All of this code relies on the output of [one of my side projects named `blazorators`](https://github.com/IEvangelist/blazorators). While writing [my O'Reilly "Learning Blazor: Build Single-Page Apps with WebAssembly and C#" book](/posts/learning-blazor), I discovered an impactful way to use both TypeScript type declarations from common JavaScript APIs and C# source generators to generate the JavaScript interop code. This is covered in chapter seven, so I don't want to spoil it too much, but rather entice you to want to [read the book](/posts/learning-blazor). I've been using this approach in my Blazor apps for a while now and I'm excited to share it with you. Let's get started!
 
-Check out my new [ Twitter account (@blazorbits)](twitter.com/@blazorbits) for Blazor tips and tricks! Below you'll see the Progress Telerik REPL (Read Evaluate Print Loop) for Blazor, select the **Preview** tab and watch the Blazor WebAssembly app perform a .NET restore and builds the app. Once the app loads, select a Natural voice from the voice selection control if it is available to you. If it's not available to you, that's not a big deal either. Select the **Speak** button and the app will speak the text you entered in the **Text-to-speech** control. You can also select the **Stop** button to stop the speech.
+Check out my new [Twitter account (@blazorbits)](https://twitter.com/@blazorbits) for Blazor tips and tricks! Below you'll see the Progress Telerik REPL (Read Evaluate Print Loop) for Blazor, select the **Preview** tab and watch the Blazor WebAssembly app perform a .NET restore and builds the app. Once the app loads, select a Natural voice from the voice selection control if it is available to you. If it's not available to you, that's not a big deal either. Select the **Speak** button and the app will speak the text you entered in the **Text-to-speech** control. You can also select the **Stop** button to stop the speech.
 
+**Interactive Demo**:
 
-
-**Interactive Demo**: [View on Blazor REPL](https://blazorrepl.telerik.com/repl/mcajYsly289d8oAd18)
-
-
+<iframe width="100%" height='600px'
+    src='https://blazorrepl.telerik.com/repl/embed/mcajYsly289d8oAd18?editor=true&result=true&errorList=true'>
+</iframe>
 
 ## Explore the app source code
 
@@ -54,47 +57,28 @@ I was working with Stephen Toub (the patent lead for the .NET team), and we file
 
 The community is excited about this project, and I'm excited to see what you build with it. Here's what some of the community members have said on Twitter:
 
-[View post by @robertmclaws](https://x.com/robertmclaws/status/1510292205814095874)
+<Tweet id="https://twitter.com/robertmclaws/status/1510292205814095874" />
 
-[View post by @KStrubeG](https://x.com/KStrubeG/status/1503140307537440783)
+<Tweet id="https://twitter.com/KStrubeG/status/1503140307537440783" />
 
-[View post by @Scott_Addie](https://x.com/Scott_Addie/status/1507350467524841474)
+<Tweet id="https://twitter.com/Scott_Addie/status/1507350467524841474" />
 
-[View post by @EdCharbeneau](https://x.com/EdCharbeneau/status/1504161891756748800)
+<Tweet id="https://twitter.com/EdCharbeneau/status/1504161891756748800" />
 
 ### The plan
 
 I'm rewriting the TypeScript abstract syntax tree parser to C#, essentially porting it one-to-one. When this is done, the parsing will be much more accurate and flexible. Likewise, our friends over on Twitter, and some of the community members on YouTube have been kind to me as well. Thank you for your kind words, they mean the world to me.
-
-
 
 **fieryscorpion** [commented](https://www.youtube.com/watch?v=U8XriF2zxS0&lc=UgyWLpFDYjI048tcnit4AaABAg):
 > This is a pretty amazing project. Hope this makes it into a serious project at Microsoft!
 Thank you!
 
 
-
-
-
 **Jiří Novotný** [commented](https://www.youtube.com/watch?v=U8XriF2zxS0&lc=UgzpOMTAz_KatcVURjV4AaABAg):
 > I think this package has a lot of potential. It makes the bridge between JS and C# in Blazor much less painful. I love it! Well done, David.
 
-
-
 ## Additional resources
 
-
-
-[Watch on YouTube](https://www.youtube.com/watch?v=U8XriF2zxS0)
-
-
-
-&nbsp;
-
-
-
-[Watch on YouTube](https://www.youtube.com/watch?v=RGPS0y2pl2k)
-
-
-
-&nbsp;
+<YouTube id="https://youtu.be/U8XriF2zxS0" />
+<br/>
+<YouTube id="https://youtu.be/RGPS0y2pl2k" />

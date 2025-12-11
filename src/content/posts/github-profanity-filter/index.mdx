@@ -11,6 +11,8 @@ coverImage:
   src: ./profanity-filter.png
   alt: Building a GitHub profanity filter with .NET Core and Azure Functions
 ---
+import { Tweet } from '@astro-community/astro-embed-twitter';
+
 # Intro
 
 With more than [40 million active users](https://github.com/search?q=type:user&type=Users), GitHub is by far the largest source code hosting platform in the world. It's an open source developers dream, and ecosystem and developer community unlike any other. And with all these users and such profound openness, there's bound to be frustration from time to time. In this post we will explore an **Azure Function** written with **ASP.NET Core 3.0** and **C# 8.0**. It has been designed to handle a **GitHub webhook** for issues and pull requests. In other words, we are able to target a specific GitHub repository and listen for new issues or pull requests - as they occur, our **Azure Function** is called.
@@ -168,7 +170,7 @@ public class IssueHandler
 
 You may have noticed the `.ctor` logic is expressed as a tuple assignment. When I discovered this was possible, I questioned it - what do you think? Leave your comments on the tweet below.
 
-[View post by @davidpine7](https://x.com/davidpine7/status/1169418926217973760)
+<Tweet id="https://twitter.com/davidpine7/status/1169418926217973760" />
 
 Now, back to the handling of issues. What's that look like?
 
@@ -503,6 +505,9 @@ I really love how **GraphQL** allows the consumer to retrieve only the shape of 
 
 This article started with detailing the underlying sentiment of an open source ecosystem, and the potential for frustration and angst. And while it's not all rainbows and ponies, it's awesome when the community comes together. I received a pull request that added the "lint licker" word replacer implementation -- yes, inspired by this commercial! For your viewing pleasure, here is what the filter looks like in action.
 
-{{< video poster="/img/2019/11/poster.png" src="/img/2019/11/in-action.mp4" >}}
+<video poster="/img/2019/11/poster.png" controls>
+  <source src="/img/2019/11/in-action.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
 
 As you can see, the profanity filter works 🤘.

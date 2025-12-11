@@ -77,7 +77,7 @@ services.Configure<TwilioOptions>(
     Configuration.GetSection(nameof(TwilioOptions)));
 ```
 
-We have some unique services being added to our dependency injection (DI) service collection. Later, our controllers can ask for these interfaces and expect the corresponding implementations. Likewise, we map over some sections from our `appsettings.json` configuration to C# classes. These also become available to us later from the perspective of DI. We can ask for `IOptions<ImageProcessOptions>` for example. See {{< url-link "ASP.NET Core - Configuration Tips" "" >}} for more details.
+We have some unique services being added to our dependency injection (DI) service collection. Later, our controllers can ask for these interfaces and expect the corresponding implementations. Likewise, we map over some sections from our `appsettings.json` configuration to C# classes. These also become available to us later from the perspective of DI. We can ask for `IOptions<ImageProcessOptions>` for example. See [ASP.NET Core - Configuration Tips](/posts/asp-net-core-configuration) for more details.
 
 #### ASP.NET Core Web API
 
@@ -104,7 +104,6 @@ public class ImageController : Controller
 > <cite>__ProTip__</cite>
 > Keep your controllers dumb! It is best to delegate their logic to a service, and this simplifies testing.
 
-<br/><br/>
 
 We ask for the `IImageProcessorService` implementation on the `api/image/options` action. This endpoint simply returns JSON that represents our combined configuration options from some of the various options classes we mapped earlier on startup. These options have information for the client app about animation frame delay, intervals, the number of photos to take, image height and width, etc.
 
@@ -257,7 +256,7 @@ The __Angular__ application is where a lot of the logic lives. It contains user 
 | `controlwizard` | This is the state machine of the overlay for the user workflow -- it toggles various templates into and out of view |
 | `numberpad` | A numeric entry markup, which outputs the user input |
 
-When application loads, we first hit the `api/image/options` endpoint -- getting our client settings from the server. See {{< url-link "Angular Http with RxJS Observables" "" >}} for more details on the `HttpClient` from __Angular__. We then set our camera stream to the `video` element on our `CameraComponent`.
+When application loads, we first hit the `api/image/options` endpoint -- getting our client settings from the server. See [Angular Http with RxJS Observables](/posts/angular-2-http) for more details on the `HttpClient` from __Angular__. We then set our camera stream to the `video` element on our `CameraComponent`.
 
 Snippet from `CameraComponent.ngAfterViewInit`.
 
@@ -441,7 +440,6 @@ Here is a look at the application in action.
 
 
 
-<br/><br/>
 
 ## Requirements
 

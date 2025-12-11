@@ -12,6 +12,8 @@ coverImage:
   src: ./csharp-advent.png
   alt: C# All The Things
 ---
+import { Tweet } from '@astro-community/astro-embed-twitter';
+
 > I'm proud to share that this post is part of the C# Advent Calendar and it's my second year contributing to it! I encourage you to check out all the others [here](https://crosscuttingconcerns.com/The-Second-Annual-C-Advent).
 
 <br />
@@ -37,7 +39,6 @@ This will install "miglifier" globally. You can then use it by simply invoking t
 > <cite>__ProTip__</cite>
 > You do not actually need to invoke `dotnet miglifier`, you can simply say `miglifier` and omit the `dotnet` from the command.
 
-<br/><br/>
 
 Each file that is found will be "miglified" and then written back to disk.
 
@@ -142,7 +143,7 @@ static class JsonSettings
 }
 ```
 
-Now, in the spirit of __C#__ I'd like to share something rather special with you. Consider this my Christmas 🎁 to you as part of the __C# Advent Calendar__...deconstruction 😈! I posted about {{< url-link "__C# 7__ when it was first released" "" >}} and while this is a __C# 7__ feature it is a little different. With the introduction of _tuples_ the language also gave us deconstruction of _tuples_.  In addition to deconstructing _tuples_ we can actually deconstruct anything that has a `public void Deconstruct([out T value])` method, where the `out` parameters serve as the ordinals to deconstructing a target tuple type. In other words, we can deconstruct non-tuple types into tuples. Let's explore this a bit more, shall we?
+Now, in the spirit of __C#__ I'd like to share something rather special with you. Consider this my Christmas 🎁 to you as part of the __C# Advent Calendar__...deconstruction 😈! I posted about [__C# 7__ when it was first released](/posts/exploring-csharp-seven) and while this is a __C# 7__ feature it is a little different. With the introduction of _tuples_ the language also gave us deconstruction of _tuples_.  In addition to deconstructing _tuples_ we can actually deconstruct anything that has a `public void Deconstruct([out T value])` method, where the `out` parameters serve as the ordinals to deconstructing a target tuple type. In other words, we can deconstruct non-tuple types into tuples. Let's ...
 
 In the miglifier app we accept two arguments.
 
@@ -169,7 +170,7 @@ foreach (var (type, files) in results.GroupBy(f => f.Type)
 
 When I first learned about this, I was so excited to tweet about it!
 
-[View post by @davidpine7](https://x.com/davidpine7/status/1032709720505831425)
+<Tweet id="https://twitter.com/davidpine7/status/1032709720505831425" />
 
 ## Credit 🙏🏼
 
@@ -190,13 +191,15 @@ The [__Centare.Extensions__](https://github.com/centare/Centare.Extensions/wiki#
 
 The __NuGet__ & __Azure DevOps__ badges are only part of the story, by all means please check out the project yourself  [IEvangelist.DotNet.Miglifier](https://github.com/IEvangelist/IEvangelist.DotNet.Miglifier)! I look forward to pull-requests, feature requests, or issues. Happy coding, friends...
 
-<img src="https://dev.azure.com/davidpine/IEvangelist.DotNet.Miglifier/_apis/build/status/IEvangelist.DotNet.Miglifier%20.NET%20Core-CI"
-     alt="Build status"
-     data-canonical-src="https://dev.azure.com/davidpine/IEvangelist.DotNet.Miglifier/_apis/build/status/IEvangelist.DotNet.Miglifier%20.NET%20Core-CI"
-     style="max-width:100%;">
+<a href="https://dev.azure.com/davidpine/IEvangelist.DotNet.Miglifier/_build/latest?definitionId=6" rel="nofollow" target="_blank">
+   <img src="https://dev.azure.com/davidpine/IEvangelist.DotNet.Miglifier/_apis/build/status/IEvangelist.DotNet.Miglifier%20.NET%20Core-CI"
+        alt="Build status"
+        data-canonical-src="https://dev.azure.com/davidpine/IEvangelist.DotNet.Miglifier/_apis/build/status/IEvangelist.DotNet.Miglifier%20.NET%20Core-CI"
+        style="max-width:100%;" />
+</a>
 <a href="https://www.nuget.org/packages/dotnet-miglifier/" rel="nofollow" target="_blank">
    <img src="https://img.shields.io/nuget/v/dotnet-miglifier.svg"
         alt="NuGet version (dotnet-miglifier)"
         data-canonical-src="https://img.shields.io/nuget/v/dotnet-miglifier.svg?style=flat-square"
-        style="max-width:100%;">
+        style="max-width:100%;" />
 </a>

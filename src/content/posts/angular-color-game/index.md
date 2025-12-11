@@ -83,7 +83,6 @@ npm install @angular/material
 > If you get an notifications about vulnerabilities address them immediately!<br/>
 > Simply, execute `npm audit fix`
 
-<br/><br/>
 
 Now, open up the `style.scss` file and let's add an `import` statement at the top and a bit of simple CSS.
 

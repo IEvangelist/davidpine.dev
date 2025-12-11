@@ -69,7 +69,6 @@ If you looked at both the `appsettings.json` and the two C# classes, I'm hoping 
 > <cite>__ProTip__</cite>
 > Use C# 6 Property Initializers to set default values. If the corresponding property exists in the JSON object mapping, it will be overwritten as to be expected; however, if omitted your default value is used.
 
-<br/><br/>
 
 Using property initializers, this is simplified as follows:
 
@@ -102,7 +101,6 @@ This should look very familiar.
 > <cite>__ProTip__</cite>
 > Use C# 6 `nameof` operator to configure your C# class mapping. This alleviates the usage of magic strings and enforces a consistent naming convention.
 
-<br/><br/>
 
 The change is tiny, however; this is another great usage of the `nameof` operator. This assumes that the the section in the JSON file matches the name of the class object representing it. Additionally, it serves as a reason to keep the names matching.
 

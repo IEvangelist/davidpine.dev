@@ -351,11 +351,11 @@ comparison of the two, note the benefits of local functions as they compare to l
 
 |   | Lambda(s) | Local Function(s) | Details |
 |--:|:--|:--|:--|
-|Generics| {{< i fa-times red >}} | {{< i fa-check green >}} |Local functions allow for the use of generics|
-|Iterators| {{< i fa-times red >}} | {{< i fa-check green >}} |The `yield` keyword is valid within local functions|
-|Recursion| {{< i fa-times red >}} | {{< i fa-check green >}} |Local functions support recursion|
-|Allocatey| {{< i fa-check green >}} | {{< i fa-times red >}} |Delegates require an `object` allocation|
-|Potential Variable Lifting| {{< i fa-check green >}} | {{< i fa-times red >}} |Implicitly captured closure is non-existent|
+|Generics| ❌ | ✅ |Local functions allow for the use of generics|
+|Iterators| ❌ | ✅ |The `yield` keyword is valid within local functions|
+|Recursion| ❌ | ✅ |Local functions support recursion|
+|Allocatey| ✅ | ❌ |Delegates require an `object` allocation|
+|Potential Variable Lifting| ✅ | ❌ |Implicitly captured closure is non-existent|
 
 It is vital to understand that local functions are <strong>not</strong> a replacement for `Action<T[,T1...]>` or `Func<T[,T1...]>`. These delegate declarations are still
 needed as parameters to enable lambda expression arguments. If you see the **#notasugly** hashtag, this was coined by Mads Torgersen.

@@ -13,11 +13,14 @@ coverImage:
   src: ./mirror.jpg
   alt: Building a Magic Mirror
 ---
+import { YouTube } from '@astro-community/astro-embed-youtube';
+import { Tweet } from '@astro-community/astro-embed-twitter';
+
 # Inspiration
 
 I am certainly not the first one to create a magic mirror, and I will not be the last either. I was inspired by those who are true Innovators...some might say, "I'm standing on the shoulders of giants". They would probably we right, and I'm okay with that. Earlier this year, I stumbled upon a tweet about someone how created a magic mirror...this is the root of my inspiration.
 
-[View post by @davidpine7](https://x.com/davidpine7/status/695318303326265345)
+<Tweet id="https://twitter.com/davidpine7/status/695318303326265345" />
 
 Before continuing on, allow me to explain what a magic mirror is. A magic mirror is simply a two-way mirror with a monitor positioned behind it that projects through the mirror. The monitor displays the application. The application is running on a small computer, in most cases a **Raspberry Pi**.
 
@@ -47,12 +50,12 @@ Below is a semi-comprehensive listing of all the materials and their correspondi
 
 |  Rough Cost | Hardware |
 |:--|:--|
-| $60  | <a href="https://www.microsoftstore.com/store/msusa/en_US/pdp/Raspberry-Pi-3-Bundle/productID.5068162700" target="_blank">Raspberry Pi 3 Bundle <a/> |
-| $130 | <a href="https://www.amazon.com/gp/product/B00IZBIMLK/ref=oh_aui_search_detailpage?ie=UTF8&psc=1" target="_blank">BenQ 27" HDMI LED Monitor <a/> |
-| $90  | <a href="https://www.tapplastics.com/product/plastics/cut_to_size_plastic/two_way_mirrored_acrylic/558" target="_blank">Custom-sized Two-way Mirrored Acrylic <a/> |
-| $40  | <a href="https://www.amazon.com/Microsoft-LifeCam-Cinema-720p-Webcam/dp/B009CPC6QA" target="_blank">Microsoft LifeCam <a/> |
-| $25  | <a href="https://www.amazon.com/gp/product/B00DEJXRAE/ref=oh_aui_search_detailpage?ie=UTF8&psc=1" target="_blank">Dell USB Wired Soundbar <a/> |  
-| $6   | <a href="https://www.amazon.com/gp/product/B000234UFG/ref=oh_aui_detailpage_o06_s00?ie=UTF8&psc=1" target="_blank">Power Cord Splitter <a/> |
+| $60  | <a href="https://www.microsoftstore.com/store/msusa/en_US/pdp/Raspberry-Pi-3-Bundle/productID.5068162700" target="_blank">Raspberry Pi 3 Bundle</a> |
+| $130 | <a href="https://www.amazon.com/gp/product/B00IZBIMLK/ref=oh_aui_search_detailpage?ie=UTF8&psc=1" target="_blank">BenQ 27" HDMI LED Monitor</a> |
+| $90  | <a href="https://www.tapplastics.com/product/plastics/cut_to_size_plastic/two_way_mirrored_acrylic/558" target="_blank">Custom-sized Two-way Mirrored Acrylic</a> |
+| $40  | <a href="https://www.amazon.com/Microsoft-LifeCam-Cinema-720p-Webcam/dp/B009CPC6QA" target="_blank">Microsoft LifeCam</a> |
+| $25  | <a href="https://www.amazon.com/gp/product/B00DEJXRAE/ref=oh_aui_search_detailpage?ie=UTF8&psc=1" target="_blank">Dell USB Wired Soundbar</a> |  
+| $6   | <a href="https://www.amazon.com/gp/product/B000234UFG/ref=oh_aui_detailpage_o06_s00?ie=UTF8&psc=1" target="_blank">Power Cord Splitter</a> |
 | $25  | Full HDMI Cable, USB Extension Cables |
 | $50  | Carpentry Materials |
 | $50  | Glenlivet 12 Year Old Scotch Whisky (not technically hardware) |
@@ -75,8 +78,8 @@ language today, **C#**.
 
 | Type | Name -- Link |
 |:--|:--|
-| <strong>OS</strong> | {{< url-link "`Windows 10 IoT Core, "Build 10.0.14393"` " "https://developer.microsoft.com/en-us/windows/iot/explore/iotcore" >}} |
-| <strong>Platform</strong> | {{< url-link "`Universal Windows Platform (UWP), "UAP 1.0"` " "https://msdn.microsoft.com/en-us/windows/uwp/get-started/universal-application-platform-guide" >}} |
+| <strong>OS</strong> | [`Windows 10 IoT Core, "Build 10.0.14393"`](https://developer.microsoft.com/en-us/windows/iot/explore/iotcore) |
+| <strong>Platform</strong> | [`Universal Windows Platform (UWP), "UAP 1.0"`](https://msdn.microsoft.com/en-us/windows/uwp/get-started/universal-application-platform-guide) |
 
 # Software
 
@@ -186,18 +189,8 @@ I would be lying if I tried taking credit for any of the construction. I'm sligh
 
 ---
 
-
-
-[Watch on YouTube](https://www.youtube.com/watch?v=KOTYW8EioBk)
-
-
-
-<br/><br/>
+<YouTube id="https://youtu.be/KOTYW8EioBk" />
 
 
 
-[Watch on YouTube](https://www.youtube.com/watch?v=PWr1zRBO90o)
-
-
-
-<br/><br/>
+<YouTube id="https://youtu.be/PWr1zRBO90o" />

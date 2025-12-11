@@ -47,7 +47,7 @@ I believe that Microsoft has done an amazing job at not only updating their docu
 > The [JavaScript.com](www.javascript.com) website has one of the best getting started experiences on the web today.
 <cite>Maria Naggaga -- Keynote "It Starts With A Search", MKE DOT NET 2017</cite>
 
-It is more natural for JavaScript to have an online tutorial than C#, but Microsoft made this happen regardless. They have an awesome series of {{< url-link ""quick starts"" "https://docs.microsoft.com/en-us/dotnet/csharp/quick-starts/index" >}} that serve as tutorials. They introduced an in-browser REPL (Read-Eval-Print Loop) for C#, and it is amazing. Here is a listing of a few of them:
+It is more natural for JavaScript to have an online tutorial than C#, but Microsoft made this happen regardless. They have an awesome series of [quick starts](https://docs.microsoft.com/en-us/dotnet/csharp/quick-starts/index) that serve as tutorials. They introduced an in-browser REPL (Read-Eval-Print Loop) for C#, and it is amazing. Here is a listing of a few of them:
 
 - [Hello C#](https://docs.microsoft.com/en-us/dotnet/csharp/quick-starts/hello-world)
 - [Numbers in C#](https://docs.microsoft.com/en-us/dotnet/csharp/quick-starts/numbers-in-csharp)
@@ -171,7 +171,7 @@ Does that seem reasonable? If not, why? If so, please [visit the issue](https://
 
 ### Counting my blessings
 
-I consider myself to be very fortunate. I work with the owner of {{< url-link ""Edwina"" "https://travelswithedwina.com/" >}}, who has been patiently teaching and coaching me through the better part of three years of my career. She used to teach algorithms and C# at the Milwaukee School of Engineering (MSOE). I have learned so much from her about C#, language semantics, algebraic reduction, etc...and I'm grateful for that. She has certainly made me a more pragmatic developer. I encourage everyone to find someone who can inspire, motivate or mentor them.
+I consider myself to be very fortunate. I work with the owner of [Edwina](https://travelswithedwina.com/), who has been patiently teaching and coaching me through the better part of three years of my career. She used to teach algorithms and C# at the Milwaukee School of Engineering (MSOE). I have learned so much from her about C#, language semantics, algebraic reduction, etc...and I'm grateful for that. She has certainly made me a more pragmatic developer. I encourage everyone to find someone who can inspire, motivate or mentor them.
 
 # Final Thoughts
 

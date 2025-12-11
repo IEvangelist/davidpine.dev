@@ -18,7 +18,6 @@ Most of us are all "slackers", meaning we truly do spend a significant amount of
 > Slack is a collaboration hub for work, no matter what work you do. It’s a place where conversations happen, decisions are made, and information is always at your fingertips.
 > <cite>[www.slack.com](https://www.slack.com)</cite>
 
-<br/><br/>
 
 It's wildly popular in the Developer Community! In fact, almost to a fault...people are constantly sharing their "slack fatigue". I am personally a part of roughly twenty slack workspaces. One of the really cool features of slack is the ability to integrate with the tool itself through the Slack API. Imagine a plugin playground where you're free to extend the capabilities of the slack ecosystem. Look to the  [Slack API](https://api.slack.com/).
 
@@ -54,7 +53,6 @@ setx OpenWeatherMapOptions__Key [Open Weather Key]
 > <cite>__ProTip__</cite>
 You will need to restart __Visual Studio__ in order for the newly added environment variables to be available.
 
-<br/><br/>
 
 ### Slack API - Slash Command Request
 
@@ -159,7 +157,6 @@ This is the shape of the object that slack's API returns for all slash commands.
 > <cite>__Disclaimer__</cite>
 > I attempted to verify the slack request, however; I couldn't get it working. See [my attempt](https://api.slack.com/docs/verifying-requests-from-slack) verifying requests from slack for more details and [`SlackCommandRequestExtensions`](https://github.com/IEvangelist/IEvangelist.Slack.SlashCommands/blob/master/IEvangelist.Slack.SlashCommands/Extensions/SlackCommandRequestExtensions.cs).
 
-<br/><br/>
 
 ### 😨 HttpClient
 

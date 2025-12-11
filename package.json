@@ -12,6 +12,8 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@astro-community/astro-embed-twitter": "^0.5.9",
+    "@astro-community/astro-embed-youtube": "^0.5.9",
     "@astrojs/markdown-remark": "^6.3.9",
     "@astrojs/mdx": "^4.3.12",
     "@astrojs/react": "^4.4.2",

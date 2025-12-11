@@ -36,7 +36,7 @@ Let's start by answering all these common questions.
 
 ## `[.NET Standard](https://docs.microsoft.com/en-us/dotnet/standard/net-standard/) `
 
-If the name [_Immo Landwerth_](https://github.com/terrajobst) doesn't ring a bell, perhaps [@terrajobst](https://twitter.com/terrajobst) will? Regardless of whether you've heard of him before -- you'd be wise to remember him now. He is a program manager for Microsoft and has a huge part in the `.NET` ecosystem as a whole. Immo has a `.NET Standard` video series on {{< i fa-lg fa-youtube >}} and if you do not have time to read this post, by all means [watch his videos](https://www.youtube.com/playlist?list=PLRAdsfhKI4OWx321A_pr-7HhRNk7wOLLY).
+If the name [_Immo Landwerth_](https://github.com/terrajobst) doesn't ring a bell, perhaps [@terrajobst](https://twitter.com/terrajobst) will? Regardless of whether you've heard of him before -- you'd be wise to remember him now. He is a program manager for Microsoft and has a huge part in the `.NET` ecosystem as a whole. Immo has a `.NET Standard` video series on YouTube and if you do not have time to read this post, by all means [watch his videos](https://www.youtube.com/playlist?list=PLRAdsfhKI4OWx321A_pr-7HhRNk7wOLLY).
 
 > `.NET Standard` is a specification. It represents a set of APIs that all `.NET` platforms have to implement.
 > <cite>[Immo Landwerth](https://youtu.be/YI4MurjfMn8?list=PLRAdsfhKI4OWx321A_pr-7HhRNk7wOLLY&t=191)</cite>
@@ -82,7 +82,7 @@ It is typically advised that you target the lowest version of the standard that 
 
 ### `.NET` API Explorer
 
-Microsoft has been hard at work, and their documentation teams have been putting together some incredibly useful ways to consume documentation. As a developer, I typically rely on **StackOverflow** as a source of truth -- however, I have been finding myself spending more time on the official documentation sites. A big {{< i fa-lg fa-thumbs-o-up >}} to the team for making the `.NET` docs so much better than before. They even have a `.NET` API Explorer. This is immensely powerful -- in a matter of seconds I can quickly explore APIs and determine if something is lacking.
+Microsoft has been hard at work, and their documentation teams have been putting together some incredibly useful ways to consume documentation. As a developer, I typically rely on **StackOverflow** as a source of truth -- however, I have been finding myself spending more time on the official documentation sites. A big 👍 to the team for making the `.NET` docs so much better than before. They even have a `.NET` API Explorer. This is immensely powerful -- in a matter of seconds I can quickly explore APIs and determine if something is lacking.
 
 <a href="https://docs.microsoft.com/en-us/dotnet/api/?view=netstandard-2.0" target="_blank">
     ![.NET Standard API Explorer](./dot-net-standard-api-explorer.png)

@@ -45,11 +45,9 @@ of the conversation was encountered, we came up with an analogy.
 This was the reoccurring analogy and I agreed with it wholeheartedly. That is why I think that TypeScript is like "training wheels" for JavaScript developers.
 That is not at all a bad thing! Just look at what you can do with "training wheels".
 
-{{< img-fit
-    "7u" "training-wheels.gif" "With style"
-    "5u" "training-wheels-2.gif" "Or Bust"
-    "0u$" "" ""
-    "date" >}}
+![With style](./training-wheels.gif)
+
+![Or Bust](./training-wheels-2.gif)
 
 Seriously though, with that fact that __we are not compilers__ and we cannot predict certain behaviors that occur in the "wild west" of JavaScript -- __we should
 rely on tooling to help__. It is simply a pragmatic approach to developing with a true sense of reliability and consistency. Training wheels provide you with the

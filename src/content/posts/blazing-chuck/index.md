@@ -12,7 +12,7 @@ coverImage:
   src: ./ast.png
   alt: Writing a Blazor App
 ---
-Every time a developer encounters a new technology it's in our nature to explore it. This is the case with WebAssembly, and Microsoft's vision of the world in Blazor. Blazor is single page application framework that sits atop of WebAssembly, but it's still considered an experiment. I had the chance to interview Steve Sanderson about WebAssembly and Blazor -- I shared {{< url-link "that post earlier this month" "" >}}. Now, I'd like to explore Blazor with you a bit more.
+Every time a developer encounters a new technology it's in our nature to explore it. This is the case with WebAssembly, and Microsoft's vision of the world in Blazor. Blazor is single page application framework that sits atop of WebAssembly, but it's still considered an experiment. I had the chance to interview Steve Sanderson about WebAssembly and Blazor -- I shared [that post earlier this month](/posts/webassembly-interview). Now, I'd like to explore Blazor with you a bit more.
 
 # Blazor
 
@@ -134,13 +134,11 @@ I've made mine more flashy and consistent with the rest of the application.
 > <cite>__ProTip__</cite>
 > Your application is represented on the initial request, make the most of it!
 
-<br/><br/>
 
 Here is what my loading application looks like:
 
 
 
-<br/><br/>
 
 # Intriguing Parts
 
@@ -242,7 +240,7 @@ Debugging is only available within Chrome and is very limited.
 
 # "Blazing Chuck!"
 
-Here it is, the moment you've been waiting for. Putting all the pieces together, and you have "Blazing Chuck". Go forth, and {{< url-link ""kick chuck"" "https://ievangelistblazingchuck.azurewebsites.net/" >}}. Disclaimer, this actually doesn't work well (or at all) on mobile -- for best results explore on a desktop... more to come once I figure out the issue with that.
+Here it is, the moment you've been waiting for. Putting all the pieces together, and you have "Blazing Chuck". Go forth, and [kick chuck](https://ievangelistblazingchuck.azurewebsites.net/). Disclaimer, this actually doesn't work well (or at all) on mobile -- for best results explore on a desktop... more to come once I figure out the issue with that.
 
 # Thanks
 

@@ -14,7 +14,7 @@ coverImage:
 ---
 ## Intro
 
-I love working with the __Angular__ `HttpClient`. It is easy to use and was designed to work with __RxJS__. It is vastly different from the __AngularJS__ implementation, if you're curious I wrote about these differences {{< url-link "here" "" >}}. However, there is one common issue that developers fall victim to. The issue really relates to __TypeScript__ generics. I have also written about generics in __TypeScript__ [here](https://www.dotnetcurry.com/typescript/1439/typescript-generics). But in this post, we will reveal how the issue can easily be avoided.
+I love working with the __Angular__ `HttpClient`. It is easy to use and was designed to work with __RxJS__. It is vastly different from the __AngularJS__ implementation, if you're curious I wrote about these differences [here](/posts/angular-2-http). However, there is one common issue that developers fall victim to. The issue really relates to __TypeScript__ generics. I have also written about generics in __TypeScript__ [here](https://www.dotnetcurry.com/typescript/1439/typescript-generics). But in this post, we will reveal how the issue can easily be avoided.
 
 ## The problem
 
@@ -22,8 +22,6 @@ The problem is that the `HttpClient` class exposes generic methods that allow co
 
 > <cite>__ProTip__</cite>
 > Never... make... assumptions!
-
-<br/><br/>
 
 The assumption is that you can pass an `interface` with non-primitive types or a `class` as a generic type parameter, and that it will work as expected. This is simply __not the case__. Consider the following:
 
@@ -100,7 +98,6 @@ If we add a `constructor` to our `class` and then pass in a `data: any` argument
 > The `Object.assign()` method is used to copy the values of all enumerable own properties from one or more source objects to a target object. It will return the target object.
 > <cite>[MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign)</cite>
 
-<br/><br/>
 
 
 
