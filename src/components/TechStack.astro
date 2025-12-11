@@ -1,0 +1,166 @@
+---
+import TechBadge from './TechBadge.astro'
+
+const techStack = [
+  {
+    name: 'C#',
+    icon: 'devicon:csharp',
+  },
+  {
+    name: 'Aspire',
+    icon: 'aspire',
+  },
+  {
+    name: 'TypeScript',
+    icon: 'devicon:typescript',
+  },
+  {
+    name: 'Azure',
+    icon: 'devicon:azure',
+  },
+  {
+    name: '.NET',
+    icon: 'dotnet',
+  },
+  {
+    name: 'JavaScript',
+    icon: 'devicon:javascript',
+  },
+  {
+    name: 'Node.js',
+    icon: 'devicon:nodejs',
+  },
+  {
+    name: 'Tailwind CSS',
+    icon: 'devicon:tailwindcss',
+  },
+  {
+    name: 'HTML5',
+    icon: 'devicon:html5',
+  },
+  {
+    name: 'CSS3',
+    icon: 'devicon:css3',
+  },
+  {
+    name: 'Angular',
+    icon: 'devicon:angular',
+  },
+  {
+    name: 'React',
+    icon: 'devicon:react',
+  },
+  {
+    name: 'Cosmos DB',
+    icon: 'devicon:cosmosdb',
+  },
+  {
+    name: 'RaspberryPi',
+    icon: 'devicon:raspberrypi',
+  },
+  {
+    name: 'Astro',
+    icon: 'devicon:astro',
+  },
+  {
+    name: 'GitHub',
+    icon: 'devicon:github',
+  },
+  {
+    name: 'GitHub Actions',
+    icon: 'devicon:githubactions',
+  },
+  {
+    name: 'GitHub Copilot',
+    icon: 'devicon:githubcopilot',
+  },
+  {
+    name: 'Docker',
+    icon: 'devicon:docker',
+  },
+  {
+    name: 'Docker',
+    icon: 'devicon:docker',
+  },
+  {
+    name: 'Git',
+    icon: 'devicon:git',
+  },
+  {
+    name: 'RxJS',
+    icon: 'devicon:rxjs',
+  },
+  {
+    name: 'WASM',
+    icon: 'devicon:wasm',
+  },
+  {
+    name: 'JSON',
+    icon: 'devicon:json',
+  },
+  {
+    name: 'Visual Studio',
+    icon: 'devicon:visualstudio',
+  },
+  {
+    name: 'Visual Studio Code',
+    icon: 'devicon:vscode',
+  },
+  {
+    name: 'Markdown',
+    icon: 'devicon:markdown',
+  },
+]
+
+export interface Props {
+  variant?: 'default' | 'center'
+}
+
+const { variant = 'default' } = Astro.props
+
+const baseClasses = 'flex flex-wrap gap-3 max-w-4xl'
+const variantClasses = {
+  default: '',
+  center: 'justify-center mx-auto',
+}
+
+const classes = `${baseClasses} ${variantClasses[variant]}`
+---
+
+<section class="tech-stack">
+  <div class={classes} id="tech-stack-container">
+    {techStack.map((tech) => <TechBadge name={tech.name} icon={tech.icon} />)}
+  </div>
+</section>
+
+<script is:inline>
+  // Sort tech badges alphabetically on the client side
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('tech-stack-container')
+    if (!container) return
+
+    const badges = Array.from(container.children)
+
+    badges.sort((a, b) => {
+      const textA = a.textContent?.trim() || ''
+      const textB = b.textContent?.trim() || ''
+      return textA.localeCompare(textB)
+    })
+
+    // Clear and re-append in sorted order
+    container.innerHTML = ''
+    badges.forEach((badge) => container.appendChild(badge))
+  })
+</script>
+
+<style>
+  .tech-stack {
+    margin: 2rem 0;
+  }
+
+  @media (max-width: 640px) {
+    .tech-stack {
+      margin: 1.5rem 0;
+    }
+  }
+</style>

@@ -4,62 +4,29 @@ title: "Hi, I'm David 👋🏽"
 ---
 
 import { Image } from 'astro:assets'
+import TechStack from '~/components/TechStack.astro'
+import siteConfig from '~/site.config'
+import SocialLinks from '~/components/SocialLinks.astro'
 
-You may have noticed my [GitHub tag, **IEvangelist**](https://github.com/IEvangelist). If you see this as an interface it would look something like the following (I'd be more or less a placeholder interface, but I'd impose many other contracts).
+I'm a senior software engineer who loves building things and sharing knowledge. My journey started in middle school when I became fascinated with FPS games like Wolfenstein, Quake, Doom, Duke Nukem, and Half-Life. I didn't just want to play them—I wanted to understand how they worked.
 
-```csharp
-public interface IEvangelist :
-    IAcceptFailure,
-    IAdapt,
-    IAdopt,
-    IAdvocate,
-    IAssure,
-    ICelebrateOthers,
-    IChallenge,
-    ICollaborate,
-    IContribute,
-    ICriticize,
-    IEvaluate,
-    IExceed,
-    IFollow,
-    IGetBackUp,
-    IGrow,
-    IHelp,
-    IInspirable,
-    IInspire,
-    ILead,
-    ILearn,
-    ILeverage,
-    IListen,
-    IMentor,
-    IMetaAF,
-    IModerate,
-    IMotivatable,
-    IMotivate,
-    INeverGiveUp,
-    IPassionate,
-    IPerson<TSelf>,
-    IProsper,
-    IPursueDiversifiedThought,
-    IRemainPositive,
-    IShare,
-    ISucceed
-{
-    // An evangelist is...well, write your own implementation 🤓
-}
-```
+In middle school, I taught myself [QuArK (Quake Army Knife)](https://quark.sourceforge.net/) and [Valve Hammer](https://developer.valvesoftware.com/wiki/Valve_Hammer_Editor), diving into level design and 3D architecture. I loved crafting elaborate spaces, meticulously applying textures, and placing light sources to cast perfect shadows. Building these maps was more rewarding than playing them—watching thousands of polygons and entities render down into a single [binary space partition (.bsp)](https://en.wikipedia.org/wiki/Binary_space_partitioning) file was incredibly satisfying.
 
-It all started with my middle school ambition - I wanted to learn how those cool FPS games worked. I loved Wolfenstein, Quake, Doom, Duke Nukem, Half-Life, etc...and I just wanted to learn how they ticked, and take a look under the hood. I taught myself how to use [QuArK (Quake Army Knife)](https://quark.sourceforge.net/) and [Valve Hammer](https://developer.valvesoftware.com/wiki/Valve_Hammer_Editor), harnessing my passions for art and three-dimensional space. I found myself building elaborate architectures, painstakingly applying textures, dissecting the best placement for a light source that will cast desirable shadows - drawing attention to focal points, etc. I loved building these maps more than I loved playing them. Rendering thousands of polygons and entities down into a single [binary space partition (.bsp)](https://en.wikipedia.org/wiki/Binary_space_partitioning), something about that was gratifying.
+That passion for understanding how things work led me to software engineering. Today, I focus on building developer tools, advocating for .NET technologies, and helping others learn through speaking, writing, and open-source contributions.
 
-I then had an idea of what I wanted to do. Years later, I decided that I wanted to be a software engineer and that is what I set out to become. I like to think of myself as a charismatic, results-driven software engineer with proficiency in adaptability and problem-solving. Experienced in .NET frameworks, team software engineering, and agile development methodologies.
+## Tech Stack
 
-### Bio
+<TechStack variant="center" />
+
+## Bio
 
 David Pine is a member of the **Aspire team at Microsoft**, where he helps build **aspire.dev** and focuses on developer experiences across [.NET](https://learn.microsoft.com/dotnet), and [Azure](https://learn.microsoft.com/azure). He is the O'Reilly Media author of *Learning Blazor: Build Single-Page Apps with WebAssembly and C#* and a [Dometrain author](https://dometrain.com/course/from-zero-to-hero-configuration-and-options-in-dotnet/?ref=david-pine).
 
 David is deeply involved in the developer community—sharing knowledge through [speaking engagements](http://davidpine.net/speaking) around the world, contributing to [open-source](https://github.com/IEvangelist), and advocating for the .NET Foundation, C#, TypeScript, SignalR, Reactive Extensions, Azure, and .NET. He also co-hosts the [On .NET Live](https://dotnet.microsoft.com/live/on-dotnet-live) stream, part of the .NET Live TV family.
 
-Follow David on X (Twitter) at [@davidpine7](https://twitter.com/davidpine7) 🤘🏽.
+Follow me on social media to stay updated with my latest content and projects!
+
+<SocialLinks socialLinks={siteConfig.socialLinks} />
 
 ## GitHub contributions
 

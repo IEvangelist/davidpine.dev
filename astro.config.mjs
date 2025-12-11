@@ -23,7 +23,9 @@ import remarkUnknownDirectives from './src/plugins/remark-unknown-directives' /*
 import remarkMath from 'remark-math' /* for latex math support */
 import rehypeKatex from 'rehype-katex' /* again, for latex math support */
 import remarkGemoji from './src/plugins/remark-gemoji' /* for shortcode emoji support */
-import rehypePixelated from './src/plugins/rehype-pixelated' /* Custom plugin to handle pixelated images */
+import rehypePixelated from './src/plugins/rehype-pixelated'
+import icon from 'astro-icon'
+/* Custom plugin to handle pixelated images */
 
 // https://astro.build/config
 export default defineConfig({
@@ -65,7 +67,7 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   integrations: [
-    sitemap(),
+    sitemap(), // Must come after expressive-code integration
     expressiveCode({
       themes: siteConfig.themes.include,
       useDarkModeMediaQuery: false,
@@ -74,11 +76,12 @@ export default defineConfig({
         wrap: false,
       },
       plugins: [pluginLineNumbers()],
-    }), // Must come after expressive-code integration
+    }),
     mdx(),
     react({
       include: ['**/components/slide/slide-viewer.tsx'],
     }),
+    icon(),
   ],
   experimental: {
     contentIntellisense: true,

@@ -6,7 +6,8 @@
     "verbatimModuleSyntax": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"]
+      "~/*": ["src/*"],
+      "@icons/*": ["src/icons/*"]
     },
     "plugins": [
       {
