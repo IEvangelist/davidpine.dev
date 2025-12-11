@@ -398,7 +398,39 @@ article img {
   }
 
   blockquote {
-    @apply relative bg-foreground/5 before:content-['>'] before:block before:absolute before:text-accent before:font-bold before:left-3;
+    @apply relative my-6 pl-8 pr-4 py-6 rounded-lg bg-gradient-to-r;
+    background: linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--theme-accent) 10%, transparent) 0%,
+      color-mix(in oklab, var(--theme-accent) 5%, transparent) 100%
+    );
+    border-left: 4px solid var(--theme-accent);
+    color: color-mix(in oklab, var(--theme-foreground) 90%, var(--theme-accent));
+
+    &::before {
+      content: '"';
+      position: absolute;
+      left: 0.5rem;
+      top: 0.25rem;
+      font-size: 3rem;
+      line-height: 1;
+      font-weight: 700;
+      color: color-mix(in oklab, var(--theme-accent) 30%, transparent);
+      font-style: normal;
+    }
+
+    & > *:first-child {
+      margin-top: 0;
+    }
+
+    & > *:last-child {
+      margin-bottom: 0;
+    }
+
+    & p {
+      position: relative;
+      z-index: 1;
+    }
   }
 
   aside {
