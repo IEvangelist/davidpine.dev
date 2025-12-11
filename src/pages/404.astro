@@ -225,36 +225,106 @@ Suggested fixes:
     }
   });
 
-  // Konami code easter egg
+  // Konami code easter egg (keyboard and mobile touch)
   const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
   let konamiIndex = 0;
   
+  // Mobile touch support
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let tapCount = 0;
+  let tapTimer: number | null = null;
+  
+  function triggerPartyMode() {
+    document.body.classList.add('party-mode');
+    const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdH2JkYyIgHRwaHB4gIuRkI2Hf3ZwbnF4gImPkI2IgHdycHJ4gIiOj42HgHdxcHN5gYiNjo2Hf3dxcXR5gYeMjYyGf3ZxcnV6gYaLjIuFfnZxc3Z7gYWKi4qEfXVyc3d7gYSJioqDfHVydHh8gYOIiYmCe3RydXl9gYKHiIiBeXRzdnp+gIGGh4eBd3RzeHuAgICFhoaAd3N0eXyAf3+EhYV/dnN1en2AfoCDhIR+dXN2e36AfX+Cg4N9dHN3fH+AfH6BgoJ8c3N4fYCAe32AgYF7cnN5foGAen2Af4B5cXN6f4GAeXx+fnx3cXR7gIGAdnt9fXp2cXV8gYGAdXp8fHh0cXZ9gYGAdHl7e3dzcHd+gYF/c3h6endxcHh/gYF+c3d5eXZxcHl/gYF9cnZ4eHVwcHqAgYB8cXV3d3RwcHuAgX97cHR2dnNwcXyAgH56b3N1dXJwcX2Af356bnJ0dHFwcn6Afn14bXFzc3Bwc3+Afn13bHByc29wdH+Bfn12a28ycm5wdYCBfnx1amx');
+    audio.play().catch(() => {});
+    
+    // Add confetti
+    for (let i = 0; i < 100; i++) {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      confetti.style.left = Math.random() * 100 + '%';
+      confetti.style.animationDelay = Math.random() * 3 + 's';
+      confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 80%, 60%)`;
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 4000);
+    }
+    
+    setTimeout(() => document.body.classList.remove('party-mode'), 5000);
+  }
+  
+  // Keyboard support
   document.addEventListener('keydown', (e) => {
     if (e.key === konamiCode[konamiIndex]) {
       konamiIndex++;
       if (konamiIndex === konamiCode.length) {
         konamiIndex = 0;
-        document.body.classList.add('party-mode');
-        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdH2JkYyIgHRwaHB4gIuRkI2Hf3ZwbnF4gImPkI2IgHdycHJ4gIiOj42HgHdxcHN5gYiNjo2Hf3dxcXR5gYeMjYyGf3ZxcnV6gYaLjIuFfnZxc3Z7gYWKi4qEfXVyc3d7gYSJioqDfHVydHh8gYOIiYmCe3RydXl9gYKHiIiBeXRzdnp+gIGGh4eBd3RzeHuAgICFhoaAd3N0eXyAf3+EhYV/dnN1en2AfoCDhIR+dXN2e36AfX+Cg4N9dHN3fH+AfH6BgoJ8c3N4fYCAe32AgYF7cnN5foGAen2Af4B5cXN6f4GAeXx+fnx3cXR7gIGAdnt9fXp2cXV8gYGAdXp8fHh0cXZ9gYGAdHl7e3dzcHd+gYF/c3h6endxcHh/gYF+c3d5eXZxcHl/gYF9cnZ4eHVwcHqAgYB8cXV3d3RwcHuAgX97cHR2dnNwcXyAgH56b3N1dXJwcX2Af356bnJ0dHFwcn6Afn14bXFzc3Bwc3+Afn13bHByc29wdH+Bfn12a28ycm5wdYCBfnx1amx');
-        audio.play().catch(() => {});
-        
-        // Add confetti
-        for (let i = 0; i < 100; i++) {
-          const confetti = document.createElement('div');
-          confetti.className = 'confetti';
-          confetti.style.left = Math.random() * 100 + 'vw';
-          confetti.style.animationDelay = Math.random() * 3 + 's';
-          confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 80%, 60%)`;
-          document.body.appendChild(confetti);
-          setTimeout(() => confetti.remove(), 4000);
-        }
-        
-        setTimeout(() => document.body.classList.remove('party-mode'), 5000);
+        triggerPartyMode();
       }
     } else {
       konamiIndex = 0;
     }
   });
+  
+  // Mobile touch support: 5 quick taps on the easter egg hint
+  const easterEgg = document.querySelector('.easter-egg');
+  if (easterEgg) {
+    easterEgg.addEventListener('click', () => {
+      tapCount++;
+      
+      if (tapTimer) {
+        clearTimeout(tapTimer);
+      }
+      
+      if (tapCount >= 5) {
+        tapCount = 0;
+        triggerPartyMode();
+      } else {
+        tapTimer = setTimeout(() => {
+          tapCount = 0;
+        }, 2000);
+      }
+    });
+  }
+  
+  // Touch swipe support for Konami code on mobile
+  document.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  
+  document.addEventListener('touchend', (e) => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = touchEndY - touchStartY;
+    const minSwipeDistance = 50;
+    
+    let direction = '';
+    
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      // Horizontal swipe
+      if (Math.abs(deltaX) > minSwipeDistance) {
+        direction = deltaX > 0 ? 'ArrowRight' : 'ArrowLeft';
+      }
+    } else {
+      // Vertical swipe
+      if (Math.abs(deltaY) > minSwipeDistance) {
+        direction = deltaY > 0 ? 'ArrowDown' : 'ArrowUp';
+      }
+    }
+    
+    if (direction && direction === konamiCode[konamiIndex]) {
+      konamiIndex++;
+      if (konamiIndex === konamiCode.length) {
+        konamiIndex = 0;
+        triggerPartyMode();
+      }
+    } else if (direction) {
+      konamiIndex = 0;
+    }
+  }, { passive: true });
 </script>
 
 <style>
@@ -587,10 +657,18 @@ Suggested fixes:
     color: var(--theme-foreground);
     opacity: 0.3;
     transition: opacity 0.3s ease;
+    cursor: pointer;
+    user-select: none;
   }
 
   .easter-egg:hover {
     opacity: 0.6;
+  }
+  
+  @media (hover: none) {
+    .easter-egg {
+      opacity: 0.5;
+    }
   }
 
   :global(.party-mode) {
@@ -609,12 +687,19 @@ Suggested fixes:
     height: 10px;
     animation: fall 3s linear forwards;
     z-index: 9999;
+    pointer-events: none;
   }
 
   @keyframes fall {
     to {
       transform: translateY(100vh) rotate(720deg);
+      opacity: 0;
     }
+  }
+  
+  /* Prevent horizontal scrollbar from confetti */
+  :global(body.party-mode) {
+    overflow-x: hidden;
   }
 
   @media (max-width: 640px) {
