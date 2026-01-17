@@ -36,6 +36,45 @@ const { socialLinks } = Astro.props
     )
   }
   {
+    socialLinks.bluesky && (
+      <a
+        href={socialLinks.bluesky}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="social-link text-accent hover:text-accent"
+      >
+        <span class="sr-only">Bluesky</span>
+        <IconBluesky class="size-7" />
+      </a>
+    )
+  }
+  {
+    socialLinks.linkedin && (
+      <a
+        href={socialLinks.linkedin}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="social-link text-accent hover:text-accent"
+      >
+        <span class="sr-only">LinkedIn</span>
+        <IconLinkedin class="size-7" />
+      </a>
+    )
+  }
+  {
+    socialLinks.email && (
+      <a
+        href={`mailto:${socialLinks.email}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="social-link text-accent hover:text-accent"
+      >
+        <span class="sr-only">Email</span>
+        <IconEmail class="size-7" />
+      </a>
+    )
+  }
+  {
     socialLinks.mastodon && (
       <a
         href={socialLinks.mastodon}
@@ -60,45 +99,6 @@ const { socialLinks } = Astro.props
       >
         <span class="sr-only">Twitter</span>
         <IconTwitter class="size-7" />
-      </a>
-    )
-  }
-  {
-    socialLinks.linkedin && (
-      <a
-        href={socialLinks.linkedin}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="social-link text-accent hover:text-accent"
-      >
-        <span class="sr-only">LinkedIn</span>
-        <IconLinkedin class="size-7" />
-      </a>
-    )
-  }
-  {
-    socialLinks.bluesky && (
-      <a
-        href={socialLinks.bluesky}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="social-link text-accent hover:text-accent"
-      >
-        <span class="sr-only">Bluesky</span>
-        <IconBluesky class="size-7" />
-      </a>
-    )
-  }
-  {
-    socialLinks.email && (
-      <a
-        href={`mailto:${socialLinks.email}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="social-link text-accent hover:text-accent"
-      >
-        <span class="sr-only">Email</span>
-        <IconEmail class="size-7" />
       </a>
     )
   }

@@ -9,6 +9,8 @@ import HomeBanner from '~/components/HomeBanner.astro'
 import siteConfig from '~/site.config'
 import TagsSection from '~/components/TagsSection.astro'
 import SeriesSection from '~/components/SeriesSection.astro'
+import IconTags from '~/icons/tags.svg'
+import IconNew from '~/icons/new.svg'
 
 const home = await getCollection('home')
 let HomeContent
@@ -48,7 +50,10 @@ const postsHaveSeries = sortedPosts.some((post) => post.data.series)
   {
     postsHaveTags && (
       <section>
-        <BlockHeader>Tags</BlockHeader>
+        <BlockHeader>
+          <IconTags style="display: inline; vertical-align: middle;" />
+          Tags
+        </BlockHeader>
         <TagsSection posts={sortedPosts} />
       </section>
     )
@@ -56,7 +61,10 @@ const postsHaveSeries = sortedPosts.some((post) => post.data.series)
   {
     sortedPosts.length > 0 && (
       <section>
-        <BlockHeader>Latest Posts</BlockHeader>
+        <BlockHeader>
+          <IconNew style="display: inline; vertical-align: middle;" />
+          Latest Posts
+        </BlockHeader>
         {sortedPosts
           .reverse()
           .slice(0, Math.floor(siteConfig.pageSize / 2))
