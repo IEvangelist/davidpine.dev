@@ -200,6 +200,8 @@ const config: SiteConfig = {
     duck: '/duck.webp',
     copilot: '/copilot.webp',
     chatgpt: '/chatgpt.webp',
+    davidfowler: 'https://avatars.githubusercontent.com/u/95136',
+    davidpine: 'https://avatars.githubusercontent.com/u/7679720',
   },
 }
 
