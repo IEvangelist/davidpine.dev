@@ -1,25 +1,32 @@
 ---
-import { renderMermaid, THEMES } from 'beautiful-mermaid';
+import { renderMermaid, THEMES } from 'beautiful-mermaid'
 
 interface Props {
-  chart: string;
-  theme?: keyof typeof THEMES;
+  chart: string
+  theme?: keyof typeof THEMES
 }
 
-const { chart, theme = 'dracula' } = Astro.props;
+const { chart, theme = 'dracula' } = Astro.props
+const options = { ...THEMES[theme], transparent: true };
 
-const svg = await renderMermaid(chart, THEMES[theme]);
+const svg = await renderMermaid(chart, options)
 ---
 
-<div class="mermaid-diagram" set:html={svg} />
+<figure className="mermaid-diagram">
+  <div set:html={svg} />
+</figure>
 
 <style>
   .mermaid-diagram {
     display: flex;
     justify-content: center;
+    align-items: center;
+    width: 100%;
     margin: 1.5rem 0;
   }
+
   .mermaid-diagram :global(svg) {
+    width: 100%;
     max-width: 100%;
     height: auto;
   }
