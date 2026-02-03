@@ -1,5 +1,5 @@
 ---
-title: '🛠️ Three docs tools for the Aspire MCP'
+title: 'How I taught AI to read Aspire docs'
 published: '2026-02-02'
 description: 'How I added list_docs, search_docs, and get_doc to the Aspire MCP server to help AI agents build better Aspire apps.'
 author: David Pine
@@ -15,13 +15,13 @@ tags:
 
 I know, I know—you're probably not in the mood for another AI post. Trust me, this one delivers.
 
-Let me tell you the story of how a candid conversation with my long-time mentor turned into three new tools that fundamentally change how AI agents understand Aspire.
+This is the story of how a candid conversation with my long-time mentor turned into three new tools that fundamentally change how AI agents understand Aspire.
 
 ## 💬 The conversation that started it all
 
-David Fowler has always been very direct with me—which I've come to not only expect but genuinely adore.
+David Fowler has always been direct with me—which I've come to not only expect but genuinely adore.
 
-We were in the midst of a rebrand, replatforming docs, and reimagining Aspire for what felt like the 13<sup>th</sup> time. During one of our conversations, I was explaining how we could improve the end-user experience when building Aspire apps with AI assistance. That's when we discovered the real problem.
+We were in the midst of a rebrand, replatforming docs, and reimagining Aspire for what felt like the 13<sup>th</sup> time. During one of our conversations, I was explaining how we could improve the developer experience when building Aspire apps with AI assistance. That's when we discovered the real problem.
 
 :::davidfowler
 Plan it.
@@ -38,18 +38,20 @@ Spike it.
 :::davidpine
 Say less. 👇
 
-> I literally created a GitHub branch named `plan-spec-spike-it` to capture the idea.
+> I literally created a GitHub branch named `plan-spec-spike-it` to capture the idea 🤓.
 
 ![GitHub branch named plan-spec-spike-it](./plan-spec-spike-it-branch.png)
+
+For the spec, see [mcp-docs-search.md](https://github.com/dotnet/aspire/blob/main/docs/specs/mcp-docs-search.md).
 :::
 
 ## 🤔 The problem: AI doesn't know where to look
 
 When developers rely on AI to help build Aspire apps, something frustrating kept happening.
 
-The AI would recommend generic .NET patterns. It would reference `learn.microsoft.com` for documentation. It would suggest running `dotnet run` instead of `aspire run`. It would recommend outdated NuGet packages. It would hallucinate APIs that don't exist. FFS 🤬!
+The AI would recommend generic .NET patterns. It would reference `learn.microsoft.com` for documentation. It would suggest `dotnet run` instead of `aspire run`. It would recommend outdated NuGet packages. It would hallucinate APIs that don't exist. FFS 🤬!
 
-Why? Because we were ".NET Aspire" far longer than we've been just "Aspire." LLMs are trained on historical data, and they're slow to catch up—this is one area where they genuinely struggle. The models learned .NET Aspire patterns: the .NET CLI, learn.microsoft.com, the old conventions. Now that we're simply **Aspire** with **aspire.dev** as our documentation home, we had to teach them.
+Why? Because we were ".NET Aspire" far longer than we've been just "Aspire." LLMs are trained on historical data, and they're slow to catch up. The models learned .NET Aspire patterns: the .NET CLI, learn.microsoft.com, the old conventions. Now that we're simply **Aspire** with **aspire.dev** as our documentation home, we needed to teach them the new way.
 
 :::note
 I actually registered and indexed aspire.dev on [Context7](https://context7.com) so I could use their MCP server. It worked, but the tooling felt clunky. We could do better—and we did.
@@ -59,21 +61,21 @@ I actually registered and indexed aspire.dev on [Context7](https://context7.com)
 
 The answer was staring us in the face.
 
-We needed to surface Aspire documentation directly to AI agents through the Aspire MCP (Model Context Protocol) server. Not just links to docs—the actual content, indexed and searchable. I wrote three new tools for the Aspire MCP server:
+We needed to surface Aspire documentation directly to AI agents through the Aspire MCP (Model Context Protocol) server. Not just links—the actual content, indexed and searchable. So I wrote three new tools:
 
 - **`list_docs`**: Lists all available documents from aspire.dev
 - **`search_docs`**: Performs weighted lexical search across indexed documentation
 - **`get_doc`**: Retrieves a specific document by its slug
 
-These tools are designed to solve a real problem. They feed LLMs meaningful guidance based on the official docs.
+These tools solve a real problem: feeding LLMs meaningful guidance grounded in official documentation.
 
-## 🦸 Standing on the shoulders of LLMS.txt
+## 🦸 Standing on the shoulders of llms.txt
 
 Here's where it gets interesting.
 
-Since day one, aspire.dev has shipped with `LLMS.txt` support—thanks to an amazing Starlight maintainer, [Chris Swithinbank (delucis)](https://github.com/delucis/starlight-llms-txt). His [`starlight-llms-txt`](https://github.com/delucis/starlight-llms-txt) plugin follows the official [LLMS.txt specification](https://llmstxt.org/) and generates LLM-friendly documentation during the site build process.
+Since day one, aspire.dev has shipped with `llms.txt` support—thanks to an amazing Starlight maintainer, [Chris Swithinbank (delucis)](https://github.com/delucis). His [`starlight-llms-txt`](https://github.com/delucis/starlight-llms-txt) plugin follows the official [llms.txt specification](https://llmstxt.org/) and generates LLM-friendly documentation during the site build process.
 
-The LLMS.txt spec is brilliant in its simplicity:
+The llms.txt spec is brilliant in its simplicity:
 
 - A standardized `/llms.txt` markdown file for LLM consumption
 - Brief background information, guidance, and links to detailed content
@@ -83,7 +85,8 @@ We configure a few pages to ignore, and from there it's off to the races. The re
 
 ## 🏗️ The architecture
 
-Let me walk you through how this all works. Here's the component overview:
+Let me walk you through how this all works.
+
 ### Tools
 
 - **`list_docs`**: Lists all available documentation
@@ -103,14 +106,14 @@ Let me walk you through how this all works. Here's the component overview:
 
 ### ⚙️ How it works
 
-1. **Eager indexing**: When the MCP server starts, it immediately begins fetching and indexing aspire.dev documentation in the background. This is usually done before the user even makes a request
-2. **ETag-based caching**: The fetcher uses HTTP ETags for conditional requests—no re-downloading unchanged content
-3. **Weighted lexical search**: Documents are scored using field weights (titles weighted 10x, summaries 8x, headings 6x, code 5x)
-4. **Zero external dependencies**: No embedding provider needed. Pure lexical search that just works
+1. **Eager indexing**: When the MCP server starts, it immediately begins fetching and indexing aspire.dev documentation in the background—usually before the user even makes a request.
+2. **ETag-based caching**: The fetcher uses HTTP ETags for conditional requests—no re-downloading unchanged content.
+3. **Weighted lexical search**: Documents are scored using field weights (titles weighted 10x, summaries 8x, headings 6x, code 5x).
+4. **Zero external dependencies**: No embedding provider needed. Pure lexical search that just works.
 
 ### 🔤 Why lexical search over embeddings?
 
-I found that the embedding upfront was more costly, we may consider it at a later time to help improve recall, but for now lexical search nails the use cases we care about.
+Embeddings are costly upfront. We may revisit them later to improve recall, but for now, lexical search nails the use cases we care about.
 
 Queries are:
 
@@ -122,7 +125,7 @@ When someone asks about `AddPostgresContainer`, they mean _exactly_ that method 
 
 ## ✨ The impact on UX
 
-This PR ([dotnet/aspire#14028](https://github.com/dotnet/aspire/pull/14028)) fundamentally changes how AI agents help developers.
+This [pull request](https://github.com/dotnet/aspire/pull/14028) fundamentally changes how AI agents help developers.
 
 ### Before
 - ❌ AI recommends `dotnet run` 
@@ -189,10 +192,8 @@ Retrieves a specific document by its slug. Matching is case-insensitive, and you
 }
 ```
 
-:::tip
-Once you're up and running with the Aspire MCP server:
-
-In VS Code, it's as simple as:
+:::tip[Try it yourself]
+Once you're up and running with the Aspire MCP server, configuring VS Code is simple:
 
 ```json title="./vscode/mcp.json"
 {
@@ -224,11 +225,26 @@ Additional scoring bonuses:
 - Multiple occurrences: +0.25 per occurrence (max 3)
 - Code identifier match: +0.5
 
-The parser uses `ReadOnlySpan<char>` throughout for zero-allocation parsing and `ArrayPool<char>` for slug generation. Performance matters when you're indexing documentation at startup.
+The parser uses `ReadOnlySpan<char>` for zero-allocation parsing and `ArrayPool<char>` for slug generation. Performance matters when you're indexing documentation at startup.
 
-:::warning
-One limitation of this architecture: it's **destructive**. The parsed llms.txt content doesn't preserve links back to the original source pages on aspire.dev. Users (and agents) can't easily navigate to the canonical documentation URL. Mapping slugs to a parsed `sitemap.xml` could solve this—food for thought for a future iteration.
+:::warning[A known limitation]
+This architecture is **destructive**. The parsed llms.txt content doesn't preserve links back to the original source pages on aspire.dev. Users (and agents) can't easily navigate to the canonical documentation URL. Mapping slugs to a parsed `sitemap.xml` could solve this—food for thought for a future iteration.
 :::
+
+## 🧩 Beyond MCP: reusable services
+
+Here's the thing—we built a very small amount of MCP-specific code. For the most part, we built **reusable services** that happen to be exposed through MCP.
+
+The `IDocsIndexService`, `IDocsSearchService`, `IDocsFetcher`, and `IDocsCache` are all standalone abstractions. They understand how to fetch, parse, cache, and search aspire.dev documentation. The MCP tools are just one consumer.
+
+This opens up possibilities:
+
+- **CLI command**: `aspire docs search "redis caching"` could query the same index
+- **AI skills**: Semantic Kernel or AutoGen agents could use these services directly
+- **IDE extensions**: A VS Code extension could surface doc search without leaving the editor
+- **Build-time validation**: Verify that code samples reference documented APIs
+
+The architecture is intentionally decoupled. Today it's MCP. Tomorrow it could be anything that needs programmatic access to Aspire documentation.
 
 ## 📊 Architecture diagrams
 
@@ -308,20 +324,20 @@ This is just the beginning.
 
 Future considerations include:
 
-- **Full Documentation Support**: Currently using `llms-small.txt` for abridged docs. Could add `llms-full.txt` for comprehensive documentation
-- **Sitemap.xml Integration**: Use `sitemap.xml` to discover all docs pages for more complete indexing, an map to existing slugs for backreference to aspire.dev
-- **Disk Persistence**: Serialize parsed documents to disk for faster startup
-- **Search Improvements**: TF-IDF or BM25 for more sophisticated ranking, fuzzy matching for typo tolerance
+- **Full documentation support**: Currently using `llms-small.txt` for abridged docs—could add `llms-full.txt` for comprehensive documentation.
+- **Sitemap integration**: Use `sitemap.xml` to discover all docs pages for more complete indexing, and map slugs back to aspire.dev URLs.
+- **Disk persistence**: Serialize parsed documents to disk for faster startup.
+- **Search improvements**: TF-IDF or BM25 for more sophisticated ranking, plus fuzzy matching for typo tolerance.
 
 ## 🎬 Wrapping up
 
 Sometimes the best solutions come from recognizing what's already there. We had LLMS.txt. We had the MCP server. We just needed to connect them.
 
-Thanks to David Fowler for the direct feedback that led to this, and to Chris Swithinbank for the incredible `starlight-llms-txt` plugin that makes this all possible. If you're using AI to build Aspire apps, these tools should make your experience significantly better.
+Thanks to David Fowler for the direct feedback that sparked this work, and to Chris Swithinbank for the incredible `starlight-llms-txt` plugin that makes it all possible. If you're using AI to build Aspire apps, these tools should make your experience noticeably better.
 
 The AI now has access to the same documentation you do—and it knows to use it.
 
-Check out the full PR: [dotnet/aspire#14028](https://github.com/dotnet/aspire/pull/14028)
+Check out the [full pull request on GitHub](https://github.com/dotnet/aspire/pull/14028).
 
 ---
 
