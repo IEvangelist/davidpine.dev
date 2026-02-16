@@ -256,7 +256,7 @@ import Mermaid from '../../../components/Mermaid.astro';
 
 Here's what happens when an AI agent uses the docs tools:
 
-<Mermaid chart={`
+<Mermaid alt="Request flow: AI Agent calls search_docs on the Aspire MCP server, which queries the DocsIndexService. On a cache miss, docs are fetched from aspire.dev with ETag support; on a hit, cached docs are returned." chart={`
 sequenceDiagram
     actor Agent as AI Agent
     participant MCP as Aspire MCP
@@ -286,7 +286,7 @@ sequenceDiagram
 
 The tools use different services based on their needs:
 
-<Mermaid chart={`
+<Mermaid alt="Tools to services mapping: list_docs and get_doc connect to IDocsIndexService, search_docs connects to IDocsSearchService which also uses IDocsIndexService." chart={`
 flowchart LR
     ListDocs["list_docs"] --> Index["IDocsIndexService"]
     SearchDocs["search_docs"] --> Search["IDocsSearchService"]
@@ -298,7 +298,7 @@ flowchart LR
 
 The index service coordinates fetching from aspire.dev and parsing the LLMS.txt format:
 
-<Mermaid chart={`
+<Mermaid alt="Fetching and parsing flow: IDocsIndexService coordinates IDocsFetcher and LlmsTxtParser, with IDocsFetcher retrieving content from aspire.dev/llms-small.txt." chart={`
 flowchart LR
     Index["IDocsIndexService"] --> Fetcher["IDocsFetcher"]
     Index --> Parser["LlmsTxtParser"]
@@ -309,7 +309,7 @@ flowchart LR
 
 The fetcher uses HTTP ETags to avoid re-downloading unchanged content:
 
-<Mermaid chart={`
+<Mermaid alt="Caching with ETags: IDocsFetcher uses IDocsCache backed by IMemoryCache, and sends conditional If-None-Match requests to aspire.dev which may return 304 Not Modified." chart={`
 flowchart LR
     Fetcher["IDocsFetcher"] --> Cache["IDocsCache"]
     Cache --> Memory["IMemoryCache"]

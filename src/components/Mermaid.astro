@@ -4,15 +4,16 @@ import { renderMermaid, THEMES } from 'beautiful-mermaid'
 interface Props {
   chart: string
   theme?: keyof typeof THEMES
+  alt?: string
 }
 
-const { chart, theme = 'dracula' } = Astro.props
+const { chart, theme = 'dracula', alt } = Astro.props
 const options = { ...THEMES[theme], transparent: true };
 
 const svg = await renderMermaid(chart, options)
 ---
 
-<figure className="mermaid-diagram">
+<figure class="mermaid-diagram" data-alt={alt} role="img" aria-label={alt}>
   <div set:html={svg} />
 </figure>
 
@@ -23,6 +24,12 @@ const svg = await renderMermaid(chart, options)
     align-items: center;
     width: 100%;
     margin: 1.5rem 0;
+    cursor: zoom-in;
+    transition: opacity 0.2s ease;
+  }
+
+  .mermaid-diagram:hover {
+    opacity: 0.85;
   }
 
   .mermaid-diagram :global(svg) {
@@ -31,3 +38,146 @@ const svg = await renderMermaid(chart, options)
     height: auto;
   }
 </style>
+
+<style is:global>
+  .mermaid-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: color-mix(in srgb, var(--theme-background) 95%, transparent);
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    cursor: zoom-out;
+  }
+
+  .mermaid-overlay.active {
+    opacity: 1;
+  }
+
+  .mermaid-overlay-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 2rem;
+    overflow: auto;
+  }
+
+  .mermaid-overlay-content svg {
+    width: 90vw;
+    max-height: 80vh;
+    height: auto;
+  }
+
+  .mermaid-overlay-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: color-mix(in srgb, var(--theme-accent) 20%, transparent);
+    border: 1px solid color-mix(in srgb, var(--theme-accent) 40%, transparent);
+    border-radius: 0.5rem;
+    color: var(--theme-foreground);
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.25rem;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    z-index: 10000;
+  }
+
+  .mermaid-overlay-close:hover {
+    background: color-mix(in srgb, var(--theme-accent) 40%, transparent);
+    border-color: color-mix(in srgb, var(--theme-accent) 60%, transparent);
+  }
+
+  .mermaid-overlay-alt {
+    color: color-mix(in srgb, var(--theme-foreground) 85%, transparent);
+    font-size: 0.95rem;
+    text-align: center;
+    padding: 0.75rem 2rem 1.25rem;
+    max-width: 80vw;
+    line-height: 1.4;
+  }
+</style>
+
+<script>
+  function initMermaidZoom() {
+    const diagrams = document.querySelectorAll('.mermaid-diagram');
+
+    diagrams.forEach((diagram) => {
+      diagram.addEventListener('click', () => {
+        const svg = diagram.querySelector('svg');
+        if (!svg) return;
+
+        const alt = (diagram as HTMLElement).dataset.alt || '';
+
+        // Create overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'mermaid-overlay';
+
+        // Close button (minimize icon)
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'mermaid-overlay-close';
+        closeBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>`;
+        closeBtn.setAttribute('aria-label', 'Close zoom');
+        overlay.appendChild(closeBtn);
+
+        // SVG content
+        const content = document.createElement('div');
+        content.className = 'mermaid-overlay-content';
+        content.appendChild(svg.cloneNode(true));
+        overlay.appendChild(content);
+
+        // Alt text
+        if (alt) {
+          const altEl = document.createElement('div');
+          altEl.className = 'mermaid-overlay-alt';
+          altEl.textContent = alt;
+          overlay.appendChild(altEl);
+        }
+
+        document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
+
+        // Animate in
+        requestAnimationFrame(() => overlay.classList.add('active'));
+
+        // Close handlers
+        const close = () => {
+          overlay.classList.remove('active');
+          setTimeout(() => {
+            overlay.remove();
+            document.body.style.overflow = '';
+          }, 250);
+        };
+
+        closeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          close();
+        });
+        overlay.addEventListener('click', close);
+
+        document.addEventListener(
+          'keydown',
+          (e) => {
+            if (e.key === 'Escape') close();
+          },
+          { once: true },
+        );
+      });
+    });
+  }
+
+  // Run on initial load and on Astro page transitions
+  initMermaidZoom();
+  document.addEventListener('astro:after-swap', initMermaidZoom);
+</script>
