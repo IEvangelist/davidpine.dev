@@ -1,0 +1,11 @@
+{
+  "assignments": [
+    {
+      "assignment_id": "davidpine-dev-001",
+      "universe": "alien",
+      "created_at": "2026-02-22T00:00:00Z",
+      "agents": ["Ripley", "Dallas", "Lambert", "Ash"],
+      "reason": "space-themed universe aligns with Astro framework; pressure/consequence names fit development team dynamics"
+    }
+  ]
+}
