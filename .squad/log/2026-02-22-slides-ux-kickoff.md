@@ -33,3 +33,26 @@ David Pine requested UX improvements for the slides feature:
 
 - Session started. Dallas and Lambert working in background.
 - Git commit deferred until agents report back.
+
+---
+
+## Phase 2 — Content Features Completed
+
+**Timestamp:** 2026-02-22T02:00:00Z
+
+### Dallas (Frontend Dev)
+- Implemented KaTeX Math plugin with on-demand CDN loading (`cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css`)
+- Added `math: z.boolean().default(false)` and `slideNumber: z.boolean().default(true)` to slides schema
+- Wired new props through the viewer chain (`content.config.ts` → `[slug].astro` → `SlideCard.astro` → `slide-viewer.tsx`)
+- Math plugin intentionally not preview-gated (math is visual content, should render in thumbnails)
+
+### Lambert (UX/Design)
+- Added vertical slide example to `why-astro-for-docs.md` using `---` vertical separator syntax
+- Added per-slide background demo using `<!-- .slide: data-background-color="..." -->` comment syntax
+- Implemented CSS `bounce-down` animation on vertical navigation down arrow (2s ease, 4px travel, `--theme-accent` color)
+- Updated instruction bar with arrow icons: "Arrow keys ↑↓←→ to navigate"
+
+### Scribe
+- Merged 3 decision inbox files into `decisions.md` (dallas-phase2-math, lambert-phase1-review, lambert-phase2-content)
+- Wrote orchestration log for Phase 2
+- Appended Phase 2 completion notes to session log
