@@ -72,6 +72,17 @@ The web moved forward. **Fast.**
 | 📋 Open Issues | 216 |
 | 🏷️ Releases | **2,594** |
 
+--
+
+## What's Behind Those Numbers?
+
+<ul>
+<li class="fragment"><strong>54.8k stars</strong> — More than Next.js had at this stage</li>
+<li class="fragment"><strong>999 contributors</strong> — True open-source velocity</li>
+<li class="fragment"><strong>253k+ projects</strong> — Real adoption, not just hype</li>
+<li class="fragment"><strong>2,594 releases</strong> — Shipping every single week</li>
+</ul>
+
 ---
 
 ## Starlight: Purpose-Built for Docs
@@ -197,6 +208,37 @@ I migrated .NET Aspire docs from Learn to Astro + Starlight.
 
 ---
 
+<!-- .slide: data-auto-animate -->
+## The Migration
+
+<p data-id="platform">📦 <strong>DocFX</strong></p>
+<p data-id="build">⏱️ Build time: <strong>4+ minutes</strong></p>
+<p data-id="search">🔍 Search: <strong>None built-in</strong></p>
+<p data-id="dx">🧑‍💻 DX: <strong>XML configuration</strong></p>
+
+---
+
+<!-- .slide: data-auto-animate -->
+## The Migration
+
+<p data-id="platform">📦 <strong>Astro + Starlight</strong></p>
+<p data-id="build">⏱️ Build time: <strong>Under 30 seconds</strong></p>
+<p data-id="search">🔍 Search: <strong>Pagefind (instant)</strong></p>
+<p data-id="dx">🧑‍💻 DX: <strong>TypeScript + MDX</strong></p>
+
+---
+
+<!-- .slide: data-auto-animate -->
+## The Migration
+
+<p data-id="platform">📦 <strong>Astro + Starlight</strong> ✅</p>
+<p data-id="build">⏱️ Build time: <strong>Under 30 seconds</strong> ✅</p>
+<p data-id="search">🔍 Search: <strong>Pagefind (instant)</strong> ✅</p>
+<p data-id="dx">🧑‍💻 DX: <strong>TypeScript + MDX</strong> ✅</p>
+<p data-id="result">🚀 <em>Everything improved.</em></p>
+
+---
+
 ## What We Gained
 
 - 🔍 **Better search** with Pagefind
@@ -264,6 +306,7 @@ Recent Astro partnerships:
 
 ---
 
+<!-- .slide: data-background-color="#1a1a2e" -->
 ## The Lesson
 
 When the ecosystem you depend on stagnates...

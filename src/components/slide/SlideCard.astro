@@ -10,6 +10,8 @@ export interface Slide {
   pubDate: Date
   theme: string
   transition: string
+  math?: boolean
+  slideNumber?: boolean
 }
 
 interface Props {
@@ -43,6 +45,7 @@ const slideContent = `## ${slide.title}${slide.author ? `\n\n*${slide.author}*` 
       controls={false}
       progress={false}
       preview={true}
+      math={slide.math}
       client:load
     />
   </div>

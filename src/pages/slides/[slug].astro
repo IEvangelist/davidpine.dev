@@ -20,6 +20,10 @@ export async function getStaticPaths() {
 
 const { slide } = Astro.props
 
+// Detect print-pdf mode for PDF export
+const isPrintMode = Astro.url.searchParams.has('print-pdf')
+const { slug } = Astro.params
+
 // Get the raw content (body) from the slide
 const rawContent = slide.body || ''
 
@@ -39,6 +43,23 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
 ---
 
 <Layout title={slide.data.title} description={slide.data.description}>
+  {isPrintMode ? (
+    <div class="slide-print-page" id="slide-page">
+      <div class="slide-print-container" id="slide-container">
+        <SlideViewer
+          client:only="react"
+          content={fullContent}
+          theme={slide.data.theme}
+          transition="none"
+          controls={false}
+          progress={false}
+          math={slide.data.math}
+          slideNumber={false}
+          embedded={false}
+        />
+      </div>
+    </div>
+  ) : (
   <div class="slide-viewer-page" id="slide-page">
     <div class="slide-header" id="slide-header">
       <div class="slide-header-left">
@@ -46,14 +67,34 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
         <h1 class="slide-title">{slide.data.title}</h1>
         {slide.data.author && <p class="slide-author">by {slide.data.author}</p>}
       </div>
-      <button id="expand-btn" class="expand-button" title="Expand slides">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 3 21 3 21 9"></polyline>
-          <polyline points="9 21 3 21 3 15"></polyline>
-          <line x1="21" y1="3" x2="14" y2="10"></line>
-          <line x1="3" y1="21" x2="10" y2="14"></line>
-        </svg>
-      </button>
+      <div class="slide-header-buttons">
+        {slide.data.autoSlide > 0 && (
+          <button id="autoslide-btn" class="autoslide-button" title="Toggle auto-play" data-auto-slide={slide.data.autoSlide}>
+            <svg id="autoslide-play-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="display:none;">
+              <polygon points="6 3 20 12 6 21 6 3"></polygon>
+            </svg>
+            <svg id="autoslide-pause-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+          </button>
+        )}
+        <a href={`/slides/${slug}?print-pdf`} target="_blank" class="print-button" title="Print / Export PDF">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+        </a>
+        <button id="expand-btn" class="expand-button" title="Expand slides">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <polyline points="9 21 3 21 3 15"></polyline>
+            <line x1="21" y1="3" x2="14" y2="10"></line>
+            <line x1="3" y1="21" x2="10" y2="14"></line>
+          </svg>
+        </button>
+      </div>
     </div>
     <div class="slide-container" id="slide-container">
       <button id="collapse-btn" class="collapse-button" title="Exit expanded view">
@@ -71,12 +112,17 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
         transition={slide.data.transition}
         controls={slide.data.controls}
         progress={slide.data.progress}
+        math={slide.data.math}
+        slideNumber={slide.data.slideNumber}
+        autoSlide={slide.data.autoSlide}
       />
     </div>
     <div class="slide-instructions" id="slide-instructions">
-      <p>Use arrow keys or click to navigate • Press <kbd>E</kbd> to expand • Press <kbd>Esc</kbd> to exit</p>
+      <p class="instructions-desktop">Arrow keys <span class="arrow-hint">↑↓←→</span> to navigate • <kbd>O</kbd> overview • <kbd>S</kbd> speaker notes • <kbd>Ctrl+Shift+F</kbd> search • <kbd>E</kbd> expand{slide.data.autoSlide > 0 && <Fragment> • <kbd>A</kbd> toggle auto-play</Fragment>} • <kbd>Esc</kbd> exit</p>
+      <p class="instructions-mobile">Swipe to navigate • <kbd>E</kbd> expand{slide.data.autoSlide > 0 && <Fragment> • <kbd>A</kbd> auto-play</Fragment>} • <kbd>Esc</kbd> exit</p>
     </div>
   </div>
+  )}
 </Layout>
 
 <script>
@@ -85,6 +131,9 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     const collapseBtn = document.getElementById('collapse-btn');
     const slideContainer = document.getElementById('slide-container');
     const slidePage = document.getElementById('slide-page');
+    const autoSlideBtn = document.getElementById('autoslide-btn') as HTMLButtonElement | null;
+    const playIcon = document.getElementById('autoslide-play-icon');
+    const pauseIcon = document.getElementById('autoslide-pause-icon');
     
     if (!expandBtn || !collapseBtn || !slideContainer || !slidePage) return;
     
@@ -102,7 +151,30 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     
     expandBtn.addEventListener('click', expandSlides);
     collapseBtn.addEventListener('click', collapseSlides);
+
+    // After expand/collapse CSS transitions finish, tell reveal.js to relayout
+    slideContainer.addEventListener('transitionend', (e) => {
+      // Only react to transitions on the container itself, not bubbled events
+      if (e.target === slideContainer) {
+        window.dispatchEvent(new Event('reveal-relayout'));
+      }
+    });
     
+    // Auto-slide play/pause toggle
+    let isPlaying = true; // auto-slide starts playing if enabled
+    function toggleAutoSlide() {
+      isPlaying = !isPlaying;
+      if (playIcon && pauseIcon) {
+        playIcon.style.display = isPlaying ? 'none' : 'block';
+        pauseIcon.style.display = isPlaying ? 'block' : 'none';
+      }
+      window.dispatchEvent(new CustomEvent('reveal-autoslide-toggle'));
+    }
+
+    if (autoSlideBtn) {
+      autoSlideBtn.addEventListener('click', toggleAutoSlide);
+    }
+
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
       // Only handle if not in an input field
@@ -116,6 +188,8 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
         if (slideContainer.classList.contains('expanded')) {
           collapseSlides();
         }
+      } else if ((e.key === 'a' || e.key === 'A') && autoSlideBtn) {
+        toggleAutoSlide();
       }
     });
   }
@@ -146,6 +220,7 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    gap: 0.5rem;
     margin-bottom: 0.5rem;
     transition: opacity 0.3s ease, transform 0.3s ease;
   }
@@ -191,6 +266,36 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     margin: 0.25rem 0 0 0;
   }
 
+  .autoslide-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    background: transparent;
+    border: 2px solid var(--theme-accent);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .autoslide-button svg {
+    fill: var(--theme-accent);
+    transition: fill 0.2s ease;
+  }
+
+  .autoslide-button:hover {
+    background: var(--theme-accent);
+    transform: scale(1.05);
+  }
+
+  .autoslide-button:hover svg {
+    fill: var(--theme-background);
+  }
+
+  .slides-expanded .autoslide-button {
+    display: none;
+  }
+
   .expand-button {
     display: flex;
     align-items: center;
@@ -219,6 +324,72 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
 
   .slides-expanded .expand-button {
     display: none;
+  }
+
+  /* Header button group */
+  .slide-header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  /* Print / Export PDF button */
+  .print-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    background: transparent;
+    border: 2px solid var(--theme-accent);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+    text-decoration: none;
+  }
+
+  .print-button svg {
+    stroke: var(--theme-accent);
+    transition: stroke 0.2s ease;
+  }
+
+  .print-button:hover {
+    background: var(--theme-accent);
+    transform: scale(1.05);
+  }
+
+  .print-button:hover svg {
+    stroke: var(--theme-background);
+  }
+
+  .slides-expanded .print-button {
+    display: none;
+  }
+
+  /* Print mode — full-viewport layout for PDF export */
+  .slide-print-page {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .slide-print-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .slide-print-container :global(.reveal) {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .slide-print-container :global(.reveal .slides h1),
+  .slide-print-container :global(.reveal .slides h2),
+  .slide-print-container :global(.reveal .slides h3) {
+    color: var(--theme-accent);
   }
 
   .slide-container {
@@ -328,6 +499,25 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     opacity: 1;
   }
 
+  /* Vertical navigation — down arrow indicator */
+  .slide-container :global(.reveal .controls .navigate-down) {
+    color: var(--theme-accent);
+  }
+
+  .slide-container :global(.reveal .controls .navigate-down.enabled) {
+    opacity: 0.85;
+    animation: bounce-down 2s ease infinite;
+  }
+
+  .slide-container :global(.reveal .controls .navigate-up) {
+    color: var(--theme-accent);
+  }
+
+  @keyframes bounce-down {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
   .slide-container :global(.reveal .progress) {
     background: var(--theme-separator);
     height: 4px;
@@ -343,6 +533,49 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     font-family: inherit;
     font-size: 0.75rem;
     opacity: 0.8;
+  }
+
+  /* Search plugin overlay — terminal theme */
+  .slide-container :global(.reveal .searchbox) {
+    position: absolute !important;
+    top: 0.5rem !important;
+    right: 0.5rem !important;
+    left: auto !important;
+    z-index: 20;
+    background: var(--theme-background);
+    border: 1px solid var(--theme-accent);
+    border-radius: 0.5rem;
+    padding: 0.375rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    max-width: 260px;
+  }
+
+  .slide-container :global(.reveal .searchbox .searchinput) {
+    background: color-mix(in oklab, var(--theme-foreground) 8%, var(--theme-background)) !important;
+    color: var(--theme-foreground) !important;
+    border: 1px solid var(--theme-separator) !important;
+    border-radius: 0.375rem !important;
+    padding: 0.375rem 0.5rem !important;
+    font-family: inherit !important;
+    font-size: 0.8rem !important;
+    outline: none !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .slide-container :global(.reveal .searchbox .searchinput:focus) {
+    border-color: var(--theme-accent) !important;
+  }
+
+  .slide-container :global(.reveal .searchbox .searchresults) {
+    color: var(--theme-foreground) !important;
+    opacity: 0.7;
+    font-size: 0.7rem !important;
+    font-family: inherit !important;
+    padding: 0 0.25rem !important;
   }
 
   .slide-container :global(img) {
@@ -538,6 +771,18 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     border-radius: 0.25rem;
     font-family: inherit;
     font-weight: 600;
+    font-size: 0.8em;
+    white-space: nowrap;
+  }
+
+  .slide-instructions .arrow-hint {
+    letter-spacing: 0.05em;
+    font-size: 0.9em;
+    opacity: 0.9;
+  }
+
+  .instructions-mobile {
+    display: none;
   }
 
   @media (max-width: 767px) {
@@ -559,6 +804,14 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
 
     .expand-button {
       align-self: flex-end;
+    }
+
+    .instructions-desktop {
+      display: none;
+    }
+
+    .instructions-mobile {
+      display: block;
     }
   }
 

@@ -77,6 +77,9 @@ const slidesCollection = defineCollection({
     transition: z.string().default('slide'),
     controls: z.boolean().default(true),
     progress: z.boolean().default(true),
+    math: z.boolean().default(false),
+    slideNumber: z.boolean().default(true),
+    autoSlide: z.number().default(0),
   }),
 })
 

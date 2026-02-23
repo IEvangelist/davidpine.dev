@@ -93,6 +93,10 @@ interface SlideViewerProps {
   controls?: boolean;
   progress?: boolean;
   preview?: boolean;
+  math?: boolean;
+  slideNumber?: boolean;
+  autoSlide?: number;
+  embedded?: boolean;
 }
 
 export const SlideViewer: React.FC<SlideViewerProps> = ({
@@ -102,6 +106,10 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
   controls = true,
   progress = true,
   preview = false,
+  math: mathEnabled = false,
+  slideNumber = true,
+  autoSlide = 0,
+  embedded = true,
 }) => {
   const deckRef = useRef<HTMLDivElement>(null);
   const revealRef = useRef<Reveal.Api | null>(null);
@@ -205,6 +213,29 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
         const { default: RevealMarkdown } = await import("reveal.js/plugin/markdown/markdown.esm.js");
         const { default: Notes } = await import("reveal.js/plugin/notes/notes.esm.js");
 
+        // Only load Zoom and Search plugins for full viewer (not preview thumbnails)
+        const plugins = [RevealMarkdown, Highlight, Notes];
+        if (!preview) {
+          const { default: Zoom } = await import("reveal.js/plugin/zoom/zoom.esm.js");
+          const { default: Search } = await import("reveal.js/plugin/search/search.esm.js");
+          plugins.push(Zoom, Search);
+        }
+
+        // Load Math/KaTeX plugin when math is enabled (works in both full and preview modes)
+        if (mathEnabled) {
+          const { default: RevealMath } = await import("reveal.js/plugin/math/math.esm.js");
+          plugins.push(RevealMath);
+
+          // Load KaTeX CSS if not already loaded
+          if (!document.querySelector('link[data-katex-css]')) {
+            const katexLink = document.createElement('link');
+            katexLink.rel = 'stylesheet';
+            katexLink.href = 'https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css';
+            katexLink.setAttribute('data-katex-css', 'true');
+            document.head.appendChild(katexLink);
+          }
+        }
+
         // Create HTML structure for reveal.js
         // Decode HTML entities that may have been escaped during Astro's build process
         const decodedContent = decodeHtmlEntities(content);
@@ -221,17 +252,45 @@ ${decodedContent}
         deckRef.current.className = `reveal reveal-${uniqueId.replace(/:/g, "-")}`;
         deckRef.current.innerHTML = `<div class="slides">${slidesHtml}</div>`;
 
-        // Initialize reveal.js in embedded mode
+        // Load print stylesheet for PDF export mode
+        if (!embedded && !document.querySelector('link[data-reveal-print-css]')) {
+          const printLink = document.createElement('link');
+          printLink.rel = 'stylesheet';
+          printLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.css';
+          printLink.setAttribute('data-reveal-print-css', 'true');
+          document.head.appendChild(printLink);
+
+          // reveal.js print-pdf plugin CSS
+          const pdfLink = document.createElement('link');
+          pdfLink.rel = 'stylesheet';
+          pdfLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/print/pdf.css';
+          pdfLink.setAttribute('data-reveal-pdf-css', 'true');
+          pdfLink.media = 'print';
+          document.head.appendChild(pdfLink);
+        }
+
+        // Initialize reveal.js
         revealRef.current = new Reveal(deckRef.current, {
-          hash: false,
+          hash: !preview,
           controls,
           progress,
+          touch: !preview,
+          slideNumber: preview ? false : (slideNumber ? 'c/t' : false),
           transition: transition as "none" | "fade" | "slide" | "convex" | "concave" | "zoom",
-          plugins: [RevealMarkdown, Highlight, Notes],
+          plugins,
           markdown: { smartypants: true },
-          embedded: true,
-          width: "100%",
-          height: "100%",
+          ...(mathEnabled ? { math: { } } : {}), // reveal.js Math plugin auto-detects KaTeX
+          // Auto-animate defaults (slides opt-in via data-auto-animate attribute in markdown)
+          autoAnimateEasing: 'ease',
+          autoAnimateDuration: 1.0,
+          autoAnimateUnmatched: true,
+          // Auto-slide (milliseconds, 0 = disabled). Not used in preview mode.
+          autoSlide: preview ? 0 : (autoSlide || 0),
+          autoSlideStoppable: true,
+          embedded,
+          ...(embedded ? {} : { pdfSeparateFragments: false }),
+          width: embedded ? "100%" : 960,
+          height: embedded ? "100%" : 700,
         });
 
         await revealRef.current.initialize();
@@ -247,7 +306,53 @@ ${decodedContent}
       // Only destroy if we're actually unmounting, not on re-renders
       // The revealRef check prevents double-cleanup
     };
-  }, [content, theme, transition, controls, progress, preview, isClient, themeLoaded, stylesInjected, uniqueId]);
+  }, [content, theme, transition, controls, progress, preview, mathEnabled, slideNumber, autoSlide, embedded, isClient, themeLoaded, stylesInjected, uniqueId]);
+
+  // ResizeObserver to relayout reveal.js when container resizes
+  // Handles window resize, expand/collapse transitions, and any layout shifts
+  useEffect(() => {
+    if (!isInitialized || !deckRef.current || !revealRef.current) return;
+
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const debouncedLayout = () => {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        if (revealRef.current) {
+          revealRef.current.layout();
+        }
+      }, 100);
+    };
+
+    // Observe the reveal container for size changes
+    const observer = new ResizeObserver(debouncedLayout);
+    observer.observe(deckRef.current);
+
+    // Also listen for custom relayout events (e.g., from expand/collapse transitions)
+    const handleRelayout = () => debouncedLayout();
+    window.addEventListener("reveal-relayout", handleRelayout);
+
+    // Listen for auto-slide toggle events from the Astro page
+    let autoSlidePaused = false;
+    const handleAutoSlideToggle = () => {
+      if (!revealRef.current) return;
+      if (autoSlidePaused) {
+        revealRef.current.configure({ autoSlide: autoSlide || 0 });
+        autoSlidePaused = false;
+      } else {
+        revealRef.current.configure({ autoSlide: 0 });
+        autoSlidePaused = true;
+      }
+    };
+    window.addEventListener("reveal-autoslide-toggle", handleAutoSlideToggle);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("reveal-relayout", handleRelayout);
+      window.removeEventListener("reveal-autoslide-toggle", handleAutoSlideToggle);
+      if (debounceTimer) clearTimeout(debounceTimer);
+    };
+  }, [isInitialized]);
 
   // Cleanup reveal.js on unmount only
   useEffect(() => {
