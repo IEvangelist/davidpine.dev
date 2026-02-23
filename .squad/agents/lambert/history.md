@@ -48,3 +48,12 @@
 - **Vertical navigation CSS:** Added styles for `.navigate-down` and `.navigate-up` buttons using `--theme-accent`. Added a subtle `bounce-down` animation on `.navigate-down.enabled` to hint that users can scroll down. Animation is gentle (2s ease, 4px travel).
 - **Instruction bar update:** Changed "Arrow keys to navigate" → "Arrow keys ↑↓←→ to navigate" with a `.arrow-hint` span for subtle letter-spacing. The arrows communicate that both horizontal and vertical navigation exist.
 - **Pre-existing TS warnings:** `[slug].astro` has 4 "possibly null" warnings on `slideContainer`/`slidePage` — these are false positives (guarded by early return). Not my changes.
+
+### 2026-02-22 — Phase 3: PDF Export & Auto-Animate Content
+- **PDF Export button:** Added a printer icon button to the slide header, positioned between auto-play (if present) and expand. Styled identically to expand button — `2px solid var(--theme-accent)` border, hover fills with accent color, same scale transform. Opens `?print-pdf` URL in a new tab.
+- **Print mode detection:** `Astro.url.searchParams.has('print-pdf')` in the frontmatter. When true, renders a minimal full-viewport layout: no header, no instruction bar, no expand/collapse buttons. Just the slide container filling 100vw × 100vh.
+- **SlideViewer `embedded` prop:** Added `embedded?: boolean` (default `true`). In print mode, passes `embedded={false}` — this tells reveal.js to render in standalone mode (not embedded in a page), which is required for `?print-pdf` to layout all slides for printing. Also sets `pdfSeparateFragments: false` so fragments stay on same page, and uses fixed `width: 960, height: 700` instead of `"100%"`.
+- **Print CSS loading:** When `embedded=false`, dynamically loads reveal.js print/pdf.css with `media="print"` so browser print dialog gets proper page breaks.
+- **Header button group:** Wrapped autoslide, print, and expand buttons in `.slide-header-buttons` flex container with `gap: 0.5rem`. Cleaner alignment, consistent spacing on all screen sizes.
+- **Auto-animate content:** Added 3 auto-animate slides to `why-astro-for-docs.md` after "The aspire.dev Story". Shows DocFX → Astro migration morphing: metrics (build time, search, DX) animate from old values to new values across slides using `data-id` matching. Natural narrative flow — viewer sees the same metrics transform before their eyes.
+- **Auto-animate syntax:** Uses `<!-- .slide: data-auto-animate -->` comment + `data-id` attributes on `<p>` elements. reveal.js Markdown plugin parses these natively; no plugin needed.

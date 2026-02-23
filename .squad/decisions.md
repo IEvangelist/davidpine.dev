@@ -20,6 +20,59 @@ The reveal.js Math plugin is loaded whenever a slide deck has `math: true` in fr
 
 ---
 
+## Auto-Animate Config + Auto-Slide Architecture
+
+**Date:** 2026-02-22  
+**Author:** Dallas (Frontend Dev)  
+**Phase:** 3
+
+### Auto-Animate — Global Defaults, Content-Driven Opt-In
+
+Auto-animate is a core reveal.js feature (no plugin needed). Rather than adding a schema field, the config sets global animation defaults (`autoAnimateEasing: 'ease'`, `autoAnimateDuration: 1.0`, `autoAnimateUnmatched: true`). Individual slides opt-in via the standard reveal.js markdown attribute syntax:
+
+```markdown
+<!-- .slide: data-auto-animate -->
+```
+
+This is purely content-driven — no frontmatter change needed. The defaults apply universally to any deck that uses the attribute.
+
+### Auto-Slide — Schema-Driven with Preview Gating
+
+Added `autoSlide: z.number().default(0)` to the slides schema. The value is in milliseconds (e.g., `autoSlide: 5000` for 5-second auto-advance). Zero means disabled.
+
+**Preview gating:** Auto-slide is disabled in preview/thumbnail mode (`autoSlide: preview ? 0 : value`). Thumbnails shouldn't auto-advance.
+
+**Toggle pattern:** Uses `reveal-autoslide-toggle` custom window event. The Astro `[slug].astro` page dispatches this event from a play/pause button (and `A` key shortcut). The React `SlideViewer` listens for it and calls `revealRef.current.configure({ autoSlide: 0 | originalValue })` to toggle. This is the same Astro ↔ React event bridge pattern used for `reveal-relayout`.
+
+**UI:** Play/pause button only renders when `autoSlide > 0`. Styled consistently with expand button. Instruction bar conditionally adds `A` key hint.
+
+---
+
+## PDF Export — Print Mode via Query Parameter
+
+**Date:** 2026-02-22  
+**Author:** Lambert (UX/Design)  
+**Phase:** 3
+
+PDF export uses reveal.js's native `?print-pdf` mechanism. A print button in the slide header opens the same slide URL with `?print-pdf` appended in a new tab. The Astro page detects this query parameter at build/render time and switches to a dedicated print layout.
+
+**How It Works:**
+1. **Normal mode:** Embedded viewer with header, instruction bar, expand/collapse — unchanged.
+2. **Print mode (`?print-pdf`):** Full-viewport layout, no chrome. SlideViewer receives `embedded={false}` so reveal.js renders in standalone mode. The browser's native Print dialog (Ctrl+P) then produces a PDF with correct page breaks.
+
+**Key Design Choices:**
+- `embedded={false}` for print — reveal.js's `?print-pdf` layout only works in non-embedded mode.
+- `pdfSeparateFragments: false` — keeps all fragment steps on the same page.
+- `transition: "none"` in print — prevents visual artifacts during layout phase.
+- Print button styled like expand button — same border-accent pattern, hover fill, scale transform.
+- New `.slide-header-buttons` container — all header action buttons (autoslide, print, expand) in a single flex row with consistent spacing.
+
+**Tradeoffs:**
+- SSG compatible — `Astro.url.searchParams` check works for both SSG and SSR.
+- No dedicated `/print/` route — simpler, minimal impact from unused JS loading in print mode.
+
+---
+
 ## Phase 1 reveal.js UX Review
 
 **Date:** 2026-02-22  

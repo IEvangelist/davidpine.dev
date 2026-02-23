@@ -56,3 +56,30 @@ David Pine requested UX improvements for the slides feature:
 - Merged 3 decision inbox files into `decisions.md` (dallas-phase2-math, lambert-phase1-review, lambert-phase2-content)
 - Wrote orchestration log for Phase 2
 - Appended Phase 2 completion notes to session log
+
+---
+
+## Phase 3 — Polish Completed
+
+**Timestamp:** 2026-02-22T03:00:00Z
+
+### Dallas (Frontend Dev)
+- Implemented auto-animate global config defaults (`autoAnimateEasing: 'ease'`, `autoAnimateDuration: 1.0`, `autoAnimateUnmatched: true`)
+- Added `autoSlide: z.number().default(0)` to slides schema with preview gating
+- Built `reveal-autoslide-toggle` custom event bridge for play/pause toggle
+- Play/pause button conditionally renders when `autoSlide > 0`
+- `A` keyboard shortcut wired for auto-slide toggle
+- Instruction bar conditionally includes `A` key hint
+
+### Lambert (UX/Design)
+- Added PDF export button using reveal.js native `?print-pdf` query parameter mechanism
+- Print mode renders with `embedded={false}`, `pdfSeparateFragments: false`, `transition: "none"`
+- Created `.slide-header-buttons` flex container for consistent button group layout (autoslide, print, expand)
+- Added auto-animate example content to `why-astro-for-docs.md`
+- Print button styled consistently with expand button (border-accent pattern, hover fill, scale)
+
+### Scribe
+- Merged 2 decision inbox files into `decisions.md` (dallas-phase3-autoanimate, lambert-phase3-pdf)
+- Wrote orchestration log for Phase 3
+- Appended Phase 3 completion notes to session log
+- Git committed `.squad/` state
