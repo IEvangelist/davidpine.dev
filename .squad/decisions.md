@@ -102,3 +102,18 @@ PDF export uses reveal.js's native `?print-pdf` mechanism. A print button in the
 3. **Arrow key hint in instruction bar** — Changed to "Arrow keys ↑↓←→ to navigate" to communicate all four directions are valid.
 
 No schema changes needed — these are Markdown-level features, not frontmatter.
+---
+
+## PDF Export — Client-Side Print Detection (Correction)
+
+**Date:** 2026-02-23  
+**Author:** Dallas (Frontend Dev)  
+**Supersedes:** Phase 3 "PDF Export — Print Mode via Query Parameter" (server-side detection claim)
+
+The original decision stated `Astro.url.searchParams` works for SSG. This is incorrect — during static site generation the URL has no query string, so the check always returns `false`. Print mode never activated.
+
+**Fix:** Detection moved entirely to the client side:
+- `slide-viewer.tsx` reads `window.location.search` for `?print-pdf` and overrides `embedded` to `false`.
+- `[slug].astro` uses an `initPrintMode()` script that checks `window.location.search`, hides header/instructions, and applies full-viewport layout via CSS class toggles.
+
+All other print-mode design choices (no chrome, `pdfSeparateFragments: false`, `transition: "none"`) remain unchanged.
