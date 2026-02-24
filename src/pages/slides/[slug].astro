@@ -20,8 +20,6 @@ export async function getStaticPaths() {
 
 const { slide } = Astro.props
 
-// Detect print-pdf mode for PDF export
-const isPrintMode = Astro.url.searchParams.has('print-pdf')
 const { slug } = Astro.params
 
 // Get the raw content (body) from the slide
@@ -43,23 +41,6 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
 ---
 
 <Layout title={slide.data.title} description={slide.data.description}>
-  {isPrintMode ? (
-    <div class="slide-print-page" id="slide-page">
-      <div class="slide-print-container" id="slide-container">
-        <SlideViewer
-          client:only="react"
-          content={fullContent}
-          theme={slide.data.theme}
-          transition="none"
-          controls={false}
-          progress={false}
-          math={slide.data.math}
-          slideNumber={false}
-          embedded={false}
-        />
-      </div>
-    </div>
-  ) : (
   <div class="slide-viewer-page" id="slide-page">
     <div class="slide-header" id="slide-header">
       <div class="slide-header-left">
@@ -122,7 +103,6 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
       <p class="instructions-mobile">Swipe to navigate • <kbd>E</kbd> expand{slide.data.autoSlide > 0 && <Fragment> • <kbd>A</kbd> auto-play</Fragment>} • <kbd>Esc</kbd> exit</p>
     </div>
   </div>
-  )}
 </Layout>
 
 <script>
@@ -194,9 +174,33 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     });
   }
   
+  function initPrintMode() {
+    if (!window.location.search.includes('print-pdf')) return;
+
+    const slidePage = document.getElementById('slide-page');
+    const slideHeader = document.getElementById('slide-header');
+    const slideInstructions = document.getElementById('slide-instructions');
+    const slideContainer = document.getElementById('slide-container');
+
+    if (slideHeader) slideHeader.style.display = 'none';
+    if (slideInstructions) slideInstructions.style.display = 'none';
+    if (slidePage) {
+      slidePage.classList.add('print-mode');
+    }
+    if (slideContainer) {
+      slideContainer.classList.add('print-mode');
+    }
+  }
+
   // Initialize on page load
-  document.addEventListener('DOMContentLoaded', initExpandCollapse);
-  document.addEventListener('astro:page-load', initExpandCollapse);
+  document.addEventListener('DOMContentLoaded', () => {
+    initExpandCollapse();
+    initPrintMode();
+  });
+  document.addEventListener('astro:page-load', () => {
+    initExpandCollapse();
+    initPrintMode();
+  });
 </script>
 
 <style>
@@ -366,30 +370,27 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     display: none;
   }
 
-  /* Print mode — full-viewport layout for PDF export */
-  .slide-print-page {
-    margin: 0;
+  /* Print mode — full-viewport layout for PDF export (applied client-side) */
+  .slide-viewer-page.print-mode {
     padding: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
+    z-index: 200;
+    background: var(--theme-background);
+    min-height: 100vh;
   }
 
-  .slide-print-container {
-    width: 100%;
-    height: 100%;
-    position: relative;
+  .slide-container.print-mode {
+    max-width: unset;
+    height: auto;
+    min-height: unset;
+    max-height: unset;
+    border-radius: 0;
+    border: none;
+    overflow: visible;
   }
 
-  .slide-print-container :global(.reveal) {
+  .slide-container.print-mode :global(.reveal) {
     width: 100% !important;
     height: 100% !important;
-  }
-
-  .slide-print-container :global(.reveal .slides h1),
-  .slide-print-container :global(.reveal .slides h2),
-  .slide-print-container :global(.reveal .slides h3) {
-    color: var(--theme-accent);
   }
 
   .slide-container {

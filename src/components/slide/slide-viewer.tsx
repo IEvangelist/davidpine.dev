@@ -109,8 +109,11 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
   math: mathEnabled = false,
   slideNumber = true,
   autoSlide = 0,
-  embedded = true,
+  embedded: embeddedProp = true,
 }) => {
+  // Auto-detect print-pdf mode from URL (SSG can't detect query params at build time)
+  const isPrintMode = typeof window !== 'undefined' && window.location.search.includes('print-pdf');
+  const embedded = isPrintMode ? false : embeddedProp;
   const deckRef = useRef<HTMLDivElement>(null);
   const revealRef = useRef<Reveal.Api | null>(null);
   const [isClient, setIsClient] = useState(false);
@@ -265,7 +268,6 @@ ${decodedContent}
           pdfLink.rel = 'stylesheet';
           pdfLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/print/pdf.css';
           pdfLink.setAttribute('data-reveal-pdf-css', 'true');
-          pdfLink.media = 'print';
           document.head.appendChild(pdfLink);
         }
 
