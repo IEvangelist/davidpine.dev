@@ -4,6 +4,7 @@ import LightDarkAutoButton from '~/components/LightDarkAutoButton.astro'
 import Search from '~/components/Search.astro'
 import SelectTheme from '~/components/SelectTheme.astro'
 import NavLink from '~/components/NavLink.astro'
+import IconGitHub from '~/icons/github.svg'
 
 const lightDarkAutoTheme = siteConfig.themes.mode === 'light-dark-auto'
 const selectTheme =
@@ -23,6 +24,16 @@ const selectTheme =
       <Search trailingSlashes={siteConfig.trailingSlashes} />
       {lightDarkAutoTheme && <LightDarkAutoButton />}
       {selectTheme && <SelectTheme />}
+      <a
+        href="https://github.com/IEvangelist"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="GitHub"
+        class="hover:text-accent flex cursor-pointer items-center justify-center rounded-md no-underline"
+      >
+        <IconGitHub class="size-6 text-accent" />
+        <span class="sr-only">GitHub</span>
+      </a>
       <nav id="nav-mobile" aria-label="Menu" class="p-0 text-accent sm:hidden">
         <button
           id="nav-mobile-button"

@@ -16,12 +16,6 @@ const { socialLinks } = Astro.props
 ---
 
 <div class="flex w-full max-w-md items-center justify-between">
-  <style>
-    .social-link svg {
-      stroke: currentColor;
-      color: inherit;
-    }
-  </style>
   {
     socialLinks.github && (
       <a
@@ -76,17 +70,21 @@ const { socialLinks } = Astro.props
   }
   {
     socialLinks.mastodon && (
-      <a
-        href={socialLinks.mastodon}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="social-link text-accent hover:text-accent"
-      >
-        <span class="sr-only">Mastodon</span>
-        <IconMastodon class="size-7" />
-      </a>
+      <>
+        <a
+          href={socialLinks.mastodon}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="social-link text-accent hover:text-accent"
+        >
+          <span class="sr-only">Mastodon</span>
+          <IconMastodon class="size-7" />
+        </a>
 
-      <a style="display:none;" rel="me" href="https://dotnet.social/@davidpine">Mastodon</a>
+        <a style="display:none;" rel="me" href="https://dotnet.social/@davidpine">
+          Mastodon
+        </a>
+      </>
     )
   }
   {

@@ -6,10 +6,26 @@ interface Props {
 }
 
 const { link } = Astro.props
+
+const normalizePath = (path: string) => {
+  const normalized = path.replace(/\/+$/, '')
+  return normalized || '/'
+}
+
+const currentPath = normalizePath(Astro.url.pathname)
+const linkPath = link.external
+  ? undefined
+  : normalizePath(new URL(link.url, Astro.url).pathname)
+const isActive =
+  linkPath === '/'
+    ? currentPath === '/'
+    : linkPath !== undefined &&
+      (currentPath === linkPath || currentPath.startsWith(`${linkPath}/`))
 ---
 
 <a
-  class="nav-link"
+  class:list={['nav-link', { active: isActive }]}
+  aria-current={isActive ? 'page' : undefined}
   rel={link.external ? 'noopener noreferrer' : undefined}
   target={link.external ? '_blank' : undefined}
   href={link.url}
@@ -34,7 +50,8 @@ const { link } = Astro.props
     transition: width 0.3s ease-out;
   }
 
-  .nav-link:hover::after {
+  .nav-link:hover::after,
+  .nav-link.active::after {
     width: 100%;
   }
 </style>

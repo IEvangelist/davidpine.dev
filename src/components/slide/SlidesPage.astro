@@ -17,39 +17,50 @@ const { slides, tags, tag } = Astro.props
 ---
 
 <div>
-  {tags && tags.length > 0 && (
-    <div class="flex flex-wrap gap-2 mb-6">
-      <a
-        href="/slides"
-        class:list={[
-          "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-8 px-3",
-          !tag
-            ? "text-accent border border-accent"
-            : "text-foreground/60 border border-foreground/20 hover:text-accent hover:border-accent"
-        ]}
-      >
-        All
-      </a>
-      {tags.map((t) => (
+  {
+    tags && tags.length > 0 && (
+      <div class="flex flex-wrap gap-2 mb-6">
         <a
-          href={`/slides?tag=${t.tag}`}
+          href="/slides"
+          data-slide-filter
+          data-tag=""
           class:list={[
-            "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-8 px-3",
-            tag === t.tag
-              ? "text-accent border border-accent"
-              : "text-foreground/60 border border-foreground/20 hover:text-accent hover:border-accent"
+            'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-8 px-3 border',
+            !tag
+              ? 'text-accent border-accent'
+              : 'text-foreground/60 border-foreground/20 hover:text-accent hover:border-accent',
           ]}
         >
-          {t.tag}
-          {t.count && <span class="ml-1 text-xs opacity-60">({t.count})</span>}
+          All
         </a>
-      ))}
-    </div>
-  )}
+        {tags.map((t) => (
+          <a
+            href={`/slides?tag=${encodeURIComponent(t.tag)}`}
+            data-slide-filter
+            data-tag={t.tag}
+            class:list={[
+              'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-8 px-3 border',
+              tag === t.tag
+                ? 'text-accent border-accent'
+                : 'text-foreground/60 border-foreground/20 hover:text-accent hover:border-accent',
+            ]}
+          >
+            {t.tag}
+            {t.count && <span class="ml-1 text-xs opacity-60">({t.count})</span>}
+          </a>
+        ))}
+      </div>
+    )
+  }
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
     {
       slides.map((slide) => (
-        <a href={`/slides/${slide.id}`} class="block no-underline">
+        <a
+          href={`/slides/${slide.id}`}
+          class="block no-underline"
+          data-slide-card
+          data-tags={JSON.stringify(slide.tags ?? [])}
+        >
           <SlideCard slide={slide} />
         </a>
       ))
@@ -57,10 +68,111 @@ const { slides, tags, tag } = Astro.props
   </div>
 
   {
-    slides.length === 0 && (
-      <div class="text-center py-12">
-        <div class="text-[var(--theme-foreground)] opacity-60 text-lg">No slides found</div>
+    (
+      <div
+        class:list={['text-center py-12', slides.length > 0 && 'hidden']}
+        data-no-slides
+      >
+        <div class="text-[var(--theme-foreground)] opacity-60 text-lg">
+          No slides found
+        </div>
       </div>
     )
   }
 </div>
+
+<script>
+  const activeFilterClasses = ['text-accent', 'border-accent']
+  const inactiveFilterClasses = [
+    'text-foreground/60',
+    'border-foreground/20',
+    'hover:text-accent',
+    'hover:border-accent',
+  ]
+
+  function getSelectedSlideTags() {
+    const tags = new URLSearchParams(window.location.search).getAll('tag')
+    return [...new Set(tags.filter(Boolean))]
+  }
+
+  function parseSlideTags(card: Element) {
+    try {
+      const tags = JSON.parse(card.getAttribute('data-tags') ?? '[]')
+      return Array.isArray(tags) ? tags : []
+    } catch {
+      return []
+    }
+  }
+
+  function updateSlideFilters() {
+    const selectedTags = getSelectedSlideTags()
+    const cards = document.querySelectorAll('[data-slide-card]')
+    const filters = document.querySelectorAll('[data-slide-filter]')
+    const noSlides = document.querySelector('[data-no-slides]')
+    let visibleCards = 0
+
+    cards.forEach((card) => {
+      const tags = parseSlideTags(card)
+      const isVisible =
+        selectedTags.length === 0 || selectedTags.every((tag) => tags.includes(tag))
+      card.classList.toggle('hidden', !isVisible)
+      visibleCards += isVisible ? 1 : 0
+    })
+
+    filters.forEach((filter) => {
+      const filterTag = filter.getAttribute('data-tag') ?? ''
+      const isActive = filterTag
+        ? selectedTags.includes(filterTag)
+        : selectedTags.length === 0
+
+      filter.classList.remove(...activeFilterClasses, ...inactiveFilterClasses)
+      filter.classList.add(...(isActive ? activeFilterClasses : inactiveFilterClasses))
+
+      if (isActive) {
+        filter.setAttribute('aria-pressed', 'true')
+      } else {
+        filter.setAttribute('aria-pressed', 'false')
+      }
+    })
+
+    noSlides?.classList.toggle('hidden', visibleCards > 0)
+  }
+
+  function handleSlideFilterClick(event: MouseEvent) {
+    const target = event.target instanceof Element ? event.target : null
+    const filter = target?.closest('[data-slide-filter]')
+
+    if (!(filter instanceof HTMLAnchorElement)) {
+      return
+    }
+
+    event.preventDefault()
+    const filterTag = filter.getAttribute('data-tag') ?? ''
+    const selectedTags = new Set(getSelectedSlideTags())
+    const url = new URL(window.location.href)
+
+    url.searchParams.delete('tag')
+
+    if (filterTag) {
+      if (selectedTags.has(filterTag)) {
+        selectedTags.delete(filterTag)
+      } else {
+        selectedTags.add(filterTag)
+      }
+
+      selectedTags.forEach((tag) => url.searchParams.append('tag', tag))
+    }
+
+    history.pushState(null, '', url.toString())
+    updateSlideFilters()
+  }
+
+  if (document.documentElement.dataset.slideFiltersInitialized !== 'true') {
+    document.documentElement.dataset.slideFiltersInitialized = 'true'
+    document.addEventListener('click', handleSlideFilterClick)
+    window.addEventListener('popstate', updateSlideFilters)
+    document.addEventListener('astro:page-load', updateSlideFilters)
+  }
+
+  updateSlideFilters()
+</script>

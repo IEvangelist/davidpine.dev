@@ -1,50 +1,110 @@
-import type React from "react";
-import { useEffect, useId, useRef, useState } from "react";
-import type Reveal from "reveal.js";
+import type React from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
+import type Reveal from 'reveal.js'
 
 // Import reveal.js CSS from npm package
-import "reveal.js/dist/reveal.css";
-import "reveal.js/plugin/highlight/monokai.css";
+import 'reveal.js/dist/reveal.css'
+import 'reveal.js/plugin/highlight/monokai.css'
 
 // Helper function to decode HTML entities that may have been escaped during build
 function decodeHtmlEntities(text: string): string {
-  const textarea = document.createElement("textarea");
-  textarea.innerHTML = text;
-  return textarea.value;
+  const textarea = document.createElement('textarea')
+  textarea.innerHTML = text
+  return textarea.value
 }
 
 // Theme configuration for slide cards
 const SLIDE_THEME_CONFIG: Record<
   string,
   {
-    background: string;
-    textColor: string;
-    titleColor: string;
-    accentColor: string;
+    background: string
+    textColor: string
+    titleColor: string
+    accentColor: string
   }
 > = {
-  black: { background: "#191919", textColor: "#fff", titleColor: "#42affa", accentColor: "#42affa" },
-  white: { background: "#fff", textColor: "#222", titleColor: "#2a76dd", accentColor: "#2a76dd" },
-  league: { background: "#2b2b2b", textColor: "#eee", titleColor: "#eee", accentColor: "#13daec" },
-  beige: { background: "#f7f3de", textColor: "#333", titleColor: "#333", accentColor: "#8b743d" },
-  sky: { background: "#add9e4", textColor: "#333", titleColor: "#333", accentColor: "#3b759e" },
-  night: { background: "#111", textColor: "#eee", titleColor: "#e7ad52", accentColor: "#e7ad52" },
-  serif: { background: "#f0f1eb", textColor: "#000", titleColor: "#51483d", accentColor: "#51483d" },
-  simple: { background: "#fff", textColor: "#000", titleColor: "#000", accentColor: "#00008b" },
-  solarized: { background: "#fdf6e3", textColor: "#657b83", titleColor: "#586e75", accentColor: "#268bd2" },
-  blood: { background: "#222", textColor: "#eee", titleColor: "#eee", accentColor: "#a23" },
-  moon: { background: "#002b36", textColor: "#93a1a1", titleColor: "#eee8d5", accentColor: "#268bd2" },
-  dracula: { background: "#282a36", textColor: "#f8f8f2", titleColor: "#bd93f9", accentColor: "#ff79c6" },
-};
+  black: {
+    background: '#191919',
+    textColor: '#fff',
+    titleColor: '#42affa',
+    accentColor: '#42affa',
+  },
+  white: {
+    background: '#fff',
+    textColor: '#222',
+    titleColor: '#2a76dd',
+    accentColor: '#2a76dd',
+  },
+  league: {
+    background: '#2b2b2b',
+    textColor: '#eee',
+    titleColor: '#eee',
+    accentColor: '#13daec',
+  },
+  beige: {
+    background: '#f7f3de',
+    textColor: '#333',
+    titleColor: '#333',
+    accentColor: '#8b743d',
+  },
+  sky: {
+    background: '#add9e4',
+    textColor: '#333',
+    titleColor: '#333',
+    accentColor: '#3b759e',
+  },
+  night: {
+    background: '#111',
+    textColor: '#eee',
+    titleColor: '#e7ad52',
+    accentColor: '#e7ad52',
+  },
+  serif: {
+    background: '#f0f1eb',
+    textColor: '#000',
+    titleColor: '#51483d',
+    accentColor: '#51483d',
+  },
+  simple: {
+    background: '#fff',
+    textColor: '#000',
+    titleColor: '#000',
+    accentColor: '#00008b',
+  },
+  solarized: {
+    background: '#fdf6e3',
+    textColor: '#657b83',
+    titleColor: '#586e75',
+    accentColor: '#268bd2',
+  },
+  blood: {
+    background: '#222',
+    textColor: '#eee',
+    titleColor: '#eee',
+    accentColor: '#a23',
+  },
+  moon: {
+    background: '#002b36',
+    textColor: '#93a1a1',
+    titleColor: '#eee8d5',
+    accentColor: '#268bd2',
+  },
+  dracula: {
+    background: '#282a36',
+    textColor: '#f8f8f2',
+    titleColor: '#bd93f9',
+    accentColor: '#ff79c6',
+  },
+}
 
 function getThemeBackgroundAttrs(theme: string): string {
-  const config = SLIDE_THEME_CONFIG[theme] || SLIDE_THEME_CONFIG.black;
-  return `data-background-color="${config.background}"`;
+  const config = SLIDE_THEME_CONFIG[theme] || SLIDE_THEME_CONFIG.black
+  return `data-background-color="${config.background}"`
 }
 
 function generatePreviewStyles(theme: string, uniqueId: string): string {
-  const config = SLIDE_THEME_CONFIG[theme] || SLIDE_THEME_CONFIG.black;
-  const safeId = uniqueId.replace(/:/g, "-");
+  const config = SLIDE_THEME_CONFIG[theme] || SLIDE_THEME_CONFIG.black
+  const safeId = uniqueId.replace(/:/g, '-')
 
   return `
     .reveal-${safeId} .slides section {
@@ -83,26 +143,31 @@ function generatePreviewStyles(theme: string, uniqueId: string): string {
     .reveal-${safeId} .reveal-viewport {
       border-radius: 0.5rem;
     }
-  `;
+  `
+}
+
+function hasRenderableSize(element: HTMLElement): boolean {
+  const rect = element.getBoundingClientRect()
+  return rect.width > 0 && rect.height > 0
 }
 
 interface SlideViewerProps {
-  content: string;
-  theme?: string;
-  transition?: string;
-  controls?: boolean;
-  progress?: boolean;
-  preview?: boolean;
-  math?: boolean;
-  slideNumber?: boolean;
-  autoSlide?: number;
-  embedded?: boolean;
+  content: string
+  theme?: string
+  transition?: string
+  controls?: boolean
+  progress?: boolean
+  preview?: boolean
+  math?: boolean
+  slideNumber?: boolean
+  autoSlide?: number
+  embedded?: boolean
 }
 
 export const SlideViewer: React.FC<SlideViewerProps> = ({
   content,
-  theme = "black",
-  transition = "slide",
+  theme = 'black',
+  transition = 'slide',
   controls = true,
   progress = true,
   preview = false,
@@ -112,163 +177,211 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
   embedded: embeddedProp = true,
 }) => {
   // Auto-detect print-pdf mode from URL (SSG can't detect query params at build time)
-  const isPrintMode = typeof window !== 'undefined' && window.location.search.includes('print-pdf');
-  const embedded = isPrintMode ? false : embeddedProp;
-  const deckRef = useRef<HTMLDivElement>(null);
-  const revealRef = useRef<Reveal.Api | null>(null);
-  const [isClient, setIsClient] = useState(false);
-  const [themeLoaded, setThemeLoaded] = useState(false);
-  const [stylesInjected, setStylesInjected] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
-  const uniqueId = useId();
+  const isPrintMode =
+    typeof window !== 'undefined' && window.location.search.includes('print-pdf')
+  const embedded = isPrintMode ? false : embeddedProp
+  const deckRef = useRef<HTMLDivElement>(null)
+  const revealRef = useRef<Reveal.Api | null>(null)
+  const [isClient, setIsClient] = useState(false)
+  const [themeLoaded, setThemeLoaded] = useState(false)
+  const [stylesInjected, setStylesInjected] = useState(false)
+  const [isInitialized, setIsInitialized] = useState(false)
+  const uniqueId = useId()
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    setIsClient(true)
+  }, [])
 
   // Load theme CSS dynamically (shared across instances)
   useEffect(() => {
-    if (!isClient) return;
+    if (!isClient) return
 
     const loadTheme = () => {
       // Check if this theme is already loaded globally
-      const existingTheme = document.querySelector(`link[data-reveal-theme="${theme}"]`);
+      const existingTheme = document.querySelector(`link[data-reveal-theme="${theme}"]`)
       if (existingTheme) {
-        setThemeLoaded(true);
-        return;
+        setThemeLoaded(true)
+        return
       }
 
       // Add new theme link
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = `https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/theme/${theme}.css`;
-      link.setAttribute("data-reveal-theme", theme);
-      link.onload = () => setThemeLoaded(true);
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = `https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/theme/${theme}.css`
+      link.setAttribute('data-reveal-theme', theme)
+      link.onload = () => setThemeLoaded(true)
       link.onerror = () => {
-        console.warn(`Failed to load theme: ${theme}`);
-        setThemeLoaded(true);
-      };
-      document.head.appendChild(link);
-    };
+        console.warn(`Failed to load theme: ${theme}`)
+        setThemeLoaded(true)
+      }
+      document.head.appendChild(link)
+    }
 
-    loadTheme();
-  }, [theme, isClient]);
+    loadTheme()
+  }, [theme, isClient])
 
   // Inject dynamic theme styles for preview mode
   useEffect(() => {
-    if (!isClient || !preview) return;
+    if (!isClient || !preview) return
 
-    const styleId = `slide-theme-${uniqueId.replace(/:/g, "-")}`;
+    const styleId = `slide-theme-${uniqueId.replace(/:/g, '-')}`
 
     // Remove existing styles for this instance
-    const existingStyle = document.getElementById(styleId);
+    const existingStyle = document.getElementById(styleId)
     if (existingStyle) {
-      existingStyle.remove();
+      existingStyle.remove()
     }
 
     // Create and inject new styles
-    const styleElement = document.createElement("style");
-    styleElement.id = styleId;
-    styleElement.textContent = generatePreviewStyles(theme, uniqueId);
-    document.head.appendChild(styleElement);
+    const styleElement = document.createElement('style')
+    styleElement.id = styleId
+    styleElement.textContent = generatePreviewStyles(theme, uniqueId)
+    document.head.appendChild(styleElement)
 
-    setStylesInjected(true);
+    setStylesInjected(true)
 
     // Cleanup function
     return () => {
-      const styleToRemove = document.getElementById(styleId);
+      const styleToRemove = document.getElementById(styleId)
       if (styleToRemove) {
-        styleToRemove.remove();
+        styleToRemove.remove()
       }
-    };
-  }, [theme, isClient, preview, uniqueId]);
+    }
+  }, [theme, isClient, preview, uniqueId])
 
   // Initialize Reveal.js
   useEffect(() => {
-    if (!deckRef.current || !isClient || !themeLoaded || (preview && !stylesInjected)) return;
+    if (!deckRef.current || !isClient || !themeLoaded || (preview && !stylesInjected))
+      return
 
-    const startTime = Date.now();
-    const MIN_LOADING_TIME = 750; // Minimum loading time in ms for smooth UX
+    const MIN_LOADING_TIME = 750 // Minimum loading time in ms for smooth UX
+    let initializeTimer: ReturnType<typeof setTimeout> | null = null
+    let sizeObserver: ResizeObserver | null = null
+    let isCancelled = false
 
-    // Add a small random delay to prevent multiple instances from initializing simultaneously
-    const initDelay = Math.random() * 200 + 50; // 50-250ms random delay
+    const scheduleInitialize = () => {
+      if (
+        isCancelled ||
+        revealRef.current ||
+        !deckRef.current ||
+        !hasRenderableSize(deckRef.current)
+      )
+        return
+      if (initializeTimer) return
 
-    const timer = setTimeout(async () => {
-      await initializeReveal();
-    }, initDelay);
+      const startTime = Date.now()
+      // Add a small random delay to prevent multiple instances from initializing simultaneously
+      const initDelay = Math.random() * 200 + 50 // 50-250ms random delay
 
-    const initializeReveal = async () => {
+      initializeTimer = setTimeout(async () => {
+        initializeTimer = null
+        await initializeReveal(startTime)
+      }, initDelay)
+    }
+
+    const watchForRenderableSize = () => {
+      if (isCancelled || revealRef.current || !deckRef.current) return
+
+      if (hasRenderableSize(deckRef.current)) {
+        scheduleInitialize()
+        return
+      }
+
+      sizeObserver?.disconnect()
+      sizeObserver = new ResizeObserver(() => {
+        if (!deckRef.current || !hasRenderableSize(deckRef.current)) return
+
+        sizeObserver?.disconnect()
+        sizeObserver = null
+        scheduleInitialize()
+      })
+      sizeObserver.observe(deckRef.current)
+    }
+
+    const initializeReveal = async (startTime: number) => {
       try {
         // Ensure minimum loading time for smooth UX
-        const elapsed = Date.now() - startTime;
-        const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsed);
-        
+        const elapsed = Date.now() - startTime
+        const remainingTime = Math.max(0, MIN_LOADING_TIME - elapsed)
+
         if (remainingTime > 0) {
-          await new Promise(resolve => setTimeout(resolve, remainingTime));
+          await new Promise((resolve) => setTimeout(resolve, remainingTime))
         }
 
         // Check ref is still valid after delay
-        if (!deckRef.current || revealRef.current) return;
+        if (!deckRef.current || revealRef.current || isCancelled) return
+
+        if (!hasRenderableSize(deckRef.current)) {
+          watchForRenderableSize()
+          return
+        }
 
         // Dynamically import reveal.js and plugins only on client side
-        const { default: Reveal } = await import("reveal.js");
-        const { default: Highlight } = await import("reveal.js/plugin/highlight/highlight.esm.js");
-        const { default: RevealMarkdown } = await import("reveal.js/plugin/markdown/markdown.esm.js");
-        const { default: Notes } = await import("reveal.js/plugin/notes/notes.esm.js");
+        const { default: Reveal } = await import('reveal.js')
+        const { default: Highlight } =
+          await import('reveal.js/plugin/highlight/highlight.esm.js')
+        const { default: RevealMarkdown } =
+          await import('reveal.js/plugin/markdown/markdown.esm.js')
+        const { default: Notes } = await import('reveal.js/plugin/notes/notes.esm.js')
 
         // Only load Zoom and Search plugins for full viewer (not preview thumbnails)
-        const plugins = [RevealMarkdown, Highlight, Notes];
+        const plugins = [RevealMarkdown, Highlight, Notes]
         if (!preview) {
-          const { default: Zoom } = await import("reveal.js/plugin/zoom/zoom.esm.js");
-          const { default: Search } = await import("reveal.js/plugin/search/search.esm.js");
-          plugins.push(Zoom, Search);
+          const { default: Zoom } = await import('reveal.js/plugin/zoom/zoom.esm.js')
+          const { default: Search } =
+            await import('reveal.js/plugin/search/search.esm.js')
+          plugins.push(Zoom, Search)
         }
 
         // Load Math/KaTeX plugin when math is enabled (works in both full and preview modes)
         if (mathEnabled) {
-          const { default: RevealMath } = await import("reveal.js/plugin/math/math.esm.js");
-          plugins.push(RevealMath);
+          const { default: RevealMath } =
+            await import('reveal.js/plugin/math/math.esm.js')
+          plugins.push(RevealMath)
 
           // Load KaTeX CSS if not already loaded
           if (!document.querySelector('link[data-katex-css]')) {
-            const katexLink = document.createElement('link');
-            katexLink.rel = 'stylesheet';
-            katexLink.href = 'https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css';
-            katexLink.setAttribute('data-katex-css', 'true');
-            document.head.appendChild(katexLink);
+            const katexLink = document.createElement('link')
+            katexLink.rel = 'stylesheet'
+            katexLink.href =
+              'https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css'
+            katexLink.setAttribute('data-katex-css', 'true')
+            document.head.appendChild(katexLink)
           }
         }
 
         // Create HTML structure for reveal.js
         // Decode HTML entities that may have been escaped during Astro's build process
-        const decodedContent = decodeHtmlEntities(content);
-        const backgroundAttrs = preview ? getThemeBackgroundAttrs(theme) : "";
+        const decodedContent = decodeHtmlEntities(content)
+        const backgroundAttrs = preview ? getThemeBackgroundAttrs(theme) : ''
         const slidesHtml = `\
           <section data-markdown data-separator="^---$" data-separator-vertical="^--$" ${backgroundAttrs}>
             <script type="text/template">
 ${decodedContent}
             </script>
-          </section>`;
+          </section>`
 
         // Set the HTML content
         // Add unique class to container for CSS isolation
-        deckRef.current.className = `reveal reveal-${uniqueId.replace(/:/g, "-")}`;
-        deckRef.current.innerHTML = `<div class="slides">${slidesHtml}</div>`;
+        deckRef.current.className = `reveal reveal-${uniqueId.replace(/:/g, '-')}`
+        deckRef.current.innerHTML = `<div class="slides">${slidesHtml}</div>`
 
         // Load print stylesheet for PDF export mode
         if (!embedded && !document.querySelector('link[data-reveal-print-css]')) {
-          const printLink = document.createElement('link');
-          printLink.rel = 'stylesheet';
-          printLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.css';
-          printLink.setAttribute('data-reveal-print-css', 'true');
-          document.head.appendChild(printLink);
+          const printLink = document.createElement('link')
+          printLink.rel = 'stylesheet'
+          printLink.href =
+            'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.css'
+          printLink.setAttribute('data-reveal-print-css', 'true')
+          document.head.appendChild(printLink)
 
           // reveal.js print-pdf plugin CSS
-          const pdfLink = document.createElement('link');
-          pdfLink.rel = 'stylesheet';
-          pdfLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/print/pdf.css';
-          pdfLink.setAttribute('data-reveal-pdf-css', 'true');
-          document.head.appendChild(pdfLink);
+          const pdfLink = document.createElement('link')
+          pdfLink.rel = 'stylesheet'
+          pdfLink.href =
+            'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/print/pdf.css'
+          pdfLink.setAttribute('data-reveal-pdf-css', 'true')
+          document.head.appendChild(pdfLink)
         }
 
         // Initialize reveal.js
@@ -277,121 +390,151 @@ ${decodedContent}
           controls,
           progress,
           touch: !preview,
-          slideNumber: preview ? false : (slideNumber ? 'c/t' : false),
-          transition: transition as "none" | "fade" | "slide" | "convex" | "concave" | "zoom",
+          slideNumber: preview ? false : slideNumber ? 'c/t' : false,
+          transition: transition as
+            | 'none'
+            | 'fade'
+            | 'slide'
+            | 'convex'
+            | 'concave'
+            | 'zoom',
           plugins,
           markdown: { smartypants: true },
-          ...(mathEnabled ? { math: { } } : {}), // reveal.js Math plugin auto-detects KaTeX
+          ...(mathEnabled ? { math: {} } : {}), // reveal.js Math plugin auto-detects KaTeX
           // Auto-animate defaults (slides opt-in via data-auto-animate attribute in markdown)
           autoAnimateEasing: 'ease',
           autoAnimateDuration: 1.0,
           autoAnimateUnmatched: true,
           // Auto-slide (milliseconds, 0 = disabled). Not used in preview mode.
-          autoSlide: preview ? 0 : (autoSlide || 0),
+          autoSlide: preview ? 0 : autoSlide || 0,
           autoSlideStoppable: true,
           embedded,
           ...(embedded ? {} : { pdfSeparateFragments: false }),
-          width: embedded ? "100%" : 960,
-          height: embedded ? "100%" : 700,
-        });
+          width: embedded ? '100%' : 960,
+          height: embedded ? '100%' : 700,
+        })
 
-        await revealRef.current.initialize();
-        
-        setIsInitialized(true);
+        await revealRef.current.initialize()
+
+        setIsInitialized(true)
       } catch (error) {
-        console.error(`Failed to initialize reveal.js for ${uniqueId}:`, error);
+        console.error(`Failed to initialize reveal.js for ${uniqueId}:`, error)
       }
-    };
+    }
+
+    watchForRenderableSize()
 
     return () => {
-      clearTimeout(timer);
+      isCancelled = true
+      if (initializeTimer) clearTimeout(initializeTimer)
+      sizeObserver?.disconnect()
       // Only destroy if we're actually unmounting, not on re-renders
       // The revealRef check prevents double-cleanup
-    };
-  }, [content, theme, transition, controls, progress, preview, mathEnabled, slideNumber, autoSlide, embedded, isClient, themeLoaded, stylesInjected, uniqueId]);
+    }
+  }, [
+    content,
+    theme,
+    transition,
+    controls,
+    progress,
+    preview,
+    mathEnabled,
+    slideNumber,
+    autoSlide,
+    embedded,
+    isClient,
+    themeLoaded,
+    stylesInjected,
+    uniqueId,
+  ])
 
   // ResizeObserver to relayout reveal.js when container resizes
   // Handles window resize, expand/collapse transitions, and any layout shifts
   useEffect(() => {
-    if (!isInitialized || !deckRef.current || !revealRef.current) return;
+    if (!isInitialized || !deckRef.current || !revealRef.current) return
 
-    let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
     const debouncedLayout = () => {
-      if (debounceTimer) clearTimeout(debounceTimer);
+      if (debounceTimer) clearTimeout(debounceTimer)
       debounceTimer = setTimeout(() => {
-        if (revealRef.current) {
-          revealRef.current.layout();
+        if (revealRef.current && deckRef.current && hasRenderableSize(deckRef.current)) {
+          revealRef.current.layout()
         }
-      }, 100);
-    };
+      }, 100)
+    }
 
     // Observe the reveal container for size changes
-    const observer = new ResizeObserver(debouncedLayout);
-    observer.observe(deckRef.current);
+    const observer = new ResizeObserver((entries) => {
+      const resizedElement = entries[0]?.target
+      if (resizedElement instanceof HTMLElement && hasRenderableSize(resizedElement)) {
+        debouncedLayout()
+      }
+    })
+    observer.observe(deckRef.current)
 
     // Also listen for custom relayout events (e.g., from expand/collapse transitions)
-    const handleRelayout = () => debouncedLayout();
-    window.addEventListener("reveal-relayout", handleRelayout);
+    const handleRelayout = () => debouncedLayout()
+    window.addEventListener('reveal-relayout', handleRelayout)
 
     // Listen for auto-slide toggle events from the Astro page
-    let autoSlidePaused = false;
+    let autoSlidePaused = false
     const handleAutoSlideToggle = () => {
-      if (!revealRef.current) return;
+      if (!revealRef.current) return
       if (autoSlidePaused) {
-        revealRef.current.configure({ autoSlide: autoSlide || 0 });
-        autoSlidePaused = false;
+        revealRef.current.configure({ autoSlide: autoSlide || 0 })
+        autoSlidePaused = false
       } else {
-        revealRef.current.configure({ autoSlide: 0 });
-        autoSlidePaused = true;
+        revealRef.current.configure({ autoSlide: 0 })
+        autoSlidePaused = true
       }
-    };
-    window.addEventListener("reveal-autoslide-toggle", handleAutoSlideToggle);
+    }
+    window.addEventListener('reveal-autoslide-toggle', handleAutoSlideToggle)
 
     return () => {
-      observer.disconnect();
-      window.removeEventListener("reveal-relayout", handleRelayout);
-      window.removeEventListener("reveal-autoslide-toggle", handleAutoSlideToggle);
-      if (debounceTimer) clearTimeout(debounceTimer);
-    };
-  }, [isInitialized]);
+      observer.disconnect()
+      window.removeEventListener('reveal-relayout', handleRelayout)
+      window.removeEventListener('reveal-autoslide-toggle', handleAutoSlideToggle)
+      if (debounceTimer) clearTimeout(debounceTimer)
+    }
+  }, [isInitialized])
 
   // Cleanup reveal.js on unmount only
   useEffect(() => {
     return () => {
       if (revealRef.current) {
         try {
-          revealRef.current.destroy();
+          revealRef.current.destroy()
         } catch (error) {
-          console.warn("Error destroying reveal.js instance:", error);
+          console.warn('Error destroying reveal.js instance:', error)
         }
-        revealRef.current = null;
+        revealRef.current = null
       }
-    };
-  }, []);
+    }
+  }, [])
 
   return (
-    <div style={{ width: "100%", height: "100%", position: "relative" }}>
+    <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       {/* Loading overlay - managed by React */}
       {!isInitialized && (
         <div
           style={{
-            position: "absolute",
+            position: 'absolute',
             inset: 0,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "1rem",
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '1rem',
             zIndex: 10,
-            background: "var(--theme-background, #191919)",
+            background: 'var(--theme-background, #191919)',
           }}
         >
           <svg
             style={{
-              width: "3rem",
-              height: "3rem",
-              animation: "rotate 2s linear infinite",
+              width: '3rem',
+              height: '3rem',
+              animation: 'rotate 2s linear infinite',
             }}
             viewBox="0 0 50 50"
           >
@@ -414,25 +557,32 @@ ${decodedContent}
               fill="none"
               strokeWidth="4"
               style={{
-                stroke: "var(--theme-accent)",
-                strokeLinecap: "round",
-                animation: "dash 1.5s ease-in-out infinite",
+                stroke: 'var(--theme-accent)',
+                strokeLinecap: 'round',
+                animation: 'dash 1.5s ease-in-out infinite',
               }}
             />
           </svg>
-          <p style={{ color: "var(--theme-foreground)", opacity: 0.7, fontSize: "0.95rem", margin: 0 }}>
+          <p
+            style={{
+              color: 'var(--theme-foreground)',
+              opacity: 0.7,
+              fontSize: '0.95rem',
+              margin: 0,
+            }}
+          >
             Loading slides...
           </p>
         </div>
       )}
       {/* Reveal.js container - managed outside React via ref */}
       <div
-        className={`reveal reveal-container-${uniqueId.replace(/:/g, "-")}`}
+        className={`reveal reveal-container-${uniqueId.replace(/:/g, '-')}`}
         ref={deckRef}
-        style={{ width: "100%", height: "100%" }}
+        style={{ width: '100%', height: '100%' }}
       />
     </div>
-  );
-};
+  )
+}
 
-export default SlideViewer;
+export default SlideViewer

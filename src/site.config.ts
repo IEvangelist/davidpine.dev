@@ -21,7 +21,7 @@ const config: SiteConfig = {
   font: 'JetBrains Mono Variable',
   // For pagination, the number of posts to display per page.
   // The homepage will display half this number in the "Latest Posts" section.
-  pageSize: 6,
+  pageSize: 7,
   // Whether Astro should resolve trailing slashes in URLs or not.
   // This value is used in the astro.config.mjs file and in the "Search" component to make sure pagefind links match this setting.
   // It is not recommended to change this, since most links existing in the site currently do not have trailing slashes.
@@ -59,11 +59,6 @@ const config: SiteConfig = {
     {
       name: 'Pictures',
       url: '/pictures',
-    },
-    {
-      name: 'GitHub',
-      url: 'https://github.com/IEvangelist',
-      external: true,
     },
   ],
   // The theming configuration for the site.
@@ -175,7 +170,7 @@ const config: SiteConfig = {
     mastodon: 'https://dotnet.social/@davidpine',
     email: 'david.pine.7@gmail.com',
     linkedin: 'https://www.linkedin.com/in/dpine/',
-    bluesky: 'https://bsky.app/profile/davidpine.net',
+    bluesky: 'https://bsky.app/profile/davidpine.dev',
     twitter: 'https://x.com/davidpine7',
     rss: true, // Set to true to include an RSS feed link in the footer
   },

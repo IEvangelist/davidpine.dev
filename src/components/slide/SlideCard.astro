@@ -35,9 +35,7 @@ const slideContent = `## ${slide.title}${slide.author ? `\n\n*${slide.author}*` 
 <div
   class="group hover:shadow-lg hover:border-[var(--theme-accent)] transition-all duration-300 cursor-pointer w-full flex flex-col rounded-2xl border border-[var(--theme-separator)] bg-[var(--theme-background)] shadow"
 >
-  <div
-    class="w-full h-48 p-0 relative rounded-2xl overflow-hidden slide-preview"
-  >
+  <div class="w-full h-48 p-0 relative rounded-2xl overflow-hidden slide-preview">
     <SlideViewer
       content={slideContent}
       theme={slide.theme}
@@ -46,7 +44,7 @@ const slideContent = `## ${slide.title}${slide.author ? `\n\n*${slide.author}*` 
       progress={false}
       preview={true}
       math={slide.math}
-      client:load
+      client:visible
     />
   </div>
 </div>
