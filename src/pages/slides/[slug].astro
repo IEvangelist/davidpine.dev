@@ -2,6 +2,12 @@
 import Layout from '~/layouts/Layout.astro'
 import { SlideViewer } from '~/components/slide/slide-viewer'
 import { getCollection } from 'astro:content'
+import { getImage } from 'astro:assets'
+
+const slideImageAssets = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/slides/**/*.{png,jpg,jpeg,webp}',
+  { eager: true }
+)
 
 export async function getStaticPaths() {
   const slides = await getCollection('slides')
@@ -23,7 +29,26 @@ const { slide } = Astro.props
 const { slug } = Astro.params
 
 // Get the raw content (body) from the slide
-const rawContent = slide.body || ''
+const rawContent = await optimizeSlideImages(slide.body || '')
+
+async function optimizeSlideImages(content: string): Promise<string> {
+  let optimizedContent = content
+
+  for (const [assetPath, asset] of Object.entries(slideImageAssets)) {
+    if (!optimizedContent.includes(assetPath)) continue
+
+    const optimizedImage = await getImage({
+      src: asset.default,
+      width: Math.min(asset.default.width, 900),
+      format: 'webp',
+      quality: 84,
+    })
+
+    optimizedContent = optimizedContent.split(assetPath).join(optimizedImage.src)
+  }
+
+  return optimizedContent
+}
 
 // Create cover slide content
 function formatDate(date: Date): string {
@@ -116,16 +141,18 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     const pauseIcon = document.getElementById('autoslide-pause-icon');
     
     if (!expandBtn || !collapseBtn || !slideContainer || !slidePage) return;
+    const activeSlideContainer = slideContainer;
+    const activeSlidePage = slidePage;
     
     function expandSlides() {
-      slideContainer.classList.add('expanded');
-      slidePage.classList.add('slides-expanded');
+      activeSlideContainer.classList.add('expanded');
+      activeSlidePage.classList.add('slides-expanded');
       document.body.style.overflow = 'hidden';
     }
     
     function collapseSlides() {
-      slideContainer.classList.remove('expanded');
-      slidePage.classList.remove('slides-expanded');
+      activeSlideContainer.classList.remove('expanded');
+      activeSlidePage.classList.remove('slides-expanded');
       document.body.style.overflow = '';
     }
     

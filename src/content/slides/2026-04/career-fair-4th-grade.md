@@ -96,6 +96,17 @@ autoSlide: 0
     background: #ffffff;
   }
 
+  .reveal .career-fair.full-photo-slide {
+    position: relative;
+    container-type: size;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: #071326;
+  }
+
   .reveal .career-fair h2 {
     margin: 0;
     color: var(--cf-ink) !important;
@@ -163,152 +174,118 @@ autoSlide: 0
     padding: 0.34rem 0.56rem;
   }
 
-  .reveal .career-fair.cold-storage .copy {
-    gap: 0.28rem;
-  }
-
-  .reveal .career-fair.cold-storage h2 {
-    font-size: 2.82rem;
-    line-height: 1;
-  }
-
-  .reveal .career-fair.cold-storage .question,
-  .reveal .career-fair.cold-storage .yt-link {
-    padding: 0.28rem 0.5rem;
-  }
-
-  .reveal .career-fair .vault-card {
+  .reveal .career-fair.arctic-vault-slide {
     position: relative;
     isolation: isolate;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: var(--cf-ink);
+  }
+
+  .reveal .career-fair .arctic-vault-grid {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
     display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto auto;
-    gap: 0.5rem;
-    width: min(100%, 410px);
-    min-height: 314px;
-    margin: 0;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+    gap: 0.18rem;
     overflow: hidden;
-    padding: 0.78rem;
-    border: 5px solid var(--cf-ink);
-    border-radius: 20px;
-    background: linear-gradient(180deg, #ffffff 0%, #ecfeff 100%);
-    box-shadow:
-      0 0 0 0.12rem var(--cf-blue),
-      0.22rem 0.26rem 0 rgba(7, 19, 38, 0.22);
+    background: var(--cf-ink);
   }
 
-  .reveal .career-fair .vault-card > * {
-    position: relative;
-    z-index: 1;
-  }
-
-  .reveal .career-fair .vault-scene {
-    position: relative;
-    min-height: 208px;
-    overflow: hidden;
-    border-radius: 16px;
-    background:
-      radial-gradient(circle at 16% 18%, rgba(255, 255, 255, 0.9) 0 9%, transparent 10%),
-      linear-gradient(180deg, #a5f3fc 0 46%, #ecfeff 47% 100%),
-      #ecfeff;
-  }
-
-  .reveal .career-fair .vault-scene::before {
+  .reveal .career-fair .arctic-vault-grid::after {
     content: "";
     position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(7, 19, 38, 0.74) 0 42%, rgba(7, 19, 38, 0.18) 68%, rgba(7, 19, 38, 0.26) 100%);
+    pointer-events: none;
+  }
+
+  .reveal .career-fair .arctic-vault-grid img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(1.08) contrast(1.04);
+  }
+
+  .reveal .career-fair .arctic-vault-content {
+    position: relative;
     z-index: 1;
-    inset: 33% 0 0;
-    background: linear-gradient(180deg, #ffffff 0%, #cffafe 100%);
-    clip-path: polygon(0 100%, 14% 62%, 27% 100%, 45% 38%, 61% 100%, 78% 55%, 100% 100%);
+    display: grid;
+    gap: 0.52rem;
+    align-content: center;
+    width: min(72%, 720px);
+    height: 100%;
+    padding: 0.95rem 1.08rem;
+    border-right: 3px solid rgba(255, 255, 255, 0.82);
+    background: rgba(7, 19, 38, 0.82);
+    color: #ffffff !important;
+    backdrop-filter: blur(3px);
+    text-align: left !important;
   }
 
-  .reveal .career-fair .vault-scene::after {
-    content: "";
-    position: absolute;
-    z-index: 2;
-    bottom: 0;
-    left: 50%;
-    width: 76%;
-    height: 76%;
-    transform: translateX(-50%);
-    border: 5px solid var(--cf-ink);
-    border-bottom: 0;
-    border-radius: 48% 48% 0 0 / 58% 58% 0 0;
-    background: linear-gradient(180deg, #164e63 0%, #071326 100%);
-    box-shadow: inset 0 0 2.6rem rgba(103, 232, 249, 0.44);
-  }
-
-  .reveal .career-fair .vault-label {
+  .reveal .career-fair .arctic-vault-kicker {
     display: inline-flex;
-    width: fit-content;
-    max-width: 100%;
     align-items: center;
     justify-content: center;
-    padding: 0.24rem 0.5rem;
-    border: 3px solid var(--cf-ink);
+    width: fit-content;
+    max-width: 100%;
+    padding: 0.3rem 0.7rem;
+    border: 3px solid var(--cf-yellow);
     border-radius: 999px;
-    background: var(--cf-yellow);
-    color: var(--cf-ink) !important;
-    font-size: 0.76rem;
+    background: #071326;
+    color: var(--cf-yellow) !important;
+    font-size: 0.98rem;
     font-weight: 950;
     line-height: 1;
     text-transform: uppercase;
+    box-shadow: 0.16rem 0.18rem 0 rgba(7, 19, 38, 0.35);
   }
 
-  .reveal .career-fair .vault-door {
-    position: absolute;
-    left: 50%;
-    bottom: 1.05rem;
-    z-index: 3;
-    display: grid;
-    gap: 0.2rem;
-    width: 62%;
-    min-height: 6.55rem;
-    transform: translateX(-50%);
-    place-items: center;
-    padding: 0.7rem;
-    border: 4px solid #67e8f9;
-    border-radius: 26px;
-    background: linear-gradient(135deg, rgba(8, 47, 73, 0.98), rgba(14, 116, 144, 0.9));
-    box-shadow:
-      0 0 0 0.16rem rgba(255, 255, 255, 0.76),
-      0 0.9rem 2rem rgba(7, 19, 38, 0.35);
-    text-align: center;
-  }
-
-  .reveal .career-fair .vault-code {
+  .reveal .career-fair .arctic-vault-content h2 {
     color: #ffffff !important;
-    font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
-    font-size: 1.55rem;
-    font-weight: 950;
-    line-height: 1;
+    font-size: 3.2rem;
+    line-height: 0.94;
+    text-shadow: 0 0.12rem 0.4rem rgba(7, 19, 38, 0.5) !important;
   }
 
-  .reveal .career-fair .vault-caption {
+  .reveal .career-fair .arctic-vault-content h2 span {
+    color: #fef08a !important;
+  }
+
+  .reveal .career-fair .arctic-vault-content h2 .arctic-vault-title-pop {
+    color: #ffffff !important;
+  }
+
+  .reveal .career-fair .arctic-vault-facts {
     display: grid;
-    justify-items: center;
-    gap: 0.04rem;
+    gap: 0.36rem;
     margin: 0;
     padding: 0;
-    color: var(--cf-ink) !important;
-    font-size: 1rem;
-    font-weight: 950;
-    line-height: 1.06;
-    text-align: center;
+    list-style: none;
   }
 
-  .reveal .career-fair .vault-caption span {
-    display: block;
-    color: var(--cf-teal) !important;
-    font-size: 1.02rem;
+  .reveal .career-fair .arctic-vault-facts li {
+    --fact-color: var(--cf-teal);
+    padding: 0.42rem 0.58rem;
+    border-left: 6px solid var(--fact-color);
+    border-radius: 8px;
+    background: rgba(7, 19, 38, 0.78);
+    color: #ffffff !important;
+    font-size: 1.18rem;
+    font-weight: 900;
     line-height: 1.08;
-    text-transform: uppercase;
   }
 
-  .reveal .career-fair .vault-caption strong {
-    display: block;
-    color: var(--cf-blue) !important;
-    font-size: 2.55rem;
-    line-height: 1.18;
+  .reveal .career-fair .arctic-vault-facts li:nth-child(2) { --fact-color: var(--cf-yellow); }
+  .reveal .career-fair .arctic-vault-facts li:nth-child(3) { --fact-color: var(--cf-orange); }
+  .reveal .career-fair .arctic-vault-facts li:nth-child(4) { --fact-color: var(--cf-pink); }
+
+  .reveal .career-fair .arctic-vault-facts strong {
+    color: var(--fact-color) !important;
   }
 
   .reveal .career-fair.origin-chain .copy {
@@ -473,6 +450,46 @@ autoSlide: 0
     background: #ffffff;
     object-fit: contain;
     filter: none;
+  }
+
+  .reveal .career-fair .full-photo-frame {
+    --full-photo-aspect: 2.454545;
+    --full-photo-ratio: 837 / 341;
+    position: relative;
+    width: min(100cqw, calc(100cqh * var(--full-photo-aspect)));
+    max-width: 100%;
+    max-height: 100%;
+    aspect-ratio: var(--full-photo-ratio);
+  }
+
+  .reveal .career-fair .valve-hammer-photo {
+    --full-photo-aspect: 1.285141;
+    --full-photo-ratio: 1280 / 996;
+  }
+
+  .reveal .career-fair .full-slide-photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    filter: none;
+  }
+
+  .reveal .career-fair .full-photo-label {
+    position: absolute;
+    left: 3px;
+    bottom: 3px;
+    max-width: calc(100% - 6px);
+    padding: 0.34rem 0.72rem;
+    border: 3px solid #ffffff;
+    border-radius: 999px;
+    background: var(--cf-ink);
+    color: var(--cf-yellow) !important;
+    font-size: 1rem;
+    font-weight: 950;
+    line-height: 1;
+    box-shadow: 0.16rem 0.18rem 0 rgba(7, 19, 38, 0.35);
   }
 
   .reveal .career-fair .recipe-stage {
@@ -800,56 +817,36 @@ autoSlide: 0
     border-radius: clamp(18px, 2vw, 28px);
   }
 
-  .slide-container.expanded .reveal .career-fair .vault-card {
-    width: min(100%, 690px);
-    height: 100%;
-    min-height: 0;
-    gap: clamp(0.36rem, 1vh, 0.85rem);
-    padding: clamp(0.72rem, 1.6vh, 1.5rem);
-    border-width: clamp(5px, 0.7vh, 8px);
-    border-radius: clamp(18px, 2.4vh, 28px);
+  .slide-container.expanded .reveal .career-fair .arctic-vault-grid {
+    gap: clamp(0.18rem, 0.6vh, 0.45rem);
   }
 
-  .slide-container.expanded .reveal .career-fair.cold-storage .visual {
-    align-self: center;
-    height: calc(100% - clamp(0.6rem, 2vh, 1rem));
-    padding-right: clamp(2.8rem, 7vw, 6rem);
+  .slide-container.expanded .reveal .career-fair .arctic-vault-content {
+    gap: clamp(0.52rem, 1.35vh, 1.1rem);
+    width: min(64%, 980px);
+    padding: clamp(0.85rem, 2vh, 1.8rem) clamp(0.95rem, 2.2vw, 2rem);
+    border-right-width: clamp(3px, 0.5vh, 6px);
   }
 
-  .slide-container.expanded .reveal .career-fair.cold-storage .vault-card {
-    transform: translateX(clamp(-2.25rem, -3vw, -1rem));
-  }
-
-  .slide-container.expanded .reveal .career-fair .vault-scene {
-    min-height: 0;
-    height: 100%;
-    border-radius: clamp(14px, 2vh, 24px);
-  }
-
-  .slide-container.expanded .reveal .career-fair .vault-label {
-    padding: clamp(0.22rem, 0.65vh, 0.46rem) clamp(0.5rem, 1vw, 1rem);
+  .slide-container.expanded .reveal .career-fair .arctic-vault-kicker {
+    padding: clamp(0.3rem, 0.75vh, 0.56rem) clamp(0.7rem, 1.35vw, 1.2rem);
     border-width: clamp(3px, 0.55vh, 5px);
-    font-size: clamp(0.76rem, min(1.3vw, 1.9vh), 1.45rem);
+    font-size: clamp(0.98rem, min(1.55vw, 2.25vh), 1.7rem);
   }
 
-  .slide-container.expanded .reveal .career-fair .vault-door {
-    width: min(64%, 440px);
-    min-height: clamp(6.4rem, 18vh, 13rem);
-    padding: clamp(0.7rem, 1.6vh, 1.4rem);
-    border-width: clamp(4px, 0.65vh, 7px);
-    border-radius: clamp(22px, 3vh, 38px);
+  .slide-container.expanded .reveal .career-fair .arctic-vault-content h2 {
+    font-size: clamp(3.2rem, min(6.1vw, 9vh), 7rem);
   }
 
-  .slide-container.expanded .reveal .career-fair .vault-code {
-    font-size: clamp(1.55rem, min(3.2vw, 4.8vh), 3.6rem);
+  .slide-container.expanded .reveal .career-fair .arctic-vault-facts {
+    gap: clamp(0.26rem, 0.85vh, 0.7rem);
   }
 
-  .slide-container.expanded .reveal .career-fair .vault-caption span {
-    font-size: clamp(1.02rem, min(1.7vw, 2.5vh), 2rem);
-  }
-
-  .slide-container.expanded .reveal .career-fair .vault-caption strong {
-    font-size: clamp(2.55rem, min(5vw, 7vh), 5.4rem);
+  .slide-container.expanded .reveal .career-fair .arctic-vault-facts li {
+    padding: clamp(0.42rem, 1vh, 0.82rem) clamp(0.58rem, 1.15vw, 1.1rem);
+    border-left-width: clamp(6px, 0.9vh, 10px);
+    border-radius: clamp(8px, 1.2vh, 16px);
+    font-size: clamp(1.18rem, min(2.05vw, 3.15vh), 2.38rem);
   }
 
   .slide-container.expanded .reveal .career-fair .material-chain {
@@ -1116,6 +1113,19 @@ This answers the path/training question: stay curious, earn a bachelor's degree 
 
 ---
 
+<div class="career-fair full-photo-slide">
+  <div class="full-photo-frame valve-hammer-photo">
+    <img
+      class="full-slide-photo"
+      src="/media/career-fair/valve-hammer-3d.png"
+      alt="A 3D valve hammer from a self-taught video game development project"
+    />
+    <div class="full-photo-label">Middleschool : Self-taught video game dev</div>
+  </div>
+</div>
+
+---
+
 <div class="career-fair orange-pop">
   <div class="stage">
     <div class="copy">
@@ -1164,41 +1174,52 @@ If they ask, mention traveling across Serbia in a van to teach code.
 
 ---
 
-<div class="career-fair purple-pop compact cold-storage">
-  <div class="stage">
-    <div class="copy">
-      <span class="eyebrow"><span class="eyebrow-icon" aria-hidden="true">🧊</span><span class="eyebrow-text">Interesting part: cold storage</span></span>
-      <h2>Code time capsule.</h2>
-      <div class="question green fragment">What would you save for future kids?</div>
-      <a
-        class="yt-link fragment"
-        href="https://www.youtube.com/watch?v=fzI9FNjXQ0o"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <span class="yt-play" aria-hidden="true">▶</span>
-        Watch the story
-      </a>
-    </div>
-    <div class="visual">
-      <figure class="vault-card" aria-label="Arctic Code Vault illustration inspired by Bloomberg">
-        <span class="vault-label">Arctic Code Vault</span>
-        <div class="vault-scene" aria-hidden="true">
-          <div class="vault-door">
-            <span class="vault-code">{ code }</span>
-          </div>
-        </div>
-        <figcaption class="vault-caption">
-          <span>Saved for</span>
-          <strong>1,000 years</strong>
-        </figcaption>
-      </figure>
-    </div>
+<div class="career-fair full-photo-slide">
+  <div class="full-photo-frame">
+    <img
+      class="full-slide-photo"
+      src="/media/media.jpg"
+      alt="David speaking with reporters and camera crews during a media interview"
+    />
+    <div class="full-photo-label">Serbian: National News</div>
+  </div>
+</div>
+
+---
+
+<div class="career-fair arctic-vault-slide">
+  <div class="arctic-vault-grid" aria-hidden="true">
+    <img src="/src/assets/slides/2026-04/career-fair/arctic-vault/scroll-1-1.png" alt="" />
+    <img src="/src/assets/slides/2026-04/career-fair/arctic-vault/scroll-1-2.png" alt="" />
+    <img src="/src/assets/slides/2026-04/career-fair/arctic-vault/scroll-1-4.png" alt="" />
+    <img src="/src/assets/slides/2026-04/career-fair/arctic-vault/scroll-1-3.png" alt="" />
+    <img src="/src/assets/slides/2026-04/career-fair/arctic-vault/scroll-1-5.png" alt="" />
+    <img src="/src/assets/slides/2026-04/career-fair/arctic-vault/scroll-1-6.png" alt="" />
+    <img src="/src/assets/slides/2026-04/career-fair/arctic-vault/scroll-1-8.png" alt="" />
+    <img src="/src/assets/slides/2026-04/career-fair/arctic-vault/scroll-1-7.png" alt="" />
+    <img src="/src/assets/slides/2026-04/career-fair/arctic-vault/scroll-2-1.png" alt="" />
+    <img src="/src/assets/slides/2026-04/career-fair/arctic-vault/scroll-2-2.png" alt="" />
+    <img src="/src/assets/slides/2026-04/career-fair/arctic-vault/scroll-2-3.png" alt="" />
+    <img src="/src/assets/slides/2026-04/career-fair/arctic-vault/scroll-2-5.png" alt="" />
+    <img src="/src/assets/slides/2026-04/career-fair/arctic-vault/scroll-2-4.png" alt="" />
+    <img src="/src/assets/slides/2026-04/career-fair/arctic-vault/scroll-2-6.png" alt="" />
+    <img src="/src/assets/slides/2026-04/career-fair/arctic-vault/scroll-2-7.png" alt="" />
+    <img src="/src/assets/slides/2026-04/career-fair/arctic-vault/scroll-2-8.png" alt="" />
+  </div>
+  <div class="arctic-vault-content">
+    <span class="arctic-vault-kicker">Interesting part: cold storage</span>
+    <h2><span>GitHub:</span> <span class="arctic-vault-title-pop">Arctic Code Vault</span></h2>
+    <ul class="arctic-vault-facts">
+      <li><strong>About 820 feet deep</strong> in an Arctic mountain.</li>
+      <li><strong>Svalbard</strong>, closer to the North Pole than the Arctic Circle.</li>
+      <li><strong>02/02/2020</strong> snapshot of public GitHub code.</li>
+      <li><strong>21 TB</strong> archived on 186 film reels for 1,000 years.</li>
+    </ul>
   </div>
 </div>
 
 Note:
-This is the GitHub Archive/cold storage story. The poster is a kid-friendly paraphrase inspired by a Bloomberg headline listed on the GitHub Archive Program press page. The YouTube button opens in a new tab. Press down for the optional embedded video slide.
+Source: [GitHub Archive Program Arctic Vault](https://archiveprogram.github.com/arctic-vault/). The slide uses the Arctic Vault page images and facts from the GitHub Archive Program: Svalbard, about 820 feet deep, the 02/02/2020 public-code snapshot, 21TB, 186 film reels, and 1,000-year cold storage. Press down for the optional embedded video slide.
 
 --
 
@@ -1241,7 +1262,7 @@ This replaces tool talk. If they ask about tools, answer verbally and keep movin
     <div class="copy">
       <span class="eyebrow"><span class="eyebrow-icon" aria-hidden="true">👂</span><span class="eyebrow-text">Secret superpower</span></span>
       <h2>Listen first.</h2>
-      <span class="hero-word hot fragment">Then build.</span>
+      <span class="hero-word hot fragment">Collaborate. Then build.</span>
     </div>
     <div class="visual">
       <img
