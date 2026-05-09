@@ -132,7 +132,7 @@ const projects = [
 
 <script>
   const root = document.documentElement
-  const normalizeRgb = (value) => {
+  const parseRgbColor = (value) => {
     const rgbMatch = value.match(
       /rgba?\(\s*(\d{1,3})[\s,]+(\d{1,3})[\s,]+(\d{1,3})(?:[\s,\/]+[\d.]+)?\s*\)/i,
     )
@@ -174,7 +174,7 @@ const projects = [
     const rawBackground = getComputedStyle(root)
       .getPropertyValue('--theme-background')
       .trim()
-    const rgb = normalizeRgb(rawBackground)
+    const rgb = parseRgbColor(rawBackground)
 
     if (!rgb) {
       return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
@@ -182,6 +182,7 @@ const projects = [
 
     const [r, g, b] = rgb.map((channel) => {
       const normalized = channel / 255
+      // WCAG relative luminance conversion from sRGB to linear RGB.
       return normalized <= 0.03928
         ? normalized / 12.92
         : ((normalized + 0.055) / 1.055) ** 2.4
