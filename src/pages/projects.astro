@@ -142,8 +142,16 @@ const projects = [
     const activeTheme = root.getAttribute('data-theme')
     const darkTheme = root.getAttribute('data-dark-theme')
     const lightTheme = root.getAttribute('data-light-theme')
-    const fallbackDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const uiTone = activeTheme === darkTheme ? 'dark' : activeTheme === lightTheme ? 'light' : fallbackDark ? 'dark' : 'light'
+    let uiTone = 'light'
+
+    if (activeTheme === darkTheme) {
+      uiTone = 'dark'
+    } else if (activeTheme === lightTheme) {
+      uiTone = 'light'
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      uiTone = 'dark'
+    }
+
     root.setAttribute('data-ui-tone', uiTone)
   }
 
@@ -288,7 +296,7 @@ const projects = [
     width: 0.45rem;
     height: 0.45rem;
     border-radius: 999px;
-    background: color-mix(in srgb, var(--theme-accent), #22c55e 40%);
+    background: color-mix(in srgb, var(--theme-accent), var(--theme-green) 35%);
     box-shadow: 0 0 0 0 color-mix(in srgb, var(--theme-accent), transparent 58%);
     animation: pulse 1.8s ease-in-out infinite;
   }
