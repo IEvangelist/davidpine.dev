@@ -245,6 +245,7 @@ const projects = [
     border: 1px solid color-mix(in srgb, var(--theme-accent), transparent 35%);
     background: color-mix(in srgb, var(--theme-background), var(--theme-accent) 18%);
     backdrop-filter: blur(3px);
+    z-index: 2;
   }
 
   .thumb-glow {
@@ -254,11 +255,6 @@ const projects = [
     pointer-events: none;
     mix-blend-mode: screen;
     z-index: 1;
-  }
-
-  .thumb-badge {
-    position: relative;
-    z-index: 2;
   }
 
   .live-dot {
