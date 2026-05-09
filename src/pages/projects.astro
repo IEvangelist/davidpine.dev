@@ -8,28 +8,31 @@ const projects = [
     description:
       'A GitHub Action that translates .resx and localization resources for .NET apps and repositories.',
     repoUrl: 'https://github.com/IEvangelist/resource-translator',
+    pagesUrl: 'https://ievangelist.github.io/resource-translator/',
     thumbnail: '/images/projects/resource-translator.png',
-    accent: 'from-cyan-500/55 via-blue-500/45 to-violet-500/55',
+    accent: 'from-cyan-500/65 via-blue-500/55 to-violet-500/65',
     repoPath: 'IEvangelist/resource-translator',
     tags: ['GitHub Actions', '.NET', 'Localization'],
   },
   {
-    name: 'GitHub Profanity Filter',
+    name: 'Profanity Filter',
     description:
-      'An Azure Functions-powered filter that scans GitHub issues and PRs to detect and clean profane language.',
-    repoUrl: 'https://github.com/IEvangelist/GitHub.ProfanityFilter',
-    thumbnail: '/images/projects/github-profanity-filter.png',
-    accent: 'from-pink-500/55 via-fuchsia-500/45 to-orange-500/55',
-    repoPath: 'IEvangelist/GitHub.ProfanityFilter',
-    tags: ['Azure Functions', 'GitHub Webhooks', 'C#'],
+      'A modern .NET profanity filtering solution with docs published to GitHub Pages.',
+    repoUrl: 'https://github.com/IEvangelist/profanity-filter',
+    pagesUrl: 'https://ievangelist.github.io/profanity-filter/',
+    thumbnail: '/images/projects/profanity-filter.png',
+    accent: 'from-pink-500/65 via-fuchsia-500/55 to-orange-500/65',
+    repoPath: 'IEvangelist/profanity-filter',
+    tags: ['GitHub Actions', '.NET', 'Moderation'],
   },
   {
     name: 'Netlify Aspire Integration',
     description:
       'A hosting integration that helps deploy Aspire-powered static experiences using Netlify.',
     repoUrl: 'https://github.com/IEvangelist/netlify-aspire-integration',
+    pagesUrl: 'https://ievangelist.github.io/netlify-aspire-integration/',
     thumbnail: '/images/projects/netlify-aspire-integration.png',
-    accent: 'from-emerald-500/55 via-teal-500/45 to-sky-500/55',
+    accent: 'from-emerald-500/65 via-teal-500/55 to-sky-500/65',
     repoPath: 'IEvangelist/netlify-aspire-integration',
     tags: ['Aspire', 'Netlify', 'Cloud'],
   },
@@ -42,13 +45,13 @@ const projects = [
   <article class="max-w-full py-7.5 space-y-7">
     <section class="project-intro rounded-xl border border-accent/20 p-5 md:p-6">
       <p class="m-0 text-lg md:text-xl">
-        Built in public, shipped in the real world — these are featured repositories with
-        direct links and live GitHub page previews.
+        Built in public, shipped in production — each card links to the repository and
+        features a screenshot from its GitHub Pages deployment.
       </p>
       <div class="mt-4 flex flex-wrap gap-2">
         <span class="meta-chip">{projects.length} Featured Repositories</span>
-        <span class="meta-chip">GitHub-first OSS</span>
-        <span class="meta-chip">Open source + cloud</span>
+        <span class="meta-chip">GitHub Pages screenshots</span>
+        <span class="meta-chip">Theme-adaptive UI</span>
       </div>
     </section>
 
@@ -66,10 +69,11 @@ const projects = [
               <div class="thumb-wrap mb-4">
                 <img
                   src={project.thumbnail}
-                  alt={`${project.name} GitHub page screenshot`}
+                  alt={`${project.name} GitHub Pages deployment screenshot`}
                   class="thumb-image"
                   loading="lazy"
                 />
+                <span class="thumb-badge">GitHub Pages</span>
               </div>
 
               <div class="space-y-2 mb-3">
@@ -92,6 +96,7 @@ const projects = [
                   Open repository →
                 </span>
               </div>
+              <p class="m-0 mt-2 text-xs opacity-65 truncate">{project.pagesUrl}</p>
             </div>
           </a>
         ))
@@ -102,6 +107,7 @@ const projects = [
 
 <style>
   .project-card {
+    position: relative;
     transition:
       transform 0.2s ease,
       box-shadow 0.2s ease,
@@ -109,9 +115,9 @@ const projects = [
   }
 
   .project-card:hover {
-    transform: translateY(-4px);
-    border-color: color-mix(in srgb, var(--theme-accent), transparent 45%);
-    box-shadow: 0 10px 26px color-mix(in srgb, var(--theme-accent), transparent 82%);
+    transform: translateY(-6px);
+    border-color: color-mix(in srgb, var(--theme-accent), transparent 38%);
+    box-shadow: 0 16px 36px color-mix(in srgb, var(--theme-accent), transparent 80%);
   }
 
   .project-intro {
@@ -133,10 +139,11 @@ const projects = [
   }
 
   .thumb-wrap {
+    position: relative;
     border-radius: 0.6rem;
     overflow: hidden;
     border: 1px solid color-mix(in srgb, var(--theme-foreground), transparent 82%);
-    background: color-mix(in srgb, var(--theme-background), var(--theme-accent) 6%);
+    background: color-mix(in srgb, var(--theme-background), var(--theme-accent) 8%);
   }
 
   .thumb-image {
@@ -149,5 +156,18 @@ const projects = [
   .repo-path {
     font-size: 0.8rem;
     opacity: 0.65;
+  }
+
+  .thumb-badge {
+    position: absolute;
+    top: 0.55rem;
+    left: 0.55rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.01em;
+    padding: 0.18rem 0.45rem;
+    border-radius: 0.45rem;
+    border: 1px solid color-mix(in srgb, var(--theme-accent), transparent 35%);
+    background: color-mix(in srgb, var(--theme-background), var(--theme-accent) 18%);
+    backdrop-filter: blur(3px);
   }
 </style>
