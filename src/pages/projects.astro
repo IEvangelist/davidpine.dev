@@ -48,13 +48,12 @@ const projects = [
   <article class="max-w-full py-7.5 space-y-7">
     <section class="project-intro rounded-xl border border-accent/20 p-5 md:p-6">
       <p class="m-0 text-lg md:text-xl">
-        Built in public, shipped in production — each card now includes light + dark
-        GitHub Pages captures and follows your active site theme.
+        Built in public, shipped in production — quick access to each project’s live docs
+        and source.
       </p>
       <div class="mt-4 flex flex-wrap gap-2">
         <span class="meta-chip">{projects.length} Featured Repositories</span>
-        <span class="meta-chip">Dual theme screenshots</span>
-        <span class="meta-chip">Theme toggle aware</span>
+        <span class="meta-chip">Dual-theme previews</span>
         <span class="meta-chip">Live + source quick actions</span>
       </div>
     </section>
@@ -82,8 +81,6 @@ const projects = [
                   loading="lazy"
                 />
                 <span class="thumb-badge">GitHub Pages</span>
-                <span class="thumb-theme-chip thumb-theme-light">Light capture</span>
-                <span class="thumb-theme-chip thumb-theme-dark">Dark capture</span>
               </div>
 
               <div class="space-y-2 mb-3">
@@ -101,10 +98,7 @@ const projects = [
               </div>
 
               <div class="mt-auto flex items-center justify-between text-sm">
-                <span class="inline-flex items-center gap-1.5 opacity-75">
-                  <span class="live-dot" />
-                  Theme-matched preview
-                </span>
+                <span class="inline-flex items-center gap-1.5 opacity-75"><span class="live-dot" />Live</span>
                 <span class="opacity-70">github.com</span>
               </div>
 
@@ -199,6 +193,7 @@ const projects = [
 
   .thumb-wrap {
     position: relative;
+    height: 190px;
     border-radius: 0.6rem;
     overflow: hidden;
     border: 1px solid color-mix(in srgb, var(--theme-foreground), transparent 82%);
@@ -207,11 +202,15 @@ const projects = [
   }
 
   .thumb-image {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 190px;
     display: block;
     object-fit: cover;
     transition: opacity 0.28s ease;
+    opacity: 0;
+    z-index: 1;
   }
 
   .thumb-image-light {
@@ -219,8 +218,6 @@ const projects = [
   }
 
   .thumb-image-dark {
-    position: absolute;
-    inset: 0;
     opacity: 0;
   }
 
@@ -250,32 +247,6 @@ const projects = [
     backdrop-filter: blur(3px);
   }
 
-  .thumb-theme-chip {
-    position: absolute;
-    right: 0.55rem;
-    bottom: 0.55rem;
-    font-size: 0.66rem;
-    letter-spacing: 0.01em;
-    padding: 0.16rem 0.42rem;
-    border-radius: 0.45rem;
-    border: 1px solid color-mix(in srgb, var(--theme-foreground), transparent 50%);
-    background: color-mix(in srgb, var(--theme-background), var(--theme-accent) 14%);
-    backdrop-filter: blur(3px);
-    transition: opacity 0.2s ease;
-  }
-
-  .thumb-theme-dark {
-    opacity: 0;
-  }
-
-  :root[data-ui-tone='dark'] .thumb-theme-light {
-    opacity: 0;
-  }
-
-  :root[data-ui-tone='dark'] .thumb-theme-dark {
-    opacity: 1;
-  }
-
   .thumb-glow {
     position: absolute;
     inset: 0;
@@ -285,9 +256,7 @@ const projects = [
     z-index: 1;
   }
 
-  .thumb-image,
-  .thumb-badge,
-  .thumb-theme-chip {
+  .thumb-badge {
     position: relative;
     z-index: 2;
   }
