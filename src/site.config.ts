@@ -41,6 +41,10 @@ const config: SiteConfig = {
       url: '/posts',
     },
     {
+      name: 'Projects',
+      url: '/projects',
+    },
+    {
       name: 'Speaking',
       url: '/speaking',
     },

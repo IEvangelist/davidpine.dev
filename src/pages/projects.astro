@@ -1,0 +1,120 @@
+---
+import Layout from '~/layouts/Layout.astro'
+import PageHeader from '~/components/PageHeader.astro'
+import profanityFilterThumbnail from '~/content/posts/github-profanity-filter/profanity-filter.png'
+import netlifyAspireThumbnail from '~/content/posts/aspire-dot-dev/integrations.png'
+
+const projects = [
+  {
+    name: 'Resource Translator',
+    description:
+      'A GitHub Action that translates .resx and localization resources for .NET apps and repositories.',
+    repoUrl: 'https://github.com/IEvangelist/resource-translator',
+    thumbnail: 'https://opengraph.githubassets.com/1/IEvangelist/resource-translator',
+    accent: 'from-cyan-500/50 via-blue-500/40 to-violet-500/50',
+    tags: ['GitHub Actions', '.NET', 'Localization'],
+  },
+  {
+    name: 'GitHub Profanity Filter',
+    description:
+      'An Azure Functions-powered filter that scans GitHub issues and PRs to detect and clean profane language.',
+    repoUrl: 'https://github.com/IEvangelist/GitHub.ProfanityFilter',
+    thumbnail: profanityFilterThumbnail,
+    accent: 'from-pink-500/50 via-fuchsia-500/40 to-orange-500/50',
+    tags: ['Azure Functions', 'GitHub Webhooks', 'C#'],
+  },
+  {
+    name: 'Netlify Aspire Integration',
+    description:
+      'A hosting integration that helps deploy Aspire-powered static experiences using Netlify.',
+    repoUrl: 'https://github.com/IEvangelist/netlify-aspire-integration',
+    thumbnail: netlifyAspireThumbnail,
+    accent: 'from-emerald-500/50 via-teal-500/40 to-sky-500/50',
+    tags: ['Aspire', 'Netlify', 'Cloud'],
+  },
+]
+---
+
+<Layout title="Projects" description="Featured projects by David Pine">
+  <PageHeader title="Projects" />
+
+  <article class="max-w-full py-7.5">
+    <p class="text-lg opacity-85 mb-7">
+      A curated set of projects I built and maintain—each card includes a colorful landing
+      thumbnail and quick context.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      {
+        projects.map((project) => (
+          <a
+            href={project.repoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="project-card group block no-underline rounded-xl overflow-hidden border border-accent/20 bg-accent/4"
+          >
+            <div class={`h-1.5 bg-gradient-to-r ${project.accent}`} />
+            <div class="p-4">
+              <div class="thumb-wrap mb-4">
+                <img
+                  src={
+                    typeof project.thumbnail === 'string'
+                      ? project.thumbnail
+                      : project.thumbnail.src
+                  }
+                  alt={`${project.name} landing UX thumbnail`}
+                  class="thumb-image"
+                  loading="lazy"
+                />
+              </div>
+
+              <h2 class="text-xl m-0 mb-2 text-accent">{project.name}</h2>
+              <p class="m-0 mb-3 opacity-85">{project.description}</p>
+
+              <div class="flex flex-wrap gap-2 mb-2">
+                {project.tags.map((tag) => (
+                  <span class="inline-flex text-xs px-2 py-1 rounded-md border border-foreground/20">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              <span class="inline-flex text-sm text-accent group-hover:translate-x-0.5 transition-transform">
+                View repository →
+              </span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .project-card {
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .project-card:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--theme-accent), transparent 45%);
+    box-shadow: 0 10px 26px color-mix(in srgb, var(--theme-accent), transparent 82%);
+  }
+
+  .thumb-wrap {
+    border-radius: 0.6rem;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--theme-foreground), transparent 82%);
+    background: color-mix(in srgb, var(--theme-background), var(--theme-accent) 6%);
+  }
+
+  .thumb-image {
+    width: 100%;
+    height: 180px;
+    display: block;
+    object-fit: cover;
+  }
+</style>
