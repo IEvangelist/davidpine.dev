@@ -1,8 +1,6 @@
 ---
 import Layout from '~/layouts/Layout.astro'
 import PageHeader from '~/components/PageHeader.astro'
-import profanityFilterThumbnail from '~/content/posts/github-profanity-filter/profanity-filter.png'
-import netlifyAspireThumbnail from '~/content/posts/aspire-dot-dev/integrations.png'
 
 const projects = [
   {
@@ -10,8 +8,9 @@ const projects = [
     description:
       'A GitHub Action that translates .resx and localization resources for .NET apps and repositories.',
     repoUrl: 'https://github.com/IEvangelist/resource-translator',
-    thumbnail: 'https://opengraph.githubassets.com/1/IEvangelist/resource-translator',
-    accent: 'from-cyan-500/50 via-blue-500/40 to-violet-500/50',
+    thumbnail: '/images/projects/resource-translator.png',
+    accent: 'from-cyan-500/55 via-blue-500/45 to-violet-500/55',
+    repoPath: 'IEvangelist/resource-translator',
     tags: ['GitHub Actions', '.NET', 'Localization'],
   },
   {
@@ -19,8 +18,9 @@ const projects = [
     description:
       'An Azure Functions-powered filter that scans GitHub issues and PRs to detect and clean profane language.',
     repoUrl: 'https://github.com/IEvangelist/GitHub.ProfanityFilter',
-    thumbnail: profanityFilterThumbnail,
-    accent: 'from-pink-500/50 via-fuchsia-500/40 to-orange-500/50',
+    thumbnail: '/images/projects/github-profanity-filter.png',
+    accent: 'from-pink-500/55 via-fuchsia-500/45 to-orange-500/55',
+    repoPath: 'IEvangelist/GitHub.ProfanityFilter',
     tags: ['Azure Functions', 'GitHub Webhooks', 'C#'],
   },
   {
@@ -28,8 +28,9 @@ const projects = [
     description:
       'A hosting integration that helps deploy Aspire-powered static experiences using Netlify.',
     repoUrl: 'https://github.com/IEvangelist/netlify-aspire-integration',
-    thumbnail: netlifyAspireThumbnail,
-    accent: 'from-emerald-500/50 via-teal-500/40 to-sky-500/50',
+    thumbnail: '/images/projects/netlify-aspire-integration.png',
+    accent: 'from-emerald-500/55 via-teal-500/45 to-sky-500/55',
+    repoPath: 'IEvangelist/netlify-aspire-integration',
     tags: ['Aspire', 'Netlify', 'Cloud'],
   },
 ]
@@ -38,11 +39,18 @@ const projects = [
 <Layout title="Projects" description="Featured projects by David Pine">
   <PageHeader title="Projects" />
 
-  <article class="max-w-full py-7.5">
-    <p class="text-lg opacity-85 mb-7">
-      A curated set of projects I built and maintain—each card includes a colorful landing
-      thumbnail and quick context.
-    </p>
+  <article class="max-w-full py-7.5 space-y-7">
+    <section class="project-intro rounded-xl border border-accent/20 p-5 md:p-6">
+      <p class="m-0 text-lg md:text-xl">
+        Built in public, shipped in the real world — these are featured repositories with
+        direct links and live GitHub page previews.
+      </p>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <span class="meta-chip">{projects.length} Featured Repositories</span>
+        <span class="meta-chip">GitHub-first OSS</span>
+        <span class="meta-chip">Open source + cloud</span>
+      </div>
+    </section>
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       {
@@ -54,24 +62,23 @@ const projects = [
             class="project-card group block no-underline rounded-xl overflow-hidden border border-accent/20 bg-accent/4"
           >
             <div class={`h-1.5 bg-gradient-to-r ${project.accent}`} />
-            <div class="p-4">
+            <div class="p-4 flex h-full flex-col">
               <div class="thumb-wrap mb-4">
                 <img
-                  src={
-                    typeof project.thumbnail === 'string'
-                      ? project.thumbnail
-                      : project.thumbnail.src
-                  }
-                  alt={`${project.name} landing UX thumbnail`}
+                  src={project.thumbnail}
+                  alt={`${project.name} GitHub page screenshot`}
                   class="thumb-image"
                   loading="lazy"
                 />
               </div>
 
-              <h2 class="text-xl m-0 mb-2 text-accent">{project.name}</h2>
-              <p class="m-0 mb-3 opacity-85">{project.description}</p>
+              <div class="space-y-2 mb-3">
+                <p class="repo-path m-0">{project.repoPath}</p>
+                <h2 class="text-xl m-0 text-accent">{project.name}</h2>
+                <p class="m-0 opacity-85">{project.description}</p>
+              </div>
 
-              <div class="flex flex-wrap gap-2 mb-2">
+              <div class="flex flex-wrap gap-2 mb-4">
                 {project.tags.map((tag) => (
                   <span class="inline-flex text-xs px-2 py-1 rounded-md border border-foreground/20">
                     {tag}
@@ -79,9 +86,12 @@ const projects = [
                 ))}
               </div>
 
-              <span class="inline-flex text-sm text-accent group-hover:translate-x-0.5 transition-transform">
-                View repository →
-              </span>
+              <div class="mt-auto flex items-center justify-between text-sm">
+                <span class="opacity-75">github.com</span>
+                <span class="inline-flex text-accent group-hover:translate-x-0.5 transition-transform">
+                  Open repository →
+                </span>
+              </div>
             </div>
           </a>
         ))
@@ -104,6 +114,24 @@ const projects = [
     box-shadow: 0 10px 26px color-mix(in srgb, var(--theme-accent), transparent 82%);
   }
 
+  .project-intro {
+    background: linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--theme-accent), transparent 95%),
+      color-mix(in srgb, var(--theme-background), var(--theme-accent) 4%)
+    );
+  }
+
+  .meta-chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.55rem;
+    border-radius: 0.55rem;
+    border: 1px solid color-mix(in srgb, var(--theme-foreground), transparent 80%);
+    background: color-mix(in srgb, var(--theme-accent), transparent 92%);
+  }
+
   .thumb-wrap {
     border-radius: 0.6rem;
     overflow: hidden;
@@ -113,8 +141,13 @@ const projects = [
 
   .thumb-image {
     width: 100%;
-    height: 180px;
+    height: 190px;
     display: block;
     object-fit: cover;
+  }
+
+  .repo-path {
+    font-size: 0.8rem;
+    opacity: 0.65;
   }
 </style>
