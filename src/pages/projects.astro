@@ -124,6 +124,33 @@ const projects = [
     tone: '#d40000',
   },
 ]
+
+const hexToRgb = (hex) => {
+  const clean = hex.replace('#', '')
+  const expanded =
+    clean.length === 3
+      ? clean
+          .split('')
+          .map((c) => c + c)
+          .join('')
+      : clean
+  return [
+    parseInt(expanded.slice(0, 2), 16),
+    parseInt(expanded.slice(2, 4), 16),
+    parseInt(expanded.slice(4, 6), 16),
+  ]
+}
+
+// Pick a high-contrast text color for a solid tone background using WCAG 2.x luminance.
+const ctaTextOn = (toneHex) => {
+  const [r, g, b] = hexToRgb(toneHex).map((channel) => {
+    const v = channel / 255
+    return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4
+  })
+  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
+  // White (#fff) gives ~7:1 against tones with luminance < 0.18, otherwise pick dark.
+  return lum < 0.18 ? '#ffffff' : '#0b0d10'
+}
 ---
 
 <Layout title="Projects" description="Featured projects by David Pine">
@@ -146,7 +173,7 @@ const projects = [
         projects.map((project, idx) => (
           <article
             class:list={['project-row', idx % 2 === 1 && 'project-row--reversed']}
-            style={`--card-tone: ${project.tone};`}
+            style={`--card-tone: ${project.tone}; --cta-text: ${ctaTextOn(project.tone)};`}
           >
             <a
               class="image-card group/img"
@@ -463,7 +490,7 @@ const projects = [
     gap: 0.35rem;
     font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
     font-size: 0.72rem;
-    opacity: 0.6;
+    color: color-mix(in srgb, var(--theme-foreground) 88%, transparent);
     letter-spacing: 0.01em;
     word-break: break-all;
     min-width: 0;
@@ -471,7 +498,6 @@ const projects = [
 
   .repo-icon {
     flex-shrink: 0;
-    opacity: 0.7;
   }
 
   .live-status {
@@ -484,9 +510,9 @@ const projects = [
     font-weight: 600;
     padding: 0.15rem 0.5rem;
     border-radius: 999px;
-    border: 1px solid color-mix(in srgb, var(--tone), transparent 65%);
-    background: color-mix(in srgb, var(--tone), transparent 90%);
-    color: color-mix(in srgb, var(--tone), var(--theme-foreground) 55%);
+    border: 1px solid color-mix(in srgb, var(--tone), transparent 55%);
+    background: color-mix(in srgb, var(--tone), transparent 95%);
+    color: var(--theme-foreground);
     flex-shrink: 0;
   }
 
@@ -504,8 +530,7 @@ const projects = [
     letter-spacing: 0.16em;
     text-transform: uppercase;
     font-weight: 700;
-    color: color-mix(in srgb, var(--tone), var(--theme-foreground) 40%);
-    opacity: 0.95;
+    color: color-mix(in srgb, var(--tone) 7%, var(--theme-foreground));
   }
 
   .info-title {
@@ -530,7 +555,7 @@ const projects = [
   .info-description {
     font-size: 0.92rem;
     line-height: 1.55;
-    opacity: 0.78;
+    color: color-mix(in srgb, var(--theme-foreground) 94%, transparent);
     margin-top: 0.1rem;
   }
 
@@ -546,10 +571,11 @@ const projects = [
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    font-size: 0.82rem;
-    font-weight: 600;
+    font-size: 1.17rem;
+    line-height: 1.1;
+    font-weight: 700;
     text-decoration: none;
-    padding: 0.55rem 0.95rem;
+    padding: 0.6rem 1.05rem;
     border-radius: 0.6rem;
     border: 1px solid transparent;
     color: inherit;
@@ -570,11 +596,7 @@ const projects = [
   .cta-primary {
     background: var(--tone);
     border-color: var(--tone);
-    color: #0b0d10;
-  }
-
-  :root[data-ui-tone='light'] .cta-primary {
-    color: #fff;
+    color: var(--cta-text, #0b0d10);
   }
 
   .cta-primary:hover {
@@ -585,7 +607,7 @@ const projects = [
 
   .cta-secondary {
     background: transparent;
-    border-color: color-mix(in srgb, var(--theme-foreground), transparent 75%);
+    border-color: color-mix(in srgb, var(--theme-foreground), transparent 55%);
   }
 
   .cta-secondary:hover {
