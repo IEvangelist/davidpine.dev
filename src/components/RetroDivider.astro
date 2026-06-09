@@ -1,0 +1,127 @@
+---
+// Decorative retro/neobrutalist shape band shown just above the footer.
+---
+
+<div class="retro-divider" aria-hidden="true">
+  <span class="rd-shape rd-square"></span>
+  <span class="rd-shape rd-diamond"></span>
+  <span class="rd-shape rd-circle"></span>
+  <svg
+    class="rd-squiggle"
+    viewBox="0 0 240 16"
+    preserveAspectRatio="none"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M0 8C12 8 12 2 24 2C36 2 36 14 48 14C60 14 60 2 72 2C84 2 84 14 96 14C108 14 108 2 120 2C132 2 132 14 144 14C156 14 156 2 168 2C180 2 180 14 192 14C204 14 204 2 216 2C228 2 228 8 240 8"
+    ></path>
+  </svg>
+  <span class="rd-shape rd-ring"></span>
+  <span class="rd-shape rd-square rd-square--alt"></span>
+  <span class="rd-shape rd-circle rd-circle--alt"></span>
+</div>
+
+<style>
+  .retro-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.55rem, 2.4vw, 1.35rem);
+    margin-top: clamp(3rem, 7vw, 5rem);
+    padding-inline: 0.5rem;
+  }
+
+  .rd-shape {
+    flex-shrink: 0;
+    width: 1.55rem;
+    height: 1.55rem;
+    border: 2px solid var(--retro-border);
+    box-shadow: var(--retro-shadow-sm);
+    animation: rd-bob 3.4s ease-in-out infinite;
+  }
+
+  .rd-square {
+    background: var(--retro-primary);
+  }
+
+  .rd-square--alt {
+    background: var(--retro-red);
+    rotate: 12deg;
+  }
+
+  .rd-diamond {
+    background: var(--retro-secondary);
+    rotate: 45deg;
+  }
+
+  .rd-circle {
+    background: var(--retro-green);
+    border-radius: 999px;
+  }
+
+  .rd-circle--alt {
+    background: var(--retro-primary);
+  }
+
+  .rd-ring {
+    border-width: 3px;
+    border-radius: 999px;
+    background: transparent;
+    box-shadow: none;
+    color: var(--retro-purple);
+    border-color: currentColor;
+  }
+
+  .rd-squiggle {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 18rem;
+    height: 1.05rem;
+    stroke: var(--retro-secondary);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+  }
+
+  .rd-shape:nth-child(2) {
+    animation-delay: 0.35s;
+  }
+  .rd-shape:nth-child(3) {
+    animation-delay: 0.7s;
+  }
+  .retro-divider > .rd-shape:nth-last-child(3) {
+    animation-delay: 0.7s;
+  }
+  .retro-divider > .rd-shape:nth-last-child(2) {
+    animation-delay: 0.35s;
+  }
+  .retro-divider > .rd-shape:nth-last-child(1) {
+    animation-delay: 0s;
+  }
+
+  @keyframes rd-bob {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    50% {
+      translate: 0 -5px;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .rd-shape {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+    .rd-squiggle {
+      max-width: 8rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rd-shape {
+      animation: none;
+    }
+  }
+</style>

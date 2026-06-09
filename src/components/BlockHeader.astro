@@ -1,6 +1,55 @@
-<>
-  <h1 class="text-accent text-[1.6rem] pb-2.5 pl-1 mt-4 md:mt-7 font-semibold">
+<div class="block-header">
+  <h1 class="block-header-title">
     <slot />
   </h1>
-  <div class="border-1 border-accent/30 rounded-xl h-1 w-full"></div>
-</>
+</div>
+
+<style>
+  .block-header {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-block: 1.75rem 1rem;
+  }
+
+  .block-header::after {
+    width: clamp(2.5rem, 12vw, 5rem);
+    height: 0.75rem;
+    border: 2px solid var(--retro-border);
+    background: var(--retro-primary);
+    box-shadow: var(--retro-shadow-sm);
+    content: '';
+  }
+
+  .block-header-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin: 0;
+    color: var(--retro-secondary);
+    font-size: clamp(1.45rem, 4vw, 1.8rem);
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .block-header-title :global(svg) {
+    width: 2.15rem;
+    height: 2.15rem;
+    flex: 0 0 auto;
+    border: 2px solid var(--retro-border);
+    background: var(--retro-primary);
+    box-shadow: var(--retro-shadow-sm);
+    color: var(--retro-on-accent);
+    padding: 0.28rem;
+  }
+
+  .block-header:nth-of-type(3n + 2) .block-header-title :global(svg) {
+    background: var(--retro-secondary);
+  }
+
+  .block-header:nth-of-type(3n + 3) .block-header-title :global(svg) {
+    background: var(--retro-green);
+  }
+</style>

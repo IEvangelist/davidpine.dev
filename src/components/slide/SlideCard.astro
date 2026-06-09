@@ -1,6 +1,4 @@
 ---
-import { SlideViewer } from './slide-viewer'
-
 export interface Slide {
   id: string
   title: string
@@ -27,52 +25,219 @@ function formatDate(date: Date): string {
     day: 'numeric',
   })
 }
-
-// Use markdown format for preview - this is what reveal.js markdown plugin expects
-const slideContent = `## ${slide.title}${slide.author ? `\n\n*${slide.author}*` : ''}\n\n${formatDate(slide.pubDate)}`
 ---
 
-<div
-  class="group hover:shadow-lg hover:border-[var(--theme-accent)] transition-all duration-300 cursor-pointer w-full flex flex-col rounded-2xl border border-[var(--theme-separator)] bg-[var(--theme-background)] shadow"
->
-  <div class="w-full h-48 p-0 relative rounded-2xl overflow-hidden slide-preview">
-    <SlideViewer
-      content={slideContent}
-      theme={slide.theme}
-      transition={slide.transition}
-      controls={false}
-      progress={false}
-      preview={true}
-      math={slide.math}
-      client:visible
-    />
+<article class="slide-card">
+  <div class="slide-card-cover">
+    <div class="slide-card-window">
+      <p class="slide-card-eyebrow">Presentation deck</p>
+      <h2>{slide.title}</h2>
+      {slide.description && <p class="slide-card-description">{slide.description}</p>}
+    </div>
+    <div class="slide-card-rail" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
   </div>
-</div>
+  <footer class="slide-card-meta">
+    <div>
+      <span>Speaker</span>
+      <strong>{slide.author || 'David Pine'}</strong>
+    </div>
+    <div>
+      <span>Date</span>
+      <strong>{formatDate(slide.pubDate)}</strong>
+    </div>
+    {
+      slide.tags && slide.tags.length > 0 && (
+        <ul class="slide-card-tags" aria-label="Slide tags">
+          {slide.tags.slice(0, 3).map((tag) => (
+            <li>{tag}</li>
+          ))}
+        </ul>
+      )
+    }
+  </footer>
+</article>
 
 <style>
-  .slide-preview {
-    pointer-events: none;
+  .slide-card {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    flex-direction: column;
+    border: 2px solid var(--retro-border);
+    background: var(--retro-panel);
+    box-shadow: var(--retro-shadow);
+    transition:
+      translate 140ms ease,
+      box-shadow 140ms ease;
+  }
+
+  :global([data-slide-card]:hover) .slide-card,
+  :global([data-slide-card]:focus-visible) .slide-card {
+    translate: -3px -3px;
+    box-shadow: 9px 9px 0 0 var(--retro-shadow-color);
+  }
+
+  .slide-card-cover {
     position: relative;
+    min-height: clamp(17rem, 28vw, 22rem);
+    overflow: hidden;
+    border-bottom: 2px solid var(--retro-border);
+    background:
+      linear-gradient(
+        135deg,
+        color-mix(in oklab, var(--retro-primary) 18%, transparent),
+        transparent 48%
+      ),
+      linear-gradient(
+        0deg,
+        color-mix(in oklab, var(--retro-secondary) 8%, transparent),
+        transparent 36%
+      ),
+      color-mix(in oklab, var(--theme-background) 72%, var(--theme-foreground) 28%);
   }
 
-  .slide-preview :global(.reveal) {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
+  .slide-card-cover::before,
+  .slide-card-cover::after {
+    position: absolute;
+    content: '';
+    pointer-events: none;
   }
 
-  .slide-preview :global(.reveal .slides) {
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 100% !important;
-    height: 100% !important;
+  .slide-card-cover::before {
+    inset: 0;
+    background-image:
+      linear-gradient(var(--retro-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--retro-grid) 1px, transparent 1px);
+    background-size: 24px 24px;
   }
 
-  .slide-preview :global(.reveal .slides section) {
-    padding: 20px !important;
+  .slide-card-cover::after {
+    right: 1rem;
+    bottom: 1rem;
+    width: 4rem;
+    height: 4rem;
+    border-right: 2px solid var(--retro-secondary);
+    border-bottom: 2px solid var(--retro-secondary);
+  }
+
+  .slide-card-window {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    min-height: inherit;
+    align-content: center;
+    gap: 0.65rem;
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+  }
+
+  .slide-card-window h2,
+  .slide-card-window p,
+  .slide-card-meta p,
+  .slide-card-tags {
+    margin: 0;
+  }
+
+  .slide-card-window h2 {
+    max-width: 12ch;
+    color: var(--retro-secondary);
+    font-size: clamp(1.9rem, 5vw, 3.15rem);
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    line-height: 1.05;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .slide-card-eyebrow {
+    color: var(--theme-text-light);
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .slide-card-description {
+    max-width: 34ch;
+    color: var(--theme-text-light);
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .slide-card-rail {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    z-index: 1;
+    display: flex;
+    gap: 0.35rem;
+  }
+
+  .slide-card-rail span {
+    width: 1.65rem;
+    height: 0.55rem;
+    border: 2px solid var(--retro-border);
+    background: var(--retro-primary);
+    box-shadow: var(--retro-shadow-sm);
+  }
+
+  .slide-card-rail span:nth-child(2) {
+    background: var(--retro-secondary);
+  }
+
+  .slide-card-rail span:nth-child(3) {
+    background: var(--retro-green);
+  }
+
+  .slide-card-meta {
+    display: grid;
+    gap: 0.85rem;
+    padding: 1rem;
+  }
+
+  .slide-card-meta div {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .slide-card-meta span,
+  .slide-card-meta strong,
+  .slide-card-tags {
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .slide-card-meta span {
+    color: var(--retro-muted);
+    font-size: 0.68rem;
+    font-weight: 900;
+  }
+
+  .slide-card-meta strong {
+    color: var(--theme-foreground);
+    font-size: 0.82rem;
+    font-weight: 900;
+  }
+
+  .slide-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    padding: 0;
+    color: var(--theme-foreground);
+    font-size: 0.68rem;
+    font-weight: 900;
+    list-style: none;
+  }
+
+  .slide-card-tags li {
+    border: 2px solid var(--retro-border);
+    background: var(--retro-primary);
+    color: var(--retro-on-accent);
+    box-shadow: var(--retro-shadow-sm);
+    padding: 0.25rem 0.4rem;
   }
 </style>

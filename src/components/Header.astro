@@ -37,17 +37,15 @@ const selectTheme =
       <nav id="nav-mobile" aria-label="Menu" class="p-0 text-accent sm:hidden">
         <button
           id="nav-mobile-button"
-          class="px-3 py-1 h-full cursor-pointer border-2 rounded-xl bg-background"
+          class="nav-mobile-button"
           type="button"
           aria-expanded="false"
-          aria-controls="nav-menu-list"
+          aria-controls="nav-mobile-list"
         >
-          ▾
+          <span aria-hidden="true">▾</span>
+          <span class="sr-only">Toggle navigation menu</span>
         </button>
-        <ul
-          id="nav-mobile-list"
-          class="invisible absolute flex flex-col bg-background shadow text-accent border-2 m-0 p-2.5 top-11.5 left-auto right-0 z-50 rounded-xl"
-        >
+        <ul id="nav-mobile-list" class="nav-mobile-list" hidden>
           {
             siteConfig.navLinks.map((link) => (
               <li class="p-1" aria-expanded="false">
@@ -73,26 +71,124 @@ const selectTheme =
 </header>
 
 <script>
-  const navMobileButton = document.getElementById('nav-mobile-button')
-  const navMobileList = document.getElementById('nav-mobile-list')
-  const navMobileListItems = navMobileList?.querySelectorAll('li')
-  const toggleNavMobileMenu = (action: 'on' | 'off' | 'toggle') => {
-    let isNowOpen: boolean = false
-    if (action === 'on') {
-      isNowOpen = true
-      navMobileList?.classList.remove('invisible')
-    } else if (action === 'off') {
-      isNowOpen = false
-      navMobileList?.classList.add('invisible')
-    } else {
-      isNowOpen = !navMobileList?.classList.toggle('invisible')
+  function initMobileNav() {
+    const navMobile = document.getElementById('nav-mobile')
+    const navMobileButton = document.getElementById('nav-mobile-button')
+    const navMobileList = document.getElementById('nav-mobile-list')
+    const navMobileListItems = navMobileList?.querySelectorAll('li')
+
+    if (
+      !(navMobile instanceof HTMLElement) ||
+      !(navMobileButton instanceof HTMLButtonElement) ||
+      !(navMobileList instanceof HTMLUListElement) ||
+      navMobile.dataset.initialized === 'true'
+    ) {
+      return
     }
-    navMobileButton?.setAttribute('aria-expanded', isNowOpen ? 'true' : 'false')
-    navMobileListItems?.forEach((listItem) => {
-      listItem.setAttribute('aria-expanded', isNowOpen ? 'true' : 'false')
+
+    navMobile.dataset.initialized = 'true'
+
+    const setNavMobileMenu = (isOpen: boolean) => {
+      navMobileList.hidden = !isOpen
+      navMobileButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false')
+      navMobileListItems?.forEach((listItem) => {
+        listItem.setAttribute('aria-expanded', isOpen ? 'true' : 'false')
+      })
+    }
+
+    navMobileButton.addEventListener('click', (event) => {
+      event.stopPropagation()
+      setNavMobileMenu(navMobileList.hidden)
+    })
+
+    navMobileList.addEventListener('click', (event) => {
+      const target = event.target
+      if (target instanceof Element && target.closest('a')) {
+        setNavMobileMenu(false)
+      }
+    })
+
+    document.addEventListener('click', (event) => {
+      const target = event.target
+      if (!(target instanceof Node) || !navMobile.contains(target)) {
+        setNavMobileMenu(false)
+      }
+    })
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        setNavMobileMenu(false)
+        navMobileButton.focus()
+      }
     })
   }
-  navMobileButton?.addEventListener('click', (_ev) => {
-    toggleNavMobileMenu('toggle')
-  })
+
+  initMobileNav()
+  document.addEventListener('astro:page-load', initMobileNav)
 </script>
+
+<style>
+  #nav-mobile {
+    position: relative;
+    align-self: stretch;
+  }
+
+  .nav-mobile-button {
+    display: inline-flex;
+    height: 100%;
+    min-height: 3.1rem;
+    min-width: 3.1rem;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-left: 2px solid var(--retro-outline);
+    border-radius: 0;
+    background: var(--retro-panel);
+    box-shadow: none;
+    color: var(--retro-secondary);
+    font-weight: 900;
+    transition:
+      background 0.12s ease,
+      color 0.12s ease;
+  }
+
+  .nav-mobile-button[aria-expanded='true'] {
+    background: var(--retro-primary);
+    color: var(--retro-on-accent);
+  }
+
+  .nav-mobile-button:hover,
+  .nav-mobile-button:focus-visible {
+    background: var(--retro-primary);
+    color: var(--retro-on-accent);
+    outline: none;
+  }
+
+  .nav-mobile-list {
+    position: absolute;
+    top: calc(100% + 0.65rem);
+    right: 0;
+    z-index: 80;
+    display: flex;
+    width: min(17rem, calc(100vw - 2rem));
+    max-width: calc(100vw - 2rem);
+    flex-direction: column;
+    gap: 0.35rem;
+    border: 2px solid var(--retro-border);
+    border-radius: 0;
+    background: var(--retro-panel);
+    box-shadow: var(--retro-shadow);
+    color: var(--retro-secondary);
+    margin: 0;
+    padding: 0.75rem;
+  }
+
+  .nav-mobile-list[hidden] {
+    display: none;
+  }
+
+  .nav-mobile-list li {
+    padding: 0.35rem;
+  }
+</style>

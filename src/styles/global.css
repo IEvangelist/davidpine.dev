@@ -53,7 +53,7 @@
 
 /* CSS custom property for animated border */
 @property --border-angle {
-  syntax: "<angle>";
+  syntax: '<angle>';
   inherits: false;
   initial-value: 0deg;
 }
@@ -84,6 +84,524 @@ body {
   @apply transition-colors;
   font-display: block;
   font-size-adjust: from-font var(--theme-font);
+}
+
+/* BrutStack-inspired layer adapted from RetroUI's MIT template. */
+:root[data-theme] {
+  --retro-border: color-mix(
+    in oklab,
+    var(--theme-foreground) 84%,
+    var(--theme-background) 16%
+  );
+  --retro-outline: color-mix(
+    in oklab,
+    var(--theme-foreground) 92%,
+    var(--theme-background) 8%
+  );
+  --retro-panel: color-mix(
+    in oklab,
+    var(--theme-background) 92%,
+    var(--theme-foreground) 8%
+  );
+  --retro-primary: var(--theme-heading2);
+  --retro-secondary: var(--theme-accent);
+  --retro-green: var(--theme-green);
+  --retro-red: var(--theme-red);
+  --retro-purple: var(--theme-magenta);
+  --retro-muted: color-mix(
+    in oklab,
+    var(--theme-foreground) 55%,
+    var(--theme-background) 45%
+  );
+  --retro-grid: color-mix(in oklab, var(--theme-foreground) 4%, transparent);
+  --retro-shadow-color: color-mix(in oklab, #000 84%, var(--theme-background) 16%);
+  --retro-on-accent: var(--theme-background);
+  --retro-shadow: 6px 6px 0 0 var(--retro-shadow-color);
+  --retro-shadow-sm: 3px 3px 0 0 var(--retro-shadow-color);
+  --theme-text: var(--theme-foreground);
+  --theme-text-light: color-mix(
+    in oklab,
+    var(--theme-foreground) 74%,
+    var(--theme-background) 26%
+  );
+  --theme-divider: var(--retro-border);
+  --theme-bg: var(--theme-background);
+  --theme-bg-offset: var(--retro-panel);
+  --theme-bg-hover: color-mix(
+    in oklab,
+    var(--theme-background) 82%,
+    var(--theme-accent) 18%
+  );
+}
+
+:root[data-theme='houston'] {
+  color-scheme: dark;
+}
+
+:root[data-theme] body {
+  background:
+    linear-gradient(90deg, var(--retro-grid) 1px, transparent 1px),
+    linear-gradient(var(--retro-grid) 1px, transparent 1px), var(--theme-background);
+  background-size: 32px 32px;
+  text-transform: none;
+}
+
+:root[data-theme] body > div {
+  background: var(--theme-background);
+  border-inline: 2px solid var(--retro-outline);
+}
+
+:root[data-theme] header > div {
+  overflow: visible;
+  border: 2px solid var(--retro-outline);
+  border-radius: 0;
+  background: transparent;
+}
+
+:root[data-theme] [class*='rounded'] {
+  border-radius: 0 !important;
+}
+
+:root[data-theme] .rounded-full {
+  border-radius: 999px !important;
+}
+
+:root[data-theme] #logo {
+  display: flex;
+  align-items: center;
+  border-right: 2px solid var(--retro-outline);
+  border-radius: 0;
+  background: var(--retro-green);
+  color: var(--retro-on-accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 639px) {
+  :root[data-theme] header > div {
+    align-items: stretch;
+  }
+
+  :root[data-theme] #logo {
+    padding-block: 0.4rem;
+    padding-inline: 0.7rem;
+    max-width: 8rem;
+    font-size: 0.82rem;
+    line-height: 1.15;
+    letter-spacing: 0.05em;
+  }
+
+  :root[data-theme] header > div > div:last-child {
+    align-items: center;
+  }
+}
+
+:root[data-theme] header button,
+:root[data-theme] header a[aria-label='GitHub'],
+:root[data-theme] #nav-mobile-list {
+  border-radius: 0;
+}
+
+:root[data-theme] .nav-link,
+:root[data-theme] header button,
+:root[data-theme] header a[aria-label='GitHub'] {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+:root[data-theme] .nav-link::after {
+  bottom: -6px;
+  height: 4px;
+  background: var(--retro-primary);
+}
+
+:root[data-theme] a.button,
+:root[data-theme] .project-cta,
+:root[data-theme] .cta,
+:root[data-theme] .prose button,
+:root[data-theme] input[type='submit'] {
+  border: 2px solid var(--retro-border);
+  border-radius: 0;
+  background: var(--retro-primary);
+  color: var(--retro-on-accent);
+  box-shadow: var(--retro-shadow-sm);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition:
+    translate 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease;
+}
+
+:root[data-theme] a.button:hover,
+:root[data-theme] .project-cta:hover,
+:root[data-theme] .cta:hover,
+:root[data-theme] .prose button:hover,
+:root[data-theme] input[type='submit']:hover {
+  translate: -2px -2px;
+  background: var(--retro-secondary);
+  box-shadow: var(--retro-shadow);
+}
+
+:root[data-theme] a.button:active,
+:root[data-theme] .project-cta:active,
+:root[data-theme] .cta:active,
+:root[data-theme] .prose button:active,
+:root[data-theme] input[type='submit']:active {
+  translate: 3px 3px;
+  box-shadow: none;
+}
+
+:root[data-theme] .project-intro,
+:root[data-theme] .project-card,
+:root[data-theme] .post-card,
+:root[data-theme] .image-card,
+:root[data-theme] .info-panel,
+:root[data-theme] .video-card,
+:root[data-theme] .content-card,
+:root[data-theme] .friday-five-item,
+:root[data-theme] .github-card,
+:root[data-theme] .toc,
+:root[data-theme] .gallery-img,
+:root[data-theme] blockquote,
+:root[data-theme] aside:not(.character-dialogue),
+:root[data-theme] dialog,
+:root[data-theme] fieldset,
+:root[data-theme] article img {
+  border: 2px solid var(--retro-border) !important;
+  border-radius: 0 !important;
+  background: var(--retro-panel) !important;
+  box-shadow: var(--retro-shadow);
+}
+
+:root[data-theme] .project-card,
+:root[data-theme] .image-card,
+:root[data-theme] .info-panel,
+:root[data-theme] .video-card,
+:root[data-theme] .content-card,
+:root[data-theme] .friday-five-item,
+:root[data-theme] .gallery-img,
+:root[data-theme] .github-card {
+  transition:
+    translate 140ms ease,
+    box-shadow 140ms ease;
+}
+
+:root[data-theme] .project-card:hover,
+:root[data-theme] .image-card:hover,
+:root[data-theme] .info-panel:hover,
+:root[data-theme] .video-card:hover,
+:root[data-theme] .content-card:hover,
+:root[data-theme] .friday-five-item:hover,
+:root[data-theme] .gallery-img:hover,
+:root[data-theme] .github-card:hover {
+  translate: -3px -3px;
+  box-shadow: 9px 9px 0 0 var(--retro-shadow-color);
+}
+
+:root[data-theme] .post-card {
+  transition:
+    translate 140ms ease,
+    box-shadow 140ms ease;
+}
+
+:root[data-theme] .post-card:hover {
+  translate: -2px -2px;
+  box-shadow: 9px 9px 0 0 var(--retro-shadow-color);
+}
+
+:root[data-theme] .post-card img {
+  box-shadow: none !important;
+}
+
+:root[data-theme] .project-row {
+  align-items: center;
+  max-width: 100%;
+  min-width: 0;
+}
+
+:root[data-theme] .project-row > * {
+  min-width: 0;
+}
+
+:root[data-theme] .project-row .image-card,
+:root[data-theme] .project-row .info-panel {
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme] .project-row .image-card {
+  border-bottom: 2px solid var(--retro-border) !important;
+}
+
+@media (min-width: 768px) {
+  :root[data-theme] .project-row .image-card {
+    border-right: 2px solid var(--retro-border) !important;
+    border-bottom: 0 !important;
+  }
+
+  :root[data-theme] .project-row--reversed .image-card {
+    border-right: 0 !important;
+    border-left: 2px solid var(--retro-border) !important;
+  }
+}
+
+:root[data-theme] .info-panel {
+  align-self: center;
+  justify-content: center;
+  max-width: 100%;
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.35rem);
+}
+
+:root[data-theme] .image-card {
+  align-self: center;
+  justify-self: stretch;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+:root[data-theme] .image-card:hover,
+:root[data-theme] .video-link:hover,
+:root[data-theme] .gallery-img:hover {
+  transform: none !important;
+}
+
+:root[data-theme] .video-link,
+:root[data-theme] .thumb-image,
+:root[data-theme] .video-thumbnail,
+:root[data-theme] .gallery-img :is(img, picture),
+:root[data-theme] .image-card :is(img, picture) {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  margin-block: 0 !important;
+}
+
+:root[data-theme] .video-link,
+:root[data-theme] .gallery-img {
+  overflow: hidden;
+}
+
+:root[data-theme] .project-card > div:first-child {
+  background: linear-gradient(
+    90deg,
+    var(--retro-red),
+    var(--retro-primary),
+    var(--retro-green),
+    var(--retro-secondary)
+  ) !important;
+}
+
+:root[data-theme] .meta-chip,
+:root[data-theme] .thumb-badge,
+:root[data-theme] .live-status,
+:root[data-theme] .prose code:not(.expressive-code code),
+:root[data-theme] .tags a,
+:root[data-theme] [class*='TagsSection'] a,
+:root[data-theme] .series a,
+:root[data-theme] .friday-five-date {
+  border: 2px solid var(--retro-border);
+  border-radius: 0;
+  background: var(--retro-primary);
+  color: var(--retro-on-accent);
+  box-shadow: var(--retro-shadow-sm);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+:root[data-theme] .live-status {
+  flex-shrink: 0;
+  letter-spacing: 0.12em;
+}
+
+:root[data-theme] .live-dot {
+  border-radius: 999px;
+  background: var(--retro-green);
+}
+
+:root[data-theme] .cta-primary,
+:root[data-theme] .cta-secondary {
+  border-color: var(--retro-border);
+  background: var(--retro-primary);
+  color: var(--retro-on-accent);
+  filter: none !important;
+}
+
+:root[data-theme] .cta-secondary {
+  background: var(--retro-panel);
+  color: var(--theme-foreground);
+}
+
+:root[data-theme] .cta-primary:hover,
+:root[data-theme] .cta-secondary:hover {
+  transform: none !important;
+  background: var(--retro-secondary);
+  color: var(--retro-on-accent);
+}
+
+:root[data-theme] :is(.btn, .joke-btn, .print-button, .expand-button) {
+  border: 2px solid var(--retro-border) !important;
+  border-radius: 0 !important;
+  background: var(--retro-primary) !important;
+  color: var(--retro-on-accent) !important;
+  box-shadow: var(--retro-shadow-sm) !important;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition:
+    translate 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease;
+}
+
+:root[data-theme] :is(.btn.secondary, .print-button, .expand-button) {
+  background: var(--retro-panel) !important;
+  color: var(--theme-foreground) !important;
+}
+
+:root[data-theme] :is(.btn, .joke-btn, .print-button, .expand-button):hover {
+  translate: -2px -2px;
+  background: var(--retro-secondary) !important;
+  color: var(--retro-on-accent) !important;
+  box-shadow: var(--retro-shadow) !important;
+}
+
+:root[data-theme] .toc {
+  max-width: 100%;
+}
+
+:root[data-theme] .scroll-up {
+  border-radius: 0 !important;
+}
+
+:root[data-theme] .prose :is(h1, h2, h3, h4, h5, h6)::before {
+  content: none !important;
+}
+
+:root[data-theme] .prose a.heading-anchor {
+  text-decoration: none;
+}
+
+:root[data-theme] .prose :is(ul:not([class]), .section ul) {
+  list-style: none;
+  padding-left: 0;
+}
+
+:root[data-theme] .prose :is(ul:not([class]), .section ul) > li {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+:root[data-theme] .prose :is(ul:not([class]), .section ul) > li::before {
+  content: '■';
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  color: var(--retro-primary);
+  font-size: 0.72em;
+  line-height: 1.7;
+}
+
+:root[data-theme] .prose ol:not([class]) > li::marker {
+  color: var(--retro-primary);
+  font-weight: 800;
+}
+
+:root[data-theme] .gallery-img {
+  border-color: var(--retro-border) !important;
+}
+
+:root[data-theme] .gallery-img:hover {
+  z-index: 2;
+}
+
+:root[data-theme] h1,
+:root[data-theme] h2,
+:root[data-theme] h3,
+:root[data-theme] h4,
+:root[data-theme] h5,
+:root[data-theme] h6 {
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+:root[data-theme] h1 {
+  color: var(--theme-heading1);
+}
+
+:root[data-theme] h2 {
+  color: var(--retro-primary);
+}
+
+:root[data-theme] h3 {
+  color: var(--retro-secondary);
+}
+
+:root[data-theme] blockquote {
+  --quote-accent: var(--retro-primary);
+  --quote-bg: color-mix(in oklab, var(--retro-panel) 82%, var(--quote-accent) 18%);
+  --quote-fg: var(--theme-foreground);
+  --quote-mark: color-mix(in oklab, var(--quote-accent) 64%, transparent);
+  border-left-color: var(--quote-accent) !important;
+  border-left-width: 8px !important;
+  background: var(--quote-bg) !important;
+  color: var(--quote-fg) !important;
+}
+
+:root[data-theme] .prose blockquote:nth-of-type(4n + 2) {
+  --quote-accent: var(--retro-secondary);
+}
+
+:root[data-theme] .prose blockquote:nth-of-type(4n + 3) {
+  --quote-accent: var(--retro-green);
+}
+
+:root[data-theme] .prose blockquote:nth-of-type(4n + 4) {
+  --quote-accent: var(--retro-purple);
+}
+
+:root[data-theme] .prose blockquote::before {
+  content: '"' !important;
+  color: var(--quote-mark) !important;
+}
+
+:root[data-theme] aside.character-dialogue {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+:root[data-theme] aside.character-dialogue .character-dialogue-content {
+  border: 2px solid var(--retro-border);
+  border-radius: 0 !important;
+  background: var(--retro-panel) !important;
+  box-shadow: var(--retro-shadow);
+}
+
+:root[data-theme] aside.character-dialogue .character-dialogue-content::after {
+  display: none !important;
+}
+
+:root[data-theme] table,
+:root[data-theme] th,
+:root[data-theme] td,
+:root[data-theme] input,
+:root[data-theme] textarea,
+:root[data-theme] select {
+  border-color: var(--retro-border);
+  border-radius: 0;
+}
+
+:root[data-theme] ::selection {
+  color: var(--retro-on-accent);
+  background: var(--retro-primary);
 }
 
 input:focus-visible,
@@ -149,6 +667,9 @@ article img {
     @apply my-8;
 
     --ec-codeFontFml: var(--default-mono-font-family);
+    --ec-frm-edBg: var(--retro-panel);
+    --ec-frm-codeBg: var(--retro-panel);
+    --ec-codeBg: var(--retro-panel);
 
     /* Prevent italics in code blocks */
     /* Feel free to remove this if you want italics */
@@ -166,8 +687,10 @@ article img {
     }
 
     figure {
-      @apply border-2 border-foreground/8 !rounded-xl;
-      box-shadow: none !important;
+      border: 2px solid var(--retro-border) !important;
+      border-radius: 0 !important;
+      background: var(--retro-panel) !important;
+      box-shadow: var(--retro-shadow) !important;
 
       &.has-title div.copy,
       &.is-terminal div.copy {
@@ -182,10 +705,15 @@ article img {
       }
 
       figcaption {
-        border-radius: 10px 10px 0 0 !important;
-        background: transparent !important;
+        border: 0 !important;
+        border-bottom: 2px solid var(--retro-border) !important;
+        border-radius: 0 !important;
+        background: color-mix(
+          in oklab,
+          var(--retro-panel) 78%,
+          var(--theme-foreground) 22%
+        ) !important;
         padding-block: 0 !important;
-        border: none !important;
 
         &::after,
         &::before {
@@ -193,11 +721,14 @@ article img {
         }
 
         span.title {
-          @apply !text-foreground/90 !bg-foreground/8 text-center !border-b-2 !border-t-0 !border-r-0 !border-l-0 !border-foreground/10;
+          @apply text-center;
           width: 100%;
           font-family: var(--theme-font);
           font-size: var(--ec-codeFontSize);
-          border-radius: 10px 10px 0 0 !important;
+          border: 0 !important;
+          border-radius: 0 !important;
+          background: transparent !important;
+          color: var(--theme-foreground) !important;
           border-bottom-width: 0 !important;
           padding: 0 12px !important;
 
@@ -209,10 +740,29 @@ article img {
       }
 
       & > pre {
-        border-radius: 10px !important;
+        border-radius: 0 !important;
         border: none !important;
         scrollbar-width: thin;
-        background: transparent !important;
+        background: var(--retro-panel) !important;
+      }
+
+      & > pre,
+      & > pre > code,
+      div.code,
+      div.code pre,
+      div.code code,
+      .ec-line {
+        background: var(--retro-panel) !important;
+      }
+
+      & > pre > code,
+      div.code code {
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        color: inherit !important;
+        font-weight: inherit !important;
+        text-transform: none !important;
       }
     }
   }
@@ -368,7 +918,7 @@ article img {
   }
 
   ul li {
-    list-style-type: '-';
+    list-style-type: none;
   }
 
   ol li {

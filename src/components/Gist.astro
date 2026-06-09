@@ -84,6 +84,7 @@ const gistUrl = file
   .gist-wrapper {
     position: relative;
     margin: 0;
+    max-width: 100%;
   }
 
   .gist-spinner {
@@ -134,7 +135,9 @@ const gistUrl = file
   }
 
   .gist-container {
+    max-width: 100%;
     opacity: 0;
+    overflow-x: hidden;
     transition: opacity 0.3s ease-in;
   }
 
@@ -147,35 +150,62 @@ const gistUrl = file
 
   /* Gist file wrapper */
   .gist-container :global(.gist .gist-file) {
-    border: 1px solid var(--theme-divider) !important;
-    border-radius: 8px !important;
-    background: var(--theme-bg) !important;
+    max-width: 100% !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: var(--retro-panel) !important;
+    box-shadow: var(--retro-shadow) !important;
     overflow: hidden !important;
+  }
+
+  /* Remove GitHub's .file my-2 margin that created an empty band inside the frame */
+  .gist-container :global(.gist .file) {
+    margin: 0 !important;
   }
 
   /* Gist data container */
   .gist-container :global(.gist .gist-data) {
-    background: var(--theme-bg) !important;
+    max-width: 100% !important;
+    border-radius: 0 !important;
+    background: var(--retro-panel) !important;
     border-bottom: none !important;
     overflow: auto !important;
   }
 
   /* Markdown body */
   .gist-container :global(.gist .markdown-body) {
-    background: var(--theme-bg) !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    background: var(--retro-panel) !important;
     color: var(--theme-foreground) !important;
     padding: 0 !important;
   }
 
   /* Headings */
+  .gist-container :global(.gist .markdown-body .markdown-heading) {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
   .gist-container :global(.gist .markdown-body h2),
   .gist-container :global(.gist .markdown-body .markdown-heading h2) {
-    color: var(--theme-heading2) !important;
-    border-bottom: 2px solid var(--theme-accent) !important;
-    padding-bottom: 0.5rem !important;
+    border: 2px solid var(--retro-border) !important;
+    border-bottom: 0 !important;
+    background: color-mix(
+      in oklab,
+      var(--retro-panel) 86%,
+      var(--theme-foreground) 14%
+    ) !important;
+    box-shadow: none !important;
+    color: var(--retro-primary) !important;
+    padding: 0.65rem 0.85rem !important;
     margin-top: 0 !important;
-    margin-bottom: 1.5rem !important;
-    font-size: 1.5rem !important;
+    margin-bottom: 0 !important;
+    font-size: clamp(1.25rem, 2vw, 1.6rem) !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.08em !important;
+    line-height: 1.1 !important;
+    text-transform: uppercase !important;
   }
 
   .gist-container :global(.gist .markdown-body h2:first-child) {
@@ -189,59 +219,85 @@ const gistUrl = file
   }
 
   /* Table wrapper */
-  .gist-container :global(.gist markdown-accessiblity-table),
-  .gist-container :global(.gist .markdown-body table) {
+  .gist-container :global(.gist markdown-accessiblity-table) {
+    box-sizing: border-box !important;
+    display: block !important;
+    max-width: 100% !important;
     width: 100% !important;
     margin: 0 !important;
-    display: table !important;
+    overflow-x: auto !important;
+    border-radius: 0 !important;
+  }
+
+  .gist-container :global(.gist markdown-accessiblity-table + .markdown-heading) {
+    margin-top: 0 !important;
   }
 
   /* Table styling */
   .gist-container :global(.gist table) {
     width: 100% !important;
-    border-collapse: collapse !important;
-    background: var(--theme-bg) !important;
+    table-layout: fixed !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    border: 2px solid var(--retro-border) !important;
+    border-top-width: 2px !important;
+    border-radius: 0 !important;
+    background: var(--retro-panel) !important;
     color: var(--theme-text) !important;
-    font-size: 0.9rem !important;
-    border: none !important;
-    margin-bottom: 2rem !important;
+    font-size: clamp(0.92rem, 1.1vw, 1rem) !important;
+    line-height: 1.55 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   /* Table head */
   .gist-container :global(.gist thead) {
-    background: var(--theme-bg-offset) !important;
+    border-radius: 0 !important;
+    background: var(--retro-primary) !important;
   }
 
   .gist-container :global(.gist thead tr) {
-    background: var(--theme-bg-offset) !important;
-    border-bottom: 2px solid var(--theme-accent) !important;
+    border-radius: 0 !important;
+    background: var(--retro-primary) !important;
   }
 
   .gist-container :global(.gist th) {
-    padding: 1rem 0.75rem !important;
+    padding: 0.95rem 1rem !important;
     text-align: left !important;
-    font-weight: 600 !important;
-    background: var(--theme-bg-offset) !important;
-    color: var(--theme-foreground) !important;
-    border: none !important;
+    font-weight: 800 !important;
+    background: var(--retro-primary) !important;
+    color: var(--retro-on-accent) !important;
+    border: 0 !important;
+    border-right: 2px solid var(--retro-border) !important;
+    border-bottom: 2px solid var(--retro-border) !important;
+    border-radius: 0 !important;
     text-transform: uppercase !important;
     font-size: 0.85rem !important;
-    letter-spacing: 0.05em !important;
+    letter-spacing: 0.08em !important;
+    vertical-align: middle !important;
+  }
+
+  .gist-container :global(.gist th:last-child) {
+    border-right: 0 !important;
   }
 
   /* Table body */
   .gist-container :global(.gist tbody) {
-    background: var(--theme-bg) !important;
+    border-radius: 0 !important;
+    background: var(--retro-panel) !important;
   }
 
   .gist-container :global(.gist tbody tr) {
-    background: var(--theme-bg) !important;
-    border-bottom: 1px solid var(--theme-divider) !important;
+    border-radius: 0 !important;
     transition: background-color 0.2s ease !important;
   }
 
-  .gist-container :global(.gist tbody tr:hover) {
-    background: var(--theme-bg-hover) !important;
+  .gist-container :global(.gist tbody tr:nth-child(even) td) {
+    background: color-mix(
+      in oklab,
+      var(--retro-panel) 90%,
+      var(--theme-foreground) 10%
+    ) !important;
   }
 
   .gist-container :global(.gist tbody tr:hover td) {
@@ -253,26 +309,55 @@ const gistUrl = file
   }
 
   .gist-container :global(.gist td) {
-    padding: 1rem 0.75rem !important;
+    padding: 1rem !important;
     text-align: left !important;
-    border: none !important;
+    border: 0 !important;
+    border-right: 2px solid var(--retro-border) !important;
+    border-bottom: 2px solid var(--retro-border) !important;
+    border-radius: 0 !important;
     color: var(--theme-foreground) !important;
-    background: var(--theme-bg) !important;
+    background: var(--retro-panel) !important;
     vertical-align: top !important;
+  }
+
+  .gist-container :global(.gist td:last-child) {
+    border-right: 0 !important;
+  }
+
+  .gist-container :global(.gist tbody tr:last-child td) {
+    border-bottom: 0 !important;
+  }
+
+  .gist-container :global(.gist th:first-child),
+  .gist-container :global(.gist td:first-child) {
+    width: 10rem !important;
+    white-space: nowrap !important;
+  }
+
+  .gist-container :global(.gist th:nth-child(2)),
+  .gist-container :global(.gist td:nth-child(2)) {
+    width: 32% !important;
   }
 
   /* Links */
   .gist-container :global(.gist td a),
   .gist-container :global(.gist .markdown-body a) {
-    color: var(--theme-accent) !important;
-    text-decoration: none !important;
-    transition: color 0.2s ease !important;
+    color: var(--retro-primary) !important;
+    font-weight: 800 !important;
+    text-decoration-color: var(--retro-secondary) !important;
+    text-decoration-line: underline !important;
+    text-decoration-thickness: 2px !important;
+    text-underline-offset: 0.22em !important;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease !important;
   }
 
   .gist-container :global(.gist td a:hover),
   .gist-container :global(.gist .markdown-body a:hover) {
-    color: var(--theme-text) !important;
-    text-decoration: underline !important;
+    background: var(--retro-primary) !important;
+    color: var(--retro-on-accent) !important;
+    text-decoration: none !important;
   }
 
   /* Code blocks */
@@ -280,7 +365,8 @@ const gistUrl = file
   .gist-container :global(.gist .markdown-body code) {
     background: var(--theme-code-inline-bg) !important;
     padding: 0.125rem 0.375rem !important;
-    border-radius: 3px !important;
+    border: 2px solid var(--retro-border) !important;
+    border-radius: 0 !important;
     font-size: 0.9em !important;
     color: var(--theme-foreground) !important;
     font-family: var(--font-mono) !important;
@@ -288,9 +374,14 @@ const gistUrl = file
 
   /* Gist meta footer */
   .gist-container :global(.gist .gist-meta) {
-    background: var(--theme-bg-offset) !important;
+    background: color-mix(
+      in oklab,
+      var(--retro-panel) 86%,
+      var(--theme-foreground) 14%
+    ) !important;
     color: var(--theme-text-light) !important;
-    border-top: 1px solid var(--theme-divider) !important;
+    border: 2px solid var(--retro-border) !important;
+    border-top: 2px solid var(--retro-border) !important;
     padding: 0.75rem 1rem !important;
     font-size: 0.85rem !important;
   }
@@ -308,11 +399,12 @@ const gistUrl = file
   /* Mobile responsive */
   @media (max-width: 768px) {
     .gist-container :global(.gist .markdown-body) {
-      padding: 1rem !important;
+      padding: 0 !important;
     }
 
     .gist-container :global(.gist table) {
       font-size: 0.85rem !important;
+      min-width: 42rem !important;
     }
 
     .gist-container :global(.gist th),

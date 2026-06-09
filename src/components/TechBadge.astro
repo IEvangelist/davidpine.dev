@@ -22,21 +22,29 @@ const { name, icon } = Astro.props
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem 1.25rem;
-    background-color: rgba(148, 163, 184, 0.1);
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    border-radius: 0.5rem;
+    border: 2px solid var(--retro-border);
+    border-radius: 0;
+    background: var(--retro-panel);
+    box-shadow: var(--retro-shadow-sm);
+    color: var(--theme-foreground);
     font-size: 1rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition:
+      translate 120ms ease,
+      box-shadow 120ms ease,
+      background-color 120ms ease,
+      color 120ms ease;
     user-select: none;
     cursor: default;
   }
 
   .tech-badge:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    background-color: rgba(148, 163, 184, 0.15);
-    border-color: rgba(148, 163, 184, 0.3);
+    translate: -2px -2px;
+    background: var(--retro-secondary);
+    box-shadow: var(--retro-shadow);
+    color: var(--retro-on-accent);
   }
 
   .tech-icon {
@@ -45,6 +53,11 @@ const { name, icon } = Astro.props
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--retro-primary);
+  }
+
+  .tech-badge:hover .tech-icon {
+    color: currentColor;
   }
 
   .tech-icon :global(svg) {

@@ -16,20 +16,17 @@ interface Props {
 const { slides, tags, tag } = Astro.props
 ---
 
-<div>
+<div class="slides-browser">
   {
     tags && tags.length > 0 && (
-      <div class="flex flex-wrap gap-2 mb-6">
+      <nav class="slide-filters" aria-label="Filter slides by topic">
         <a
           href="/slides"
           data-slide-filter
           data-tag=""
-          class:list={[
-            'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-8 px-3 border',
-            !tag
-              ? 'text-accent border-accent'
-              : 'text-foreground/60 border-foreground/20 hover:text-accent hover:border-accent',
-          ]}
+          data-active={!tag ? 'true' : 'false'}
+          aria-pressed={!tag ? 'true' : 'false'}
+          class:list={['slide-filter', !tag ? 'is-active' : '']}
         >
           All
         </a>
@@ -38,26 +35,23 @@ const { slides, tags, tag } = Astro.props
             href={`/slides?tag=${encodeURIComponent(t.tag)}`}
             data-slide-filter
             data-tag={t.tag}
-            class:list={[
-              'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors h-8 px-3 border',
-              tag === t.tag
-                ? 'text-accent border-accent'
-                : 'text-foreground/60 border-foreground/20 hover:text-accent hover:border-accent',
-            ]}
+            data-active={tag === t.tag ? 'true' : 'false'}
+            aria-pressed={tag === t.tag ? 'true' : 'false'}
+            class:list={['slide-filter', tag === t.tag ? 'is-active' : '']}
           >
-            {t.tag}
-            {t.count && <span class="ml-1 text-xs opacity-60">({t.count})</span>}
+            <span>{t.tag}</span>
+            {t.count && <span class="slide-filter-count">({t.count})</span>}
           </a>
         ))}
-      </div>
+      </nav>
     )
   }
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+  <div class="slides-grid">
     {
       slides.map((slide) => (
         <a
           href={`/slides/${slide.id}`}
-          class="block no-underline"
+          class="slide-card-link"
           data-slide-card
           data-tags={JSON.stringify(slide.tags ?? [])}
         >
@@ -69,26 +63,15 @@ const { slides, tags, tag } = Astro.props
 
   {
     (
-      <div
-        class:list={['text-center py-12', slides.length > 0 && 'hidden']}
-        data-no-slides
-      >
-        <div class="text-[var(--theme-foreground)] opacity-60 text-lg">
-          No slides found
-        </div>
+      <div class:list={['slides-empty', slides.length > 0 && 'hidden']} data-no-slides>
+        No slides found
       </div>
     )
   }
 </div>
 
 <script>
-  const activeFilterClasses = ['text-accent', 'border-accent']
-  const inactiveFilterClasses = [
-    'text-foreground/60',
-    'border-foreground/20',
-    'hover:text-accent',
-    'hover:border-accent',
-  ]
+  const activeFilterClasses = ['is-active']
 
   function getSelectedSlideTags() {
     const tags = new URLSearchParams(window.location.search).getAll('tag')
@@ -125,8 +108,8 @@ const { slides, tags, tag } = Astro.props
         ? selectedTags.includes(filterTag)
         : selectedTags.length === 0
 
-      filter.classList.remove(...activeFilterClasses, ...inactiveFilterClasses)
-      filter.classList.add(...(isActive ? activeFilterClasses : inactiveFilterClasses))
+      filter.classList.toggle(activeFilterClasses[0], isActive)
+      filter.setAttribute('data-active', isActive ? 'true' : 'false')
 
       if (isActive) {
         filter.setAttribute('aria-pressed', 'true')
@@ -176,3 +159,100 @@ const { slides, tags, tag } = Astro.props
 
   updateSlideFilters()
 </script>
+
+<style>
+  .slides-browser {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .slide-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    border: 2px solid var(--retro-border);
+    background:
+      linear-gradient(
+        135deg,
+        color-mix(in oklab, var(--retro-primary) 12%, transparent),
+        transparent 52%
+      ),
+      var(--retro-panel);
+    box-shadow: var(--retro-shadow);
+    padding: clamp(0.85rem, 2vw, 1.1rem);
+  }
+
+  .slide-filter {
+    display: inline-flex;
+    min-height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    border: 2px solid var(--retro-border);
+    background: color-mix(in oklab, var(--retro-panel) 88%, var(--theme-foreground) 12%);
+    color: var(--theme-foreground);
+    box-shadow: var(--retro-shadow-sm);
+    font-size: 0.85rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+    padding: 0.65rem 0.85rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition:
+      translate 120ms ease,
+      box-shadow 120ms ease,
+      background-color 120ms ease,
+      color 120ms ease;
+  }
+
+  .slide-filter:hover,
+  .slide-filter:focus-visible {
+    translate: -2px -2px;
+    background: var(--retro-secondary);
+    color: var(--retro-on-accent);
+    box-shadow: var(--retro-shadow);
+    outline: none;
+  }
+
+  .slide-filter.is-active,
+  .slide-filter[data-active='true'] {
+    background: var(--retro-primary);
+    color: var(--retro-on-accent);
+  }
+
+  .slide-filter-count {
+    font-size: 0.72em;
+    opacity: 0.75;
+  }
+
+  .slides-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+    gap: 1.75rem;
+    align-items: stretch;
+  }
+
+  .slide-card-link {
+    display: flex;
+    min-width: 0;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .slide-card-link.hidden {
+    display: none;
+  }
+
+  .slides-empty {
+    border: 2px solid var(--retro-border);
+    background: var(--retro-panel);
+    box-shadow: var(--retro-shadow);
+    color: var(--theme-text-light);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    padding: 3rem 1rem;
+    text-align: center;
+    text-transform: uppercase;
+  }
+</style>

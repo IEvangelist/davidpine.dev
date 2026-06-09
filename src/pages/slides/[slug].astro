@@ -6,17 +6,17 @@ import { getImage } from 'astro:assets'
 
 const slideImageAssets = import.meta.glob<{ default: ImageMetadata }>(
   '/src/assets/slides/**/*.{png,jpg,jpeg,webp}',
-  { eager: true }
+  { eager: true },
 )
 
 export async function getStaticPaths() {
   const slides = await getCollection('slides')
-  
+
   return slides.map((slide) => {
     // Extract just the filename without the folder path for cleaner URLs
     const slugParts = slide.id.split('/')
     const slug = slugParts[slugParts.length - 1]
-    
+
     return {
       params: { slug },
       props: { slide },
@@ -74,26 +74,77 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
         {slide.data.author && <p class="slide-author">by {slide.data.author}</p>}
       </div>
       <div class="slide-header-buttons">
-        {slide.data.autoSlide > 0 && (
-          <button id="autoslide-btn" class="autoslide-button" title="Toggle auto-play" data-auto-slide={slide.data.autoSlide}>
-            <svg id="autoslide-play-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="display:none;">
-              <polygon points="6 3 20 12 6 21 6 3"></polygon>
-            </svg>
-            <svg id="autoslide-pause-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-              <rect x="6" y="4" width="4" height="16"></rect>
-              <rect x="14" y="4" width="4" height="16"></rect>
-            </svg>
-          </button>
-        )}
-        <a href={`/slides/${slug}?print-pdf`} target="_blank" class="print-button" title="Print / Export PDF">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        {
+          slide.data.autoSlide > 0 && (
+            <button
+              id="autoslide-btn"
+              class="autoslide-button"
+              title="Toggle auto-play"
+              data-auto-slide={slide.data.autoSlide}
+            >
+              <svg
+                id="autoslide-play-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                stroke="none"
+                style="display:none;"
+              >
+                <polygon points="6 3 20 12 6 21 6 3" />
+              </svg>
+              <svg
+                id="autoslide-pause-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                stroke="none"
+              >
+                <rect x="6" y="4" width="4" height="16" />
+                <rect x="14" y="4" width="4" height="16" />
+              </svg>
+            </button>
+          )
+        }
+        <a
+          href={`/slides/${slug}?print-pdf`}
+          target="_blank"
+          class="print-button"
+          title="Print / Export PDF"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
             <polyline points="6 9 6 2 18 2 18 9"></polyline>
-            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <path
+              d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
+            ></path>
             <rect x="6" y="14" width="12" height="8"></rect>
           </svg>
         </a>
         <button id="expand-btn" class="expand-button" title="Expand slides">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
             <polyline points="15 3 21 3 21 9"></polyline>
             <polyline points="9 21 3 21 3 15"></polyline>
             <line x1="21" y1="3" x2="14" y2="10"></line>
@@ -104,7 +155,17 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     </div>
     <div class="slide-container" id="slide-container">
       <button id="collapse-btn" class="collapse-button" title="Exit expanded view">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <polyline points="4 14 10 14 10 20"></polyline>
           <polyline points="20 10 14 10 14 4"></polyline>
           <line x1="14" y1="10" x2="21" y2="3"></line>
@@ -124,110 +185,132 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
       />
     </div>
     <div class="slide-instructions" id="slide-instructions">
-      <p class="instructions-desktop">Arrow keys <span class="arrow-hint">↑↓←→</span> to navigate • <kbd>O</kbd> overview • <kbd>S</kbd> speaker notes • <kbd>Ctrl+Shift+F</kbd> search • <kbd>E</kbd> expand{slide.data.autoSlide > 0 && <Fragment> • <kbd>A</kbd> toggle auto-play</Fragment>} • <kbd>Esc</kbd> exit</p>
-      <p class="instructions-mobile">Swipe to navigate • <kbd>E</kbd> expand{slide.data.autoSlide > 0 && <Fragment> • <kbd>A</kbd> auto-play</Fragment>} • <kbd>Esc</kbd> exit</p>
+      <p class="instructions-desktop">
+        Arrow keys <span class="arrow-hint">↑↓←→</span> to navigate • <kbd>O</kbd> overview
+        • <kbd>S</kbd> speaker notes • <kbd>Ctrl+Shift+F</kbd> search • <kbd>E</kbd> expand{
+          slide.data.autoSlide > 0 && (
+            <Fragment>
+              {' '}
+              • <kbd>A</kbd> toggle auto-play
+            </Fragment>
+          )
+        } • <kbd>Esc</kbd> exit
+      </p>
+      <p class="instructions-mobile">
+        Swipe to navigate • <kbd>E</kbd> expand{
+          slide.data.autoSlide > 0 && (
+            <Fragment>
+              {' '}
+              • <kbd>A</kbd> auto-play
+            </Fragment>
+          )
+        } • <kbd>Esc</kbd> exit
+      </p>
     </div>
   </div>
 </Layout>
 
 <script>
   function initExpandCollapse() {
-    const expandBtn = document.getElementById('expand-btn');
-    const collapseBtn = document.getElementById('collapse-btn');
-    const slideContainer = document.getElementById('slide-container');
-    const slidePage = document.getElementById('slide-page');
-    const autoSlideBtn = document.getElementById('autoslide-btn') as HTMLButtonElement | null;
-    const playIcon = document.getElementById('autoslide-play-icon');
-    const pauseIcon = document.getElementById('autoslide-pause-icon');
-    
-    if (!expandBtn || !collapseBtn || !slideContainer || !slidePage) return;
-    const activeSlideContainer = slideContainer;
-    const activeSlidePage = slidePage;
-    
+    const expandBtn = document.getElementById('expand-btn')
+    const collapseBtn = document.getElementById('collapse-btn')
+    const slideContainer = document.getElementById('slide-container')
+    const slidePage = document.getElementById('slide-page')
+    const autoSlideBtn = document.getElementById(
+      'autoslide-btn',
+    ) as HTMLButtonElement | null
+    const playIcon = document.getElementById('autoslide-play-icon')
+    const pauseIcon = document.getElementById('autoslide-pause-icon')
+
+    if (!expandBtn || !collapseBtn || !slideContainer || !slidePage) return
+    const activeSlideContainer = slideContainer
+    const activeSlidePage = slidePage
+
     function expandSlides() {
-      activeSlideContainer.classList.add('expanded');
-      activeSlidePage.classList.add('slides-expanded');
-      document.body.style.overflow = 'hidden';
+      activeSlideContainer.classList.add('expanded')
+      activeSlidePage.classList.add('slides-expanded')
+      document.body.style.overflow = 'hidden'
     }
-    
+
     function collapseSlides() {
-      activeSlideContainer.classList.remove('expanded');
-      activeSlidePage.classList.remove('slides-expanded');
-      document.body.style.overflow = '';
+      activeSlideContainer.classList.remove('expanded')
+      activeSlidePage.classList.remove('slides-expanded')
+      document.body.style.overflow = ''
     }
-    
-    expandBtn.addEventListener('click', expandSlides);
-    collapseBtn.addEventListener('click', collapseSlides);
+
+    expandBtn.addEventListener('click', expandSlides)
+    collapseBtn.addEventListener('click', collapseSlides)
 
     // After expand/collapse CSS transitions finish, tell reveal.js to relayout
     slideContainer.addEventListener('transitionend', (e) => {
       // Only react to transitions on the container itself, not bubbled events
       if (e.target === slideContainer) {
-        window.dispatchEvent(new Event('reveal-relayout'));
+        window.dispatchEvent(new Event('reveal-relayout'))
       }
-    });
-    
+    })
+
     // Auto-slide play/pause toggle
-    let isPlaying = true; // auto-slide starts playing if enabled
+    let isPlaying = true // auto-slide starts playing if enabled
     function toggleAutoSlide() {
-      isPlaying = !isPlaying;
+      isPlaying = !isPlaying
       if (playIcon && pauseIcon) {
-        playIcon.style.display = isPlaying ? 'none' : 'block';
-        pauseIcon.style.display = isPlaying ? 'block' : 'none';
+        playIcon.style.display = isPlaying ? 'none' : 'block'
+        pauseIcon.style.display = isPlaying ? 'block' : 'none'
       }
-      window.dispatchEvent(new CustomEvent('reveal-autoslide-toggle'));
+      window.dispatchEvent(new CustomEvent('reveal-autoslide-toggle'))
     }
 
     if (autoSlideBtn) {
-      autoSlideBtn.addEventListener('click', toggleAutoSlide);
+      autoSlideBtn.addEventListener('click', toggleAutoSlide)
     }
 
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
       // Only handle if not in an input field
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-      
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)
+        return
+
       if (e.key === 'e' || e.key === 'E') {
         if (!slideContainer.classList.contains('expanded')) {
-          expandSlides();
+          expandSlides()
         }
       } else if (e.key === 'Escape') {
         if (slideContainer.classList.contains('expanded')) {
-          collapseSlides();
+          collapseSlides()
         }
       } else if ((e.key === 'a' || e.key === 'A') && autoSlideBtn) {
-        toggleAutoSlide();
+        toggleAutoSlide()
       }
-    });
+    })
   }
-  
+
   function initPrintMode() {
-    if (!window.location.search.includes('print-pdf')) return;
+    if (!window.location.search.includes('print-pdf')) return
 
-    const slidePage = document.getElementById('slide-page');
-    const slideHeader = document.getElementById('slide-header');
-    const slideInstructions = document.getElementById('slide-instructions');
-    const slideContainer = document.getElementById('slide-container');
+    const slidePage = document.getElementById('slide-page')
+    const slideHeader = document.getElementById('slide-header')
+    const slideInstructions = document.getElementById('slide-instructions')
+    const slideContainer = document.getElementById('slide-container')
 
-    if (slideHeader) slideHeader.style.display = 'none';
-    if (slideInstructions) slideInstructions.style.display = 'none';
+    if (slideHeader) slideHeader.style.display = 'none'
+    if (slideInstructions) slideInstructions.style.display = 'none'
     if (slidePage) {
-      slidePage.classList.add('print-mode');
+      slidePage.classList.add('print-mode')
     }
     if (slideContainer) {
-      slideContainer.classList.add('print-mode');
+      slideContainer.classList.add('print-mode')
     }
   }
 
   // Initialize on page load
   document.addEventListener('DOMContentLoaded', () => {
-    initExpandCollapse();
-    initPrintMode();
-  });
+    initExpandCollapse()
+    initPrintMode()
+  })
   document.addEventListener('astro:page-load', () => {
-    initExpandCollapse();
-    initPrintMode();
-  });
+    initExpandCollapse()
+    initPrintMode()
+  })
 </script>
 
 <style>
@@ -253,7 +336,9 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     align-items: flex-start;
     gap: 0.5rem;
     margin-bottom: 0.5rem;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
   }
 
   .slide-header-left {
@@ -304,9 +389,11 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     padding: 0.5rem;
     background: transparent;
     border: 2px solid var(--theme-accent);
-    border-radius: 0.5rem;
+    border-radius: 0;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease;
   }
 
   .autoslide-button svg {
@@ -334,9 +421,11 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     padding: 0.5rem;
     background: transparent;
     border: 2px solid var(--theme-accent);
-    border-radius: 0.5rem;
+    border-radius: 0;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease;
   }
 
   .expand-button svg {
@@ -373,9 +462,11 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     padding: 0.5rem;
     background: transparent;
     border: 2px solid var(--theme-accent);
-    border-radius: 0.5rem;
+    border-radius: 0;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease;
     text-decoration: none;
   }
 
@@ -412,6 +503,7 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     max-height: unset;
     border-radius: 0;
     border: none;
+    box-shadow: none;
     overflow: visible;
   }
 
@@ -428,9 +520,10 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     max-height: 500px;
     margin: 0 auto;
     position: relative;
-    border-radius: 0.75rem;
+    border-radius: 0;
     overflow: hidden;
-    border: 1px solid var(--theme-separator);
+    border: 2px solid var(--retro-border);
+    box-shadow: var(--retro-shadow);
     transition: all 0.3s ease;
   }
 
@@ -445,6 +538,7 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     margin: 0;
     border-radius: 0;
     border: none;
+    box-shadow: none;
     z-index: 101;
   }
 
@@ -457,9 +551,12 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     padding: 0.75rem;
     background: rgba(0, 0, 0, 0.7);
     border: 2px solid rgba(255, 255, 255, 0.4);
-    border-radius: 0.5rem;
+    border-radius: 0;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease,
+      border-color 0.2s ease;
     backdrop-filter: blur(4px);
   }
 
@@ -542,8 +639,13 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
   }
 
   @keyframes bounce-down {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(4px); }
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(4px);
+    }
   }
 
   .slide-container :global(.reveal .progress) {
@@ -582,7 +684,11 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
   }
 
   .slide-container :global(.reveal .searchbox .searchinput) {
-    background: color-mix(in oklab, var(--theme-foreground) 8%, var(--theme-background)) !important;
+    background: color-mix(
+      in oklab,
+      var(--theme-foreground) 8%,
+      var(--theme-background)
+    ) !important;
     color: var(--theme-foreground) !important;
     border: 1px solid var(--theme-separator) !important;
     border-radius: 0.375rem !important;
@@ -615,7 +721,9 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
   .slide-container :global(.reveal pre) {
     position: relative;
     border-radius: 0.75rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -2px rgba(0, 0, 0, 0.1);
     margin: 1rem 0;
     width: 100%;
     max-width: 100%;

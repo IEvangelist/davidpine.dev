@@ -8,28 +8,111 @@ interface Props {
 const { avatarImage } = Astro.props
 ---
 
-<div
-  class="flex flex-col sm:flex-row items-center justify-around sm:gap-5 max-w-full mb-6 py-10 bg-accent/8 p-4 rounded-xl"
->
-  {
-    avatarImage && (
-      <div class="shrink-0 bg-conic/[from_var(--border-angle)] from-accent/20 via-accent to-accent/20 from-30% to-60% animate-rotate-border rounded-full p-[6px]">
-        <div class="relative z-20 flex rounded-full bg-background">
+<aside class="post-addendum">
+  <span class="post-addendum__tag">// thanks for reading</span>
+  <div class="post-addendum__body">
+    {
+      avatarImage && (
+        <div class="post-addendum__avatar">
           <Image
             src={avatarImage.src}
             alt={avatarImage.alt}
-            class="rounded-full size-[211px] aspect-square"
+            class="post-addendum__avatar-img"
             widths={[422]}
             height={211}
             width={211}
           />
         </div>
-      </div>
-    )
-  }
-  <div>
-    <div class:list={['m-4 max-w-full prose']}>
+      )
+    }
+    <div class="post-addendum__content prose">
       <slot />
     </div>
   </div>
-</div>
+</aside>
+
+<style>
+  .post-addendum {
+    position: relative;
+    display: block;
+    max-width: 100%;
+    margin: 2.5rem 0 1.5rem;
+    padding: 1.75rem;
+    border: 2px solid var(--retro-border);
+    background:
+      linear-gradient(
+        135deg,
+        color-mix(in oklab, var(--retro-primary) 10%, transparent) 0%,
+        transparent 45%
+      ),
+      var(--retro-panel);
+    box-shadow: var(--retro-shadow);
+  }
+
+  .post-addendum__tag {
+    position: absolute;
+    top: -0.85rem;
+    left: 1.25rem;
+    padding: 0.15rem 0.6rem;
+    font-family:
+      ui-monospace, 'SFMono-Regular', 'Cascadia Code', 'Roboto Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--retro-on-accent);
+    background: var(--retro-primary);
+    border: 2px solid var(--retro-border);
+    box-shadow: var(--retro-shadow-sm);
+  }
+
+  .post-addendum__body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  .post-addendum__avatar {
+    flex-shrink: 0;
+    padding: 5px;
+    background: var(--retro-primary);
+    border: 2px solid var(--retro-border);
+    box-shadow: var(--retro-shadow-sm);
+  }
+
+  .post-addendum__avatar-img {
+    display: block;
+    width: 132px;
+    height: 132px;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border: 2px solid var(--retro-border);
+  }
+
+  .post-addendum__content {
+    max-width: 46ch;
+    margin: 0;
+  }
+
+  .post-addendum__content :global(p) {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  @media (min-width: 640px) {
+    .post-addendum__body {
+      flex-direction: row;
+      align-items: center;
+      gap: 1.75rem;
+      text-align: left;
+    }
+
+    .post-addendum__avatar-img {
+      width: 148px;
+      height: 148px;
+    }
+  }
+</style>

@@ -146,6 +146,31 @@ const config: SiteConfig = {
     // Their values can be either a literal color (hex, rgb, hsl) or another theme key.
     // See themeKeys list in src/types.ts for available keys to override and reference.
     overrides: {
+      houston: {
+        background: '#1a1a1a',
+        foreground: '#f9f4da',
+        accent: '#14b6e5',
+        heading1: '#f9f4da',
+        heading2: '#fcba28',
+        heading3: '#14b6e5',
+        heading4: '#0ca95b',
+        heading5: '#c084fc',
+        heading6: '#ff3333',
+        list: '#fcba28',
+        link: '#14b6e5',
+        separator: '#f9f4da',
+        note: '#14b6e5',
+        tip: '#0ca95b',
+        important: '#c084fc',
+        caution: '#fcba28',
+        warning: '#ff3333',
+        blue: '#14b6e5',
+        green: '#0ca95b',
+        red: '#ff3333',
+        yellow: '#fcba28',
+        magenta: '#c084fc',
+        cyan: '#00d4d7',
+      },
       // Improve readability for aurora-x theme
       // 'aurora-x': {
       //   background: '#292929FF',

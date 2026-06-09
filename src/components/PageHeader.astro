@@ -20,10 +20,53 @@ if (pieces.length === 0) {
 const titleFromPieces = pieces.map((part) => `/ ${part}`)
 ---
 
-<div
-  class="border-0 border-accent/30 bg-accent/6 rounded-xl inline-block py-2.5 pl-3 pr-4 mt-5 md:mt-8"
->
-  <h1 class="text-accent text-2xl font-semibold flex flex-wrap gap-y-2 gap-x-3.5">
+<div class="page-header">
+  <h1 class="page-header-title">
     {title ? <span>// {title}</span> : titleFromPieces.map((part) => <span>{part}</span>)}
   </h1>
+  <span class="page-header-bar" aria-hidden="true"></span>
 </div>
+
+<style>
+  .page-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    margin-block: clamp(1.25rem, 4vw, 2rem) 1rem;
+    border: 2px solid var(--retro-border);
+    background:
+      linear-gradient(
+        135deg,
+        color-mix(in oklab, var(--retro-primary) 12%, transparent),
+        transparent 52%
+      ),
+      var(--retro-panel);
+    box-shadow: var(--retro-shadow);
+    padding: clamp(0.75rem, 2vw, 1.1rem) clamp(0.9rem, 2.5vw, 1.4rem);
+  }
+
+  .page-header-title {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.85rem;
+    margin: 0;
+    color: var(--retro-secondary);
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .page-header-bar {
+    flex: 0 0 auto;
+    width: clamp(2.5rem, 12vw, 5rem);
+    height: 0.75rem;
+    margin-left: auto;
+    border: 2px solid var(--retro-border);
+    background: var(--retro-primary);
+    box-shadow: var(--retro-shadow-sm);
+  }
+</style>

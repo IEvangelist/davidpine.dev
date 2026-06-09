@@ -72,41 +72,40 @@ if (postData.tags && postData.tags.length > 0) {
   author={postData.author}
   tags={postData.tags}
 >
-  <article class="max-w-full py-7.5" data-pagefind-body>
-    {
-      postData.coverImage && (
-        <Image
-          priority
-          layout="constrained"
-          src={postData.coverImage.src}
-          alt={postData.coverImage.alt}
-          class="w-full rounded-xl mb-5"
-        />
-      )
-    }
-    <div class="md:mx-2">
-      <h1 id={post.id} class="mb-4 text-[1.75rem] text-heading1 font-semibold">
-        # {postData.title}
-      </h1>
-      <div class="my-2 border-l-2 border-accent/80 pl-4 py-2">
-        <PostInfo post={post} class="mb-1" />
-        {
-          tags && (
-            <div class="mt-4">
-              <Tags tags={tags} />
-            </div>
-          )
-        }
+  <div class="post-page-layout">
+    <article class="post-article min-w-0 max-w-full py-7.5" data-pagefind-body>
+      {
+        postData.coverImage && (
+          <Image
+            priority
+            layout="constrained"
+            src={postData.coverImage.src}
+            alt={postData.coverImage.alt}
+            class="w-full rounded-xl mb-5"
+          />
+        )
+      }
+      <div class="md:mx-2">
+        <h1 id={post.id} class="mb-4 text-[1.75rem] text-heading1 font-semibold">
+          {postData.title}
+        </h1>
+        <div class="my-2 border-l-2 border-accent/80 pl-4 py-2">
+          <PostInfo post={post} class="mb-1" />
+          {
+            tags && (
+              <div class="mt-4">
+                <Tags tags={tags} />
+              </div>
+            )
+          }
+        </div>
       </div>
-    </div>
-    <!-- <hr class="border-accent/10 border-2 rounded-xl hidden lg:block" /> -->
-    <div class="flex flex-col xl:gap-1 2xl:gap-18 xl:flex-row xl:items-start">
-      {postData.toc && headings.length > 0 && <TableOfContents headings={headings} />}
-      <div class="mb-5 xl:min-w-full 2xl:min-w-full prose">
+      <div class="mb-5 min-w-0 xl:flex-1 prose">
         <PostContent />
       </div>
-    </div>
-  </article>
+    </article>
+    {postData.toc && headings.length > 0 && <TableOfContents headings={headings} />}
+  </div>
   {
     nextPostInSeries && (
       <a
@@ -151,3 +150,60 @@ if (postData.tags && postData.tags.length > 0) {
   }
   <ScrollUpButton />
 </Layout>
+
+<style>
+  .post-page-layout {
+    display: flex;
+    max-width: 100%;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .post-article {
+    width: 100%;
+  }
+
+  @media (min-width: 1024px) {
+    .post-page-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 17rem;
+      gap: clamp(1.5rem, 3vw, 2.5rem);
+      align-items: start;
+    }
+
+    .post-page-layout :global(.toc) {
+      position: sticky;
+      top: 2rem;
+      width: 100%;
+      margin: 1.875rem 0 0;
+      align-self: start;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .post-page-layout {
+      grid-template-columns: minmax(0, 1fr) minmax(17rem, 20rem);
+    }
+  }
+
+  @media (min-width: 1760px) {
+    .post-page-layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .post-article {
+      grid-column: 1;
+      grid-row: 1;
+      width: min(100%, 44rem);
+      margin-inline: auto;
+    }
+
+    .post-page-layout :global(.toc) {
+      grid-column: 1;
+      grid-row: 1;
+      width: 20rem;
+      margin: 1.875rem 0 0 calc(100% + 2rem);
+      justify-self: start;
+    }
+  }
+</style>

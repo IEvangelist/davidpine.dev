@@ -9,13 +9,12 @@ interface Props {
   observeSelector?: string
 }
 
-const { 
-  observeSelector = 'article div.prose'
-} = Astro.props
+const { observeSelector = 'article div.prose' } = Astro.props
 ---
 
 <button
   hidden
+  aria-label="Scroll to top"
   class="scroll-up size-11 fixed flex items-center justify-center bg-background z-100 bottom-3 right-3 rounded-full border-2 border-accent/20 hover:bg-accent/10 md:size-12 md:bottom-5 md:right-5 lg:size-13 lg:bottom-6 lg:right-6"
   data-observe={observeSelector}
 >
@@ -93,14 +92,27 @@ const {
 <style>
   /* When button appears, slide it in from the bottom */
   button.scroll-up {
-    /* also add a translate effect */
-    transform: translateY(0px);
-    /* and a transition */
+    border: 2px solid var(--retro-border, var(--theme-accent)) !important;
+    border-radius: 0 !important;
+    background: var(--retro-primary, var(--theme-background)) !important;
+    color: var(--retro-on-accent, var(--theme-foreground));
+    box-shadow: var(--retro-shadow-sm, 3px 3px 0 0 #000);
     opacity: 1;
+    transform: translateY(0);
     transition:
-      transform 0.3s ease-in-out,
+      background-color 120ms ease,
+      box-shadow 120ms ease,
       opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-      background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      transform 0.3s ease-in-out,
+      translate 120ms ease;
+  }
+  button.scroll-up:hover {
+    background: var(--retro-secondary, var(--theme-accent)) !important;
+    box-shadow: var(--retro-shadow, 6px 6px 0 0 #000);
+    translate: -2px -2px;
+  }
+  button.scroll-up :global(svg) {
+    color: currentColor;
   }
   button.scroll-up:not(.active) {
     transform: translateY(10px);

@@ -14,7 +14,7 @@ const slides: Slide[] = slideEntries.map((entry) => {
   // Extract just the filename without the folder path for cleaner URLs
   const slugParts = entry.id.split('/')
   const slug = slugParts[slugParts.length - 1]
-  
+
   return {
     id: slug,
     title: entry.data.title,
@@ -32,10 +32,13 @@ slides.sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime())
 
 // Get unique tags with counts
 const allTags = slides.flatMap((slide) => slide.tags || [])
-const tagCounts = allTags.reduce((acc, tag) => {
-  acc[tag] = (acc[tag] || 0) + 1
-  return acc
-}, {} as Record<string, number>)
+const tagCounts = allTags.reduce(
+  (acc, tag) => {
+    acc[tag] = (acc[tag] || 0) + 1
+    return acc
+  },
+  {} as Record<string, number>,
+)
 
 const tags = Object.entries(tagCounts)
   .map(([tag, count]) => ({ tag, count, size: 1 }))
@@ -45,17 +48,42 @@ const tags = Object.entries(tagCounts)
 const currentTag = Astro.url.searchParams.get('tag') || ''
 ---
 
-<Layout title="Slides" description="Presentation slides from David Pine's talks and sessions">
+<Layout
+  title="Slides"
+  description="Presentation slides from David Pine's talks and sessions"
+>
   <PageHeader title="Slides" />
-  <article class="max-w-full py-7.5">
-    <div class="mb-8">
-      <p class="text-lg opacity-80">
-        Browse through presentation slides from my various talks and speaking engagements. 
+  <article class="slides-page max-w-full py-7.5">
+    <section class="slides-intro" aria-label="Slides introduction">
+      <p>
+        Browse through presentation slides from my various talks and speaking engagements.
         Click on any slide deck to view the full presentation.
       </p>
-    </div>
-    
+    </section>
+
     <SlidesPage slides={slides} tags={tags} tag={currentTag} />
   </article>
   <ScrollUpButton />
 </Layout>
+
+<style>
+  .slides-page {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .slides-intro {
+    border: 2px solid var(--retro-border);
+    background: var(--retro-panel);
+    box-shadow: var(--retro-shadow);
+    padding: clamp(1rem, 2vw, 1.35rem);
+  }
+
+  .slides-intro p {
+    max-width: 68ch;
+    margin: 0;
+    color: var(--theme-text-light);
+    font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+    line-height: 1.65;
+  }
+</style>
