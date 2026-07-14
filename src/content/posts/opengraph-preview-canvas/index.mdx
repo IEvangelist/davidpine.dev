@@ -31,6 +31,8 @@ import sourceHovercard from './og-preview-source-hovercard.png'
 import sourceHovercardLight from './og-preview-source-hovercard-light.png'
 import diagnostics from './og-preview-diagnostics.png'
 import diagnosticsLight from './og-preview-diagnostics-light.png'
+import localDiagnostics from './og-preview-local-diagnostics.png'
+import localDiagnosticsLight from './og-preview-local-diagnostics-light.png'
 import aiFixPrompt from './og-preview-ai-fix-prompt.png'
 import aiFixPromptLight from './og-preview-ai-fix-prompt-light.png'
 import agentReadiness from './og-preview-agent-readiness.png'
@@ -54,32 +56,13 @@ So I built an open-source **OpenGraph Preview canvas** for the GitHub Copilot ap
 
 <YouTube id="https://youtu.be/Rp36LqdQm10" />
 
-The video walks through the original end-to-end flow in about six minutes: browse a page inside the canvas, inspect its social cards, review the raw metadata, and turn a diagnostic into a ready-to-run Copilot task.
-
-## Following the trail from video to code
-
-The public trail is short and useful:
-
-1. The [Media page](/media) lists **Build & Preview OpenGraph Cards Locally - GitHub Copilot App Canvas (OSS)**.
-2. The [video description](https://www.youtube.com/watch?v=Rp36LqdQm10) links directly to the extension source.
-3. The source landed in [`microsoft/aspire.dev` through pull request #1312](https://github.com/microsoft/aspire.dev/pull/1312).
-4. The merged extension lives in [`.github/extensions/og-preview`](https://github.com/microsoft/aspire.dev/tree/main/.github/extensions/og-preview).
-
-<Mermaid
-  alt="The trail from davidpine.dev leads through the YouTube walkthrough and Aspire pull request 1312 to the merged OpenGraph Preview extension source."
-  chart={`
-flowchart LR
-    Site["davidpine.dev/media"] --> Video["YouTube walkthrough"]
-    Video --> PR["microsoft/aspire.dev #1312"]
-    PR --> Source[".github/extensions/og-preview"]
-`}
-/>
-
-The pull request started on June 29, 2026 and merged on July 1. Its **21 commits** tell a better story than the original summary: a focused metadata viewer grew into a browser, a multi-platform preview suite, a source inspector, a diagnostics engine, and an agent-readiness audit.
+The video walks through the end-to-end flow in about six minutes: browse a page inside the canvas, inspect its social cards, review the raw metadata, and turn a diagnostic into a ready-to-run Copilot task.
 
 ## One canvas, four working modes
 
 The canvas has four tabs, but they all operate on the same URL and shared state. Navigating in **Browse** refreshes **Previews**, **Raw metadata**, and **Diagnostics** automatically.
+
+The walkthrough uses `aspire.dev` as one consistent target, so each view shows a different layer of evidence for the same page.
 
 ### Browse the live page
 
@@ -172,34 +155,44 @@ The OpenGraph diagnostics check required, recommended, and optional metadata, in
 - `og:site_name`, `og:locale`, and `twitter:card`
 - Description length
 
-I pointed the canvas at this site's homepage while writing this post. It immediately found real gaps: the page has a valid image, but it does not declare `og:image:alt`, dimensions, or a MIME type. It also identified optional `og:site_name` and `og:locale` tags.
+I pointed the canvas at `aspire.dev` for this walkthrough. Instead of manufacturing a failure, the diagnostics confirmed that the site passes every displayed check: the core OpenGraph fields, site name and locale, X card metadata, absolute and secure image URLs, image alt text, declared dimensions, MIME type, and description length.
 
 <ThemeImage
   zoomable
   src={diagnostics}
   lightSrc={diagnosticsLight}
-  alt="Diagnostics turns that evidence into passed checks, recommendations, and missing metadata on davidpine.dev."
+  alt="Diagnostics confirms aspire.dev passes every displayed OpenGraph check, from core tags through structured image metadata."
   class="my-8"
   imageClass="rounded-xl"
 />
 
-Expanding a failed check explains why it matters, shows the exact tag shape, links to the relevant specification, and produces a copyable AI fix prompt grounded in the current page.
+A clean report is useful evidence too: it confirms the metadata is complete before a platform crawler ever sees the page. The failure path is just as important, but it should not invent problems on a healthy site.
+
+:::note[An honest failure-path example]
+To show the remediation flow without attributing false gaps to `aspire.dev`, I loaded a tiny `localhost` fixture that deliberately includes the core tags but omits site name, locale, image alt text, dimensions, MIME type, and secure URL. This also exercises the canvas's local-preview support.
+:::
+
+<ThemeImage
+  zoomable
+  src={localDiagnostics}
+  lightSrc={localDiagnosticsLight}
+  alt="For contrast, a deliberately incomplete localhost fixture exposes missing site name, locale, image alt, dimensions, MIME type, and secure URL metadata."
+  class="my-8"
+  imageClass="rounded-xl"
+/>
+
+Expanding the missing `og:image:alt` check explains why it matters, shows the exact tag shape, links to the OpenGraph structured-properties reference, and produces a copyable AI fix prompt grounded in the local page.
 
 <ThemeImage
   zoomable
   src={aiFixPrompt}
   lightSrc={aiFixPromptLight}
-  alt="Expanding a missing og:image:alt check explains the gap and generates a grounded fix prompt with the exact tag to add."
+  alt="Expanding the localhost fixture's missing og:image:alt check explains the accessibility gap and generates a grounded fix prompt."
   class="my-8"
   imageClass="rounded-xl"
 />
 
-This is where the canvas stops being another validator. When it detects the page's GitHub repository, the prompt includes two next actions:
-
-- **Open in Copilot** starts a coding session for that repository with the fix prompt already supplied.
-- **Create issue** files the problem in the repository and hands it to the Copilot coding agent.
-
-Repository detection scores GitHub links in the fetched HTML. An "Edit this page" link is a strong signal; blob, tree, raw, and commit links are also considered. If the source cannot be identified confidently, the canvas does not guess - it leaves the prompt ready to copy manually.
+The fixture deliberately has no repository link, so the canvas does not guess - it leaves the prompt ready to copy manually. The repo-backed `aspire.dev` example below shows how the same remediation pattern can continue directly into Copilot or a GitHub issue.
 
 ## Agent readiness is part of web readiness
 
@@ -224,7 +217,13 @@ It runs 15 read-only checks across five groups:
   imageClass="rounded-xl"
 />
 
-On `aspire.dev`, the audit detects the sitemap, `llms.txt`, Markdown negotiation, and Content Signals. Expanding the missing AI crawler rules produces a focused prompt, detects `microsoft/aspire.dev`, and exposes the Copilot and issue actions.
+On `aspire.dev`, the audit detects the sitemap, `llms.txt`, Markdown negotiation, and Content Signals.
+
+:::tip[Read the llms.txt deep dive]
+Seeing `llms.txt` detected here is not incidental. It is the same agent-friendly source behind the Aspire docs MCP tools. [How I taught AI to read Aspire docs](/posts/aspire-docs-mcp-tools) traces how that file becomes `list_docs`, `get_doc`, and `search_docs` with caching and lexical ranking.
+:::
+
+Expanding the missing AI crawler rules produces a focused prompt, detects `microsoft/aspire.dev`, and exposes the Copilot and issue actions.
 
 <ThemeImage
   zoomable
@@ -234,6 +233,13 @@ On `aspire.dev`, the audit detects the sitemap, `llms.txt`, Markdown negotiation
   class="my-8"
   imageClass="rounded-xl"
 />
+
+The remediation card includes two next actions:
+
+- **Open in Copilot** starts a coding session for `microsoft/aspire.dev` with the generated prompt already supplied.
+- **Create issue** files the recommendation in the repository and hands it to the Copilot coding agent.
+
+Repository detection scores GitHub links in the fetched HTML. An "Edit this page" link is a strong signal; blob, tree, raw, and commit links are also considered. If the source cannot be identified confidently, the canvas does not guess - it leaves the prompt ready to copy manually.
 
 Emerging standards are deliberately reported as informational rather than hard failures. That distinction matters: an absent experimental endpoint should not make a healthy site look broken.
 
@@ -293,14 +299,14 @@ The key pieces are:
 
 Server-side fetching solves two important problems. It avoids browser CORS restrictions, and it makes `localhost` reachable from the extension process. The interactive Browse tab uses a script-rewriting proxy so styles, modules, fonts, and internal navigation continue working inside an opaque-origin sandbox.
 
-## The review made the implementation safer
+## Safety and accessibility are part of the design
 
-The pull request review caught four issues that materially improved the final extension:
+Fetching arbitrary URLs from an agent-driven canvas requires deliberate guardrails:
 
-1. An oversized response could destroy the stream without settling the promise. The final fetcher [rejects immediately and prevents double settlement](https://github.com/microsoft/aspire.dev/pull/1312#discussion_r3497368293).
-2. A relative canonical URL could leak into the resolved output. It is now [resolved against the fetched page URL](https://github.com/microsoft/aspire.dev/pull/1312#discussion_r3497368333).
-3. The first tab implementation used incomplete ARIA semantics. The final version [implements selection state, panel relationships, roving focus, and keyboard navigation](https://github.com/microsoft/aspire.dev/pull/1312#discussion_r3497368356).
-4. An unrestricted fetcher could become an SSRF path into the developer's network. The final guard [checks every destination and redirect hop](https://github.com/microsoft/aspire.dev/pull/1312#discussion_r3497368373), blocks private, link-local, CGNAT, and cloud-metadata ranges, and still permits loopback for the core local-preview scenario. Private networks require an explicit `OG_ALLOW_PRIVATE_NETWORK=1` opt-in.
+1. Oversized responses are rejected immediately, and stream completion is guarded against double settlement.
+2. Relative canonical, image, and metadata URLs are resolved against the fetched page URL before they reach the UI.
+3. The four tabs expose selection state and panel relationships, use roving focus, and support keyboard navigation.
+4. Every destination and redirect hop is validated. Private, link-local, CGNAT, and cloud-metadata ranges are blocked, while loopback remains available for the core local-preview scenario. Private networks require an explicit `OG_ALLOW_PRIVATE_NETWORK=1` opt-in.
 
 That last tradeoff is especially important. "Supports localhost" should not mean "silently turns the agent into a network scanner."
 
@@ -320,7 +326,7 @@ The real value is not the card renderer by itself. It is the shortened distance 
 
 ## Try it yourself
 
-Start by installing [the GitHub Copilot app](https://github.com/github/app?utm_source=IEvangelist&utm_medium=referral&utm_campaign=opengraph-preview-canvas&utm_content=davidpine.dev). The referral parameters identify `IEvangelist` as the source while keeping the destination on GitHub's official app repository.
+Start by installing [the GitHub Copilot app](https://github.com/github/app?utm_source=IEvangelist&utm_medium=referral&utm_campaign=opengraph-preview-canvas&utm_content=davidpine.dev).
 
 The extension is [open source in the Aspire docs repository](https://github.com/microsoft/aspire.dev/tree/main/.github/extensions/og-preview). It is self-contained, uses the documented GitHub Copilot app theme tokens, and has no package installation or compilation step.
 
