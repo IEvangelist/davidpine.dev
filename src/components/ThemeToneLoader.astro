@@ -1,0 +1,74 @@
+<script>
+  const root = document.documentElement
+
+  const parseRgbColor = (value: string): [number, number, number] | null => {
+    const rgbMatch = value.match(
+      /rgba?\(\s*(\d{1,3})[\s,]+(\d{1,3})[\s,]+(\d{1,3})(?:[\s,\/]+[\d.]+)?\s*\)/i,
+    )
+    if (rgbMatch) {
+      return [Number(rgbMatch[1]), Number(rgbMatch[2]), Number(rgbMatch[3])]
+    }
+
+    const hex = value.replace('#', '').trim()
+    if (/^[\da-f]{3}$/i.test(hex)) {
+      return hex.split('').map((part) => Number.parseInt(part + part, 16)) as [
+        number,
+        number,
+        number,
+      ]
+    }
+
+    if (/^[\da-f]{6}$/i.test(hex)) {
+      return [
+        Number.parseInt(hex.slice(0, 2), 16),
+        Number.parseInt(hex.slice(2, 4), 16),
+        Number.parseInt(hex.slice(4, 6), 16),
+      ]
+    }
+
+    const probe = document.createElement('span')
+    probe.style.color = value
+    document.body.appendChild(probe)
+    const computed = getComputedStyle(probe).color
+    probe.remove()
+    const computedMatch = computed.match(/rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)/i)
+    if (!computedMatch) {
+      return null
+    }
+
+    return [Number(computedMatch[1]), Number(computedMatch[2]), Number(computedMatch[3])]
+  }
+
+  const resolveThemeTone = () => {
+    const rawBackground = getComputedStyle(root)
+      .getPropertyValue('--theme-background')
+      .trim()
+    const rgb = parseRgbColor(rawBackground)
+
+    if (!rgb) {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    }
+
+    const [r, g, b] = rgb.map((channel) => {
+      const normalized = channel / 255
+      return normalized <= 0.03928
+        ? normalized / 12.92
+        : ((normalized + 0.055) / 1.055) ** 2.4
+    })
+    const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+    return luminance < 0.5 ? 'dark' : 'light'
+  }
+
+  const setUiTone = () => {
+    root.setAttribute('data-ui-tone', resolveThemeTone())
+  }
+
+  setUiTone()
+
+  new MutationObserver((changes) => {
+    if (changes.some((change) => change.attributeName === 'data-theme')) {
+      setUiTone()
+    }
+  }).observe(root, { attributes: true, attributeFilter: ['data-theme'] })
+</script>

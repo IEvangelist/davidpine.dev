@@ -6,6 +6,7 @@ import RetroDivider from '~/components/RetroDivider.astro'
 import LightDarkAutoThemeLoader from '~/components/LightDarkAutoThemeLoader.astro'
 import ScrollUpButton from '~/components/ScrollUpButton.astro'
 import SelectThemeLoader from '~/components/SelectThemeLoader.astro'
+import ThemeToneLoader from '~/components/ThemeToneLoader.astro'
 import siteConfig from '~/site.config'
 import { pick, resolveThemeColorStyles } from '~/utils'
 import crypto from 'crypto'
@@ -155,6 +156,7 @@ let generatedCss: string = cssLines.join('\n')
     <style is:inline set:html={generatedCss}></style>
     {themeMode === 'light-dark-auto' && <LightDarkAutoThemeLoader />}
     {themeMode === 'select' && <SelectThemeLoader />}
+    <ThemeToneLoader />
   </head>
   <body class="w-full h-full m-0 bg-background text-foreground">
     <div

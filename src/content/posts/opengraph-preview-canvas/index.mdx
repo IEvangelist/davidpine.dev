@@ -1,0 +1,329 @@
+---
+title: 'Building an OpenGraph preview canvas for GitHub Copilot'
+published: '2026-07-14'
+draft: false
+description: 'How I built an open-source Copilot canvas that previews social cards, audits OpenGraph metadata and agent readiness, and turns diagnostics into actionable work.'
+author: David Pine
+coverImage:
+  src: ./og-preview-feature.png
+  lightSrc: ./og-preview-feature-light.png
+  alt: 'David Pine introduces OpenGraph, Visualized: a GitHub Copilot canvas that turns link-preview debugging into an in-app workflow.'
+tags:
+  - GitHub Copilot
+  - OpenGraph
+  - AI
+  - Tooling
+  - Web
+---
+
+import { YouTube } from '@astro-community/astro-embed-youtube'
+import Mermaid from '../../../components/Mermaid.astro'
+import ThemeImage from '../../../components/ThemeImage.astro'
+import browse from './og-preview-browse.png'
+import browseLight from './og-preview-browse-light.png'
+import platformsList from './og-preview-platforms-list.png'
+import platformsListLight from './og-preview-platforms-list-light.png'
+import platformsGrid from './og-preview-platforms-grid.png'
+import platformsGridLight from './og-preview-platforms-grid-light.png'
+import rawMetadata from './og-preview-raw-metadata.png'
+import rawMetadataLight from './og-preview-raw-metadata-light.png'
+import sourceHovercard from './og-preview-source-hovercard.png'
+import sourceHovercardLight from './og-preview-source-hovercard-light.png'
+import diagnostics from './og-preview-diagnostics.png'
+import diagnosticsLight from './og-preview-diagnostics-light.png'
+import aiFixPrompt from './og-preview-ai-fix-prompt.png'
+import aiFixPromptLight from './og-preview-ai-fix-prompt-light.png'
+import agentReadiness from './og-preview-agent-readiness.png'
+import agentReadinessLight from './og-preview-agent-readiness-light.png'
+import copilotActions from './og-preview-copilot-actions.png'
+import copilotActionsLight from './og-preview-copilot-actions-light.png'
+
+Social preview bugs have a uniquely annoying feedback loop:
+
+1. Change a few `<meta>` tags.
+2. Deploy the site.
+3. Paste the public URL into one or more platform-specific validators.
+4. Discover that the image is cropped, the description is stale, or a required tag is missing.
+5. Repeat.
+
+That felt backwards. I wanted to inspect the page where I was already working, compare every important social card at once, understand the metadata behind them, and fix problems before deploying anything.
+
+So I built an open-source **OpenGraph Preview canvas** for the GitHub Copilot app. It works with public URLs and `localhost`, and it turns a passive preview into an agent-driven workflow.
+
+## See it in action
+
+<YouTube id="https://youtu.be/Rp36LqdQm10" />
+
+The video walks through the original end-to-end flow in about six minutes: browse a page inside the canvas, inspect its social cards, review the raw metadata, and turn a diagnostic into a ready-to-run Copilot task.
+
+## Following the trail from video to code
+
+The public trail is short and useful:
+
+1. The [Media page](/media) lists **Build & Preview OpenGraph Cards Locally - GitHub Copilot App Canvas (OSS)**.
+2. The [video description](https://www.youtube.com/watch?v=Rp36LqdQm10) links directly to the extension source.
+3. The source landed in [`microsoft/aspire.dev` through pull request #1312](https://github.com/microsoft/aspire.dev/pull/1312).
+4. The merged extension lives in [`.github/extensions/og-preview`](https://github.com/microsoft/aspire.dev/tree/main/.github/extensions/og-preview).
+
+<Mermaid
+  alt="The trail from davidpine.dev leads through the YouTube walkthrough and Aspire pull request 1312 to the merged OpenGraph Preview extension source."
+  chart={`
+flowchart LR
+    Site["davidpine.dev/media"] --> Video["YouTube walkthrough"]
+    Video --> PR["microsoft/aspire.dev #1312"]
+    PR --> Source[".github/extensions/og-preview"]
+`}
+/>
+
+The pull request started on June 29, 2026 and merged on July 1. Its **21 commits** tell a better story than the original summary: a focused metadata viewer grew into a browser, a multi-platform preview suite, a source inspector, a diagnostics engine, and an agent-readiness audit.
+
+## One canvas, four working modes
+
+The canvas has four tabs, but they all operate on the same URL and shared state. Navigating in **Browse** refreshes **Previews**, **Raw metadata**, and **Diagnostics** automatically.
+
+### Browse the live page
+
+The default tab is a real, interactive page view. The address bar accepts a full URL, a bare domain, or a local address such as `localhost:4321`.
+
+<ThemeImage
+  zoomable
+  src={browse}
+  lightSrc={browseLight}
+  alt="The story begins in Browse, where the canvas loads aspire.dev without leaving GitHub Copilot."
+  class="my-8"
+  imageClass="rounded-xl"
+/>
+
+This is not a static screenshot. The page is fetched through the extension's loopback server and rendered in a sandboxed frame. Internal navigation updates the address bar and reruns the metadata pipeline. Reload and open-in-browser controls are available beside the main Preview button, while the "I'm feeling lucky" control offers a quick sample site.
+
+The practical value is continuity: I can browse to the exact route I care about without leaving the canvas or copying URLs between tools.
+
+### Compare nine social renderings
+
+The Previews tab renders the same metadata as:
+
+- OpenGraph / Facebook
+- X
+- Bluesky
+- Mastodon
+- LinkedIn
+- Reddit
+- Slack
+- Microsoft Teams
+- Discord
+
+The larger list layout preserves detail, while the compact grid makes cross-platform differences obvious at a glance.
+
+<ThemeImage
+  zoomable
+  src={platformsList}
+  lightSrc={platformsListLight}
+  alt="From that live page, Previews translates one set of metadata into detailed cards for every major social platform."
+  class="my-8"
+  imageClass="rounded-xl"
+/>
+
+<ThemeImage
+  zoomable
+  src={platformsGrid}
+  lightSrc={platformsGridLight}
+  alt="The compact grid places all nine cards side by side, making cross-platform differences visible at a glance."
+  class="my-8"
+  imageClass="rounded-xl"
+/>
+
+:::note[These are fast, deterministic previews]
+Social platforms can change their renderers and cache cards independently. The canvas catches metadata and layout problems before deployment, but the final platform crawler remains the ultimate source of truth.
+:::
+
+### Inspect the raw evidence
+
+Pretty cards are useful, but debugging requires evidence. Raw metadata is grouped into OpenGraph, Twitter / X, other metadata, and icons or links. Values get useful formatting, every row has a copy action, and the entire payload can be copied as JSON.
+
+<ThemeImage
+  zoomable
+  src={rawMetadata}
+  lightSrc={rawMetadataLight}
+  alt="Behind those cards, Raw metadata groups the OpenGraph, X, page, and icon values that produced them."
+  class="my-8"
+  imageClass="rounded-xl"
+/>
+
+Aspire pages also emit `git-commit-id` and `git-source-url`. Hovering the source URL fetches the corresponding GitHub file and displays a scrollable, syntax-highlighted hovercard without leaving the canvas.
+
+<ThemeImage
+  zoomable
+  src={sourceHovercard}
+  lightSrc={sourceHovercardLight}
+  alt="A git-source-url value then opens the exact MDX source in a syntax-highlighted hovercard, connecting rendered output to code."
+  class="my-8"
+  imageClass="rounded-xl"
+/>
+
+That connection from rendered page to source file is small but powerful. It removes the "which file generated this page?" step from the debugging loop.
+
+### Diagnose, explain, and act
+
+The OpenGraph diagnostics check required, recommended, and optional metadata, including structured image properties:
+
+- `og:title`, `og:type`, `og:url`, and `og:description`
+- `og:image` and whether its URL is absolute
+- `og:image:alt`, width, height, MIME type, and secure URL
+- `og:site_name`, `og:locale`, and `twitter:card`
+- Description length
+
+I pointed the canvas at this site's homepage while writing this post. It immediately found real gaps: the page has a valid image, but it does not declare `og:image:alt`, dimensions, or a MIME type. It also identified optional `og:site_name` and `og:locale` tags.
+
+<ThemeImage
+  zoomable
+  src={diagnostics}
+  lightSrc={diagnosticsLight}
+  alt="Diagnostics turns that evidence into passed checks, recommendations, and missing metadata on davidpine.dev."
+  class="my-8"
+  imageClass="rounded-xl"
+/>
+
+Expanding a failed check explains why it matters, shows the exact tag shape, links to the relevant specification, and produces a copyable AI fix prompt grounded in the current page.
+
+<ThemeImage
+  zoomable
+  src={aiFixPrompt}
+  lightSrc={aiFixPromptLight}
+  alt="Expanding a missing og:image:alt check explains the gap and generates a grounded fix prompt with the exact tag to add."
+  class="my-8"
+  imageClass="rounded-xl"
+/>
+
+This is where the canvas stops being another validator. When it detects the page's GitHub repository, the prompt includes two next actions:
+
+- **Open in Copilot** starts a coding session for that repository with the fix prompt already supplied.
+- **Create issue** files the problem in the repository and hands it to the Copilot coding agent.
+
+Repository detection scores GitHub links in the fetched HTML. An "Edit this page" link is a strong signal; blob, tree, raw, and commit links are also considered. If the source cannot be identified confidently, the canvas does not guess - it leaves the prompt ready to copy manually.
+
+## Agent readiness is part of web readiness
+
+OpenGraph metadata answers, "How will a person see this link?" The experimental **Agent readiness** section asks, "How will an agent discover, read, and act on this site?"
+
+It runs 15 read-only checks across five groups:
+
+| Group                        | Checks                                                                            |
+| ---------------------------- | --------------------------------------------------------------------------------- |
+| Discoverability              | `robots.txt`, XML sitemap, and response `Link` headers                            |
+| Content for agents           | `llms.txt` and Markdown content negotiation                                       |
+| Bot access control           | AI crawler rules and Content Signals                                              |
+| Agent and protocol discovery | MCP, A2A, Agent Skills, AI plugin, and DNS-AID                                    |
+| Auth for agents              | OAuth protected-resource metadata, authorization-server metadata, and API Catalog |
+
+<ThemeImage
+  zoomable
+  src={agentReadiness}
+  lightSrc={agentReadinessLight}
+  alt="The audit widens the lens from social cards to agent readiness, checking how aspire.dev can be discovered, read, and used by AI."
+  class="my-8"
+  imageClass="rounded-xl"
+/>
+
+On `aspire.dev`, the audit detects the sitemap, `llms.txt`, Markdown negotiation, and Content Signals. Expanding the missing AI crawler rules produces a focused prompt, detects `microsoft/aspire.dev`, and exposes the Copilot and issue actions.
+
+<ThemeImage
+  zoomable
+  src={copilotActions}
+  lightSrc={copilotActionsLight}
+  alt="Finally, a failed readiness check becomes action: the canvas identifies microsoft/aspire.dev and offers Open in Copilot or Create issue."
+  class="my-8"
+  imageClass="rounded-xl"
+/>
+
+Emerging standards are deliberately reported as informational rather than hard failures. That distinction matters: an absent experimental endpoint should not make a healthy site look broken.
+
+## The agent can drive the canvas too
+
+The UI is only half of the collaboration model. The extension exposes one tool and two canvas actions:
+
+| Capability        | Purpose                                                              |
+| ----------------- | -------------------------------------------------------------------- |
+| `open_og_preview` | Open or focus the canvas, optionally loading a URL immediately       |
+| `preview_url`     | Drive an open canvas to a URL and return the resolved preview fields |
+| `get_metadata`    | Fetch and parse a URL headlessly, returning raw tags and diagnostics |
+
+That means I can ask Copilot:
+
+```text
+Open the OG preview for localhost:4321/posts/opengraph-preview-canvas
+```
+
+The human-visible canvas opens, while the agent can inspect the same structured result. Server-Sent Events keep agent-driven navigation synchronized with the open panel.
+
+## How the extension works
+
+The implementation is dependency-free JavaScript with no build step. Each canvas instance gets a small HTTP server bound to `127.0.0.1` on a random port.
+
+<Mermaid alt="Underneath the experience, Copilot opens the canvas, a loopback server fetches and parses the target page, and Server-Sent Events keep human and agent navigation in sync." chart={`
+sequenceDiagram
+    actor Human
+    participant Agent as Copilot
+    participant Runtime as Canvas runtime
+    participant Extension as OG extension
+    participant UI as Canvas renderer
+    participant Page as Target page
+
+    Human->>Agent: Preview localhost:4321
+    Agent->>Runtime: open_og_preview(url)
+    Runtime->>Extension: canvas.open
+    Extension->>Extension: Start 127.0.0.1 server
+    Extension-->>Runtime: Renderer URL
+    Runtime->>UI: Open side panel
+    UI->>Extension: GET /api/fetch?u=...
+    Extension->>Page: Fetch HTML
+    Page-->>Extension: HTML + headers
+    Extension->>Extension: Parse metadata + diagnostics
+    Extension-->>UI: Structured JSON
+    Extension-->>UI: SSE updates for agent navigation
+
+`} />
+
+The key pieces are:
+
+- [`extension.mjs`](https://github.com/microsoft/aspire.dev/blob/main/.github/extensions/og-preview/extension.mjs) wires the canvas, actions, loopback routes, browsing proxy, and session handoffs.
+- [`http-fetch.mjs`](https://github.com/microsoft/aspire.dev/blob/main/.github/extensions/og-preview/lib/http-fetch.mjs) handles redirects, timeouts, response limits, and network safety.
+- [`parse-og.mjs`](https://github.com/microsoft/aspire.dev/blob/main/.github/extensions/og-preview/lib/parse-og.mjs) resolves tags, URLs, social fields, repository clues, and diagnostics.
+- [`agent-readiness.mjs`](https://github.com/microsoft/aspire.dev/blob/main/.github/extensions/og-preview/lib/agent-readiness.mjs) probes the emerging agent-facing standards.
+- The [`ui`](https://github.com/microsoft/aspire.dev/tree/main/.github/extensions/og-preview/ui) directory contains the renderer, platform cards, interactions, theme support, and loading states.
+
+Server-side fetching solves two important problems. It avoids browser CORS restrictions, and it makes `localhost` reachable from the extension process. The interactive Browse tab uses a script-rewriting proxy so styles, modules, fonts, and internal navigation continue working inside an opaque-origin sandbox.
+
+## The review made the implementation safer
+
+The pull request review caught four issues that materially improved the final extension:
+
+1. An oversized response could destroy the stream without settling the promise. The final fetcher [rejects immediately and prevents double settlement](https://github.com/microsoft/aspire.dev/pull/1312#discussion_r3497368293).
+2. A relative canonical URL could leak into the resolved output. It is now [resolved against the fetched page URL](https://github.com/microsoft/aspire.dev/pull/1312#discussion_r3497368333).
+3. The first tab implementation used incomplete ARIA semantics. The final version [implements selection state, panel relationships, roving focus, and keyboard navigation](https://github.com/microsoft/aspire.dev/pull/1312#discussion_r3497368356).
+4. An unrestricted fetcher could become an SSRF path into the developer's network. The final guard [checks every destination and redirect hop](https://github.com/microsoft/aspire.dev/pull/1312#discussion_r3497368373), blocks private, link-local, CGNAT, and cloud-metadata ranges, and still permits loopback for the core local-preview scenario. Private networks require an explicit `OG_ALLOW_PRIVATE_NETWORK=1` opt-in.
+
+That last tradeoff is especially important. "Supports localhost" should not mean "silently turns the agent into a network scanner."
+
+## Why this changes the feedback loop
+
+| Before                            | With the canvas                              |
+| --------------------------------- | -------------------------------------------- |
+| Deploy before validating          | Preview `localhost` before deployment        |
+| Open separate platform validators | Compare nine renderings together             |
+| Inspect `<head>` manually         | Review grouped, copyable metadata            |
+| Translate a warning into work     | Generate a grounded fix prompt               |
+| Find the owning repository        | Detect it from the page                      |
+| Copy context into another tool    | Open a Copilot session or create an issue    |
+| Audit social metadata separately  | Include agent readiness in the same workflow |
+
+The real value is not the card renderer by itself. It is the shortened distance between **seeing a problem**, **understanding it**, and **starting the correct fix in the correct repository**.
+
+## Try it yourself
+
+Start by installing [the GitHub Copilot app](https://github.com/github/app?utm_source=IEvangelist&utm_medium=referral&utm_campaign=opengraph-preview-canvas&utm_content=davidpine.dev). The referral parameters identify `IEvangelist` as the source while keeping the destination on GitHub's official app repository.
+
+The extension is [open source in the Aspire docs repository](https://github.com/microsoft/aspire.dev/tree/main/.github/extensions/og-preview). It is self-contained, uses the documented GitHub Copilot app theme tokens, and has no package installation or compilation step.
+
+Read the official [canvas extension documentation](https://docs.github.com/en/copilot/how-tos/github-copilot-app/working-with-canvas-extensions), copy or adapt the extension for your own workflow, and then ask Copilot to open a public or local URL.
+
+Better social cards are the immediate payoff. The more interesting outcome is a reusable pattern: give humans and agents the same visible artifact, the same structured evidence, and an explicit path from diagnosis to action.

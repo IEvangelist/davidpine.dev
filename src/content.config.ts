@@ -16,6 +16,7 @@ const postsCollection = defineCollection({
       coverImage: z
         .strictObject({
           src: image(),
+          lightSrc: image().optional(),
           alt: z.string(),
         })
         .optional(),
