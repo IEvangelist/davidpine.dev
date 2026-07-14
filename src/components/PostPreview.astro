@@ -4,9 +4,9 @@ import type { CollectionEntry } from 'astro:content'
 import { render } from 'astro:content'
 import Tags from '~/components/Tags.astro'
 import PostInfo from '~/components/PostInfo.astro'
+import ThemeImage from '~/components/ThemeImage.astro'
 import type { Collation } from '~/types'
 import { TagsGroup } from '~/utils'
-import { Image } from 'astro:assets'
 
 interface Props {
   post: CollectionEntry<'posts'>
@@ -30,10 +30,12 @@ const articleLink = samePage ? `#${post.id}` : `/posts/${post.id}`
     {
       post.data.coverImage && (
         <a href={articleLink} class="flex-shrink-0">
-          <Image
+          <ThemeImage
             src={post.data.coverImage.src}
+            lightSrc={post.data.coverImage.lightSrc}
             alt={post.data.coverImage.alt}
-            class="w-full sm:w-48 md:w-64 lg:w-72 h-auto rounded-lg"
+            class="w-full sm:w-48 md:w-64 lg:w-72"
+            imageClass="rounded-lg"
           />
         </a>
       )

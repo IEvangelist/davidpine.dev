@@ -7,12 +7,13 @@ import DividerText from '~/components/DividerText.astro'
 import { getCollection, render, type CollectionEntry } from 'astro:content'
 import PostAddendum from '~/components/PostAddendum.astro'
 import TableOfContents from '~/components/TableOfContents.astro'
-import { Image } from 'astro:assets'
 import GiscusLoader from '~/components/GiscusLoader.astro'
 import siteConfig from '~/site.config'
 import Tags from '~/components/Tags.astro'
 import PostInfo from '~/components/PostInfo.astro'
 import ScrollUpButton from '~/components/ScrollUpButton.astro'
+import ThemeImage from '~/components/ThemeImage.astro'
+import { LightGallery } from 'astro-lightgallery'
 import type { Collation } from '~/types'
 import ChevronsRight from '~/icons/chevrons-right.svg'
 import { getPostSequenceContext } from '~/utils'
@@ -74,35 +75,46 @@ if (postData.tags && postData.tags.length > 0) {
 >
   <div class="post-page-layout">
     <article class="post-article min-w-0 max-w-full py-7.5" data-pagefind-body>
-      {
-        postData.coverImage && (
-          <Image
-            priority
-            layout="constrained"
-            src={postData.coverImage.src}
-            alt={postData.coverImage.alt}
-            class="w-full rounded-xl mb-5"
-          />
-        )
-      }
-      <div class="md:mx-2">
-        <h1 id={post.id} class="mb-4 text-[1.75rem] text-heading1 font-semibold">
-          {postData.title}
-        </h1>
-        <div class="my-2 border-l-2 border-accent/80 pl-4 py-2">
-          <PostInfo post={post} class="mb-1" />
-          {
-            tags && (
-              <div class="mt-4">
-                <Tags tags={tags} />
-              </div>
-            )
-          }
+      <LightGallery
+        class="post-image-gallery"
+        options={{
+          selector: '.post-gallery-item',
+          thumbnail: true,
+        }}
+        addPlugins={['zoom']}
+      >
+        {
+          postData.coverImage && (
+            <ThemeImage
+              priority
+              zoomable
+              src={postData.coverImage.src}
+              lightSrc={postData.coverImage.lightSrc}
+              alt={postData.coverImage.alt}
+              class="mb-5"
+              imageClass="rounded-xl"
+            />
+          )
+        }
+        <div class="md:mx-2">
+          <h1 id={post.id} class="mb-4 text-[1.75rem] text-heading1 font-semibold">
+            {postData.title}
+          </h1>
+          <div class="my-2 border-l-2 border-accent/80 pl-4 py-2">
+            <PostInfo post={post} class="mb-1" />
+            {
+              tags && (
+                <div class="mt-4">
+                  <Tags tags={tags} />
+                </div>
+              )
+            }
+          </div>
         </div>
-      </div>
-      <div class="mb-5 min-w-0 xl:flex-1 prose">
-        <PostContent />
-      </div>
+        <div class="mb-5 min-w-0 xl:flex-1 prose">
+          <PostContent />
+        </div>
+      </LightGallery>
     </article>
     {postData.toc && headings.length > 0 && <TableOfContents headings={headings} />}
   </div>
@@ -161,6 +173,10 @@ if (postData.tags && postData.tags.length > 0) {
 
   .post-article {
     width: 100%;
+  }
+
+  :global(.post-image-gallery) {
+    display: block;
   }
 
   @media (min-width: 1024px) {

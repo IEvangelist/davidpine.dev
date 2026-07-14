@@ -1,0 +1,219 @@
+---
+import type { ImageMetadata } from 'astro'
+import { Image } from 'astro:assets'
+
+interface Props {
+  src: ImageMetadata
+  lightSrc?: ImageMetadata
+  alt: string
+  class?: string
+  imageClass?: string
+  priority?: boolean
+  zoomable?: boolean
+}
+
+const {
+  src,
+  lightSrc,
+  alt,
+  class: className,
+  imageClass,
+  priority = false,
+  zoomable = false,
+} = Astro.props
+const wrapperClass = ['theme-image', className].filter(Boolean).join(' ')
+const imageClassName = ['theme-image-asset', imageClass].filter(Boolean).join(' ')
+---
+
+<div
+  class={wrapperClass}
+  data-theme-image={lightSrc ? '' : undefined}
+  data-active-tone={lightSrc ? 'dark' : undefined}
+  data-dark-href={src.src}
+  data-light-href={lightSrc?.src ?? src.src}
+  data-dark-size={`${src.width}-${src.height}`}
+  data-light-size={`${lightSrc?.width ?? src.width}-${lightSrc?.height ?? src.height}`}
+>
+  {
+    zoomable ? (
+      <a
+        class="post-gallery-item theme-image-link"
+        href={src.src}
+        title="Open full-size image"
+        data-sub-html={alt}
+        data-lg-size={`${src.width}-${src.height}`}
+        data-theme-image-link
+      >
+        <Image
+          src={src}
+          alt={alt}
+          priority={priority}
+          layout="constrained"
+          class={imageClassName}
+          data-theme-image-active
+        />
+      </a>
+    ) : (
+      <Image
+        src={src}
+        alt={alt}
+        priority={priority}
+        layout="constrained"
+        class={imageClassName}
+        data-theme-image-active
+      />
+    )
+  }
+</div>
+
+<style>
+  .theme-image-asset {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .theme-image-link {
+    display: block;
+    overflow: hidden;
+    cursor: zoom-in;
+  }
+
+  .theme-image-link:focus-visible {
+    outline: 2px solid var(--theme-accent);
+    outline-offset: 4px;
+  }
+
+  .theme-image-link :global(img) {
+    transition: transform 0.2s ease;
+  }
+
+  .theme-image-link:hover :global(img) {
+    transform: scale(1.01);
+  }
+</style>
+
+<script>
+  interface GalleryInstance {
+    refresh: () => void
+  }
+
+  interface AstroGalleryElement extends HTMLElement {
+    astroLightGallery?: Promise<GalleryInstance | undefined>
+  }
+
+  const darkVariants = new WeakMap<HTMLElement, HTMLImageElement>()
+  const imageAttributes = [
+    'src',
+    'srcset',
+    'sizes',
+    'width',
+    'height',
+    'style',
+    'loading',
+    'decoding',
+    'fetchpriority',
+  ]
+
+  const initializeThemeImage = (root: HTMLElement) => {
+    if (darkVariants.has(root)) {
+      return
+    }
+
+    const activeImage = root.querySelector<HTMLImageElement>('[data-theme-image-active]')
+    if (!activeImage) {
+      return
+    }
+
+    darkVariants.set(root, activeImage.cloneNode(true) as HTMLImageElement)
+  }
+
+  const syncImage = (target: HTMLImageElement, source: HTMLImageElement) => {
+    for (const attribute of imageAttributes) {
+      const value = source.getAttribute(attribute)
+      if (value === null) {
+        target.removeAttribute(attribute)
+      } else {
+        target.setAttribute(attribute, value)
+      }
+    }
+  }
+
+  const refreshGalleries = async () => {
+    const galleries = Array.from(
+      document.querySelectorAll<AstroGalleryElement>('astro-lightgallery'),
+    )
+    if (galleries.length === 0) {
+      return
+    }
+
+    await customElements.whenDefined('astro-lightgallery')
+    await Promise.all(
+      galleries.map(async (gallery) => {
+        const instance = await gallery.astroLightGallery
+        instance?.refresh()
+      }),
+    )
+  }
+
+  const applyThemeImages = async () => {
+    const tone = document.documentElement.dataset.uiTone === 'light' ? 'light' : 'dark'
+    let changed = false
+
+    document.querySelectorAll<HTMLElement>('[data-theme-image]').forEach((root) => {
+      initializeThemeImage(root)
+      if (root.dataset.activeTone === tone) {
+        return
+      }
+
+      const activeImage = root.querySelector<HTMLImageElement>(
+        '[data-theme-image-active]',
+      )
+      const darkVariant = darkVariants.get(root)
+      if (!activeImage || !darkVariant) {
+        return
+      }
+
+      if (tone === 'light') {
+        activeImage.src = root.dataset.lightHref!
+        activeImage.removeAttribute('srcset')
+        activeImage.removeAttribute('sizes')
+        const [width, height] = root.dataset.lightSize!.split('-')
+        activeImage.width = Number(width)
+        activeImage.height = Number(height)
+      } else {
+        syncImage(activeImage, darkVariant)
+      }
+      const link = root.querySelector<HTMLAnchorElement>('[data-theme-image-link]')
+      if (link) {
+        link.href = tone === 'light' ? root.dataset.lightHref! : root.dataset.darkHref!
+        link.dataset.lgSize =
+          tone === 'light' ? root.dataset.lightSize! : root.dataset.darkSize!
+      }
+      root.dataset.activeTone = tone
+      changed = true
+    })
+
+    if (changed) {
+      await refreshGalleries()
+    }
+  }
+
+  const initializeThemeImages = () => {
+    document
+      .querySelectorAll<HTMLElement>('[data-theme-image]')
+      .forEach(initializeThemeImage)
+    void applyThemeImages()
+  }
+
+  initializeThemeImages()
+  document.addEventListener('astro:page-load', initializeThemeImages)
+  new MutationObserver((changes) => {
+    if (changes.some((change) => change.attributeName === 'data-ui-tone')) {
+      void applyThemeImages()
+    }
+  }).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-ui-tone'],
+  })
+</script>
