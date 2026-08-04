@@ -29,6 +29,8 @@ const gallerySource = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(gal
     aria-label={`Open full-size diagram: ${alt}`}
   >
     <div role="img" aria-label={alt} set:html={svg} />
+    {/* Hidden image so LightGallery can build a thumbnail from a real <img> source. */}
+    <img class="mermaid-gallery-thumb" src={gallerySource} alt="" aria-hidden="true" />
   </a>
 </figure>
 
@@ -42,10 +44,21 @@ const gallerySource = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(gal
   }
 
   .mermaid-gallery-link {
+    position: relative;
     display: block;
     width: 100%;
     cursor: zoom-in;
     transition: opacity 0.2s ease;
+  }
+
+  .mermaid-gallery-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
   }
 
   .mermaid-gallery-link:hover {
