@@ -1,0 +1,531 @@
+---
+title: Adding Full-Text Search to Blazor WebAssembly with Pagefind
+published: '2026-08-04'
+description: A standalone Blazor WebAssembly app hands Pagefind no static HTML to crawl. Here's how I indexed the Blazorators sample with Pagefind's Node API and wired search through JS interop.
+author: David Pine
+tags:
+  - Blazor
+  - WebAssembly
+  - C#
+  - Pagefind
+  - Search
+  - JavaScript
+coverImage:
+  src: ./blazorators-search.png
+  alt: The Blazorators sample app's search dialog on GitHub Pages showing five Pagefind results for a storage query
+---
+
+import Mermaid from '../../../components/Mermaid.astro';
+
+The [Blazorators](https://github.com/IEvangelist/blazorators) sample app — its [live demo site](https://ievangelist.github.io/blazorators/) — has quietly turned into a small site. Between the exhaustive DOM interop demos, a catalog of fourteen focused capability packages, the speech and geolocation labs, and the file-preview playground, there are now enough routes that _finding_ the right demo means scrolling. It needed search.
+
+Reaching for [Pagefind](https://pagefind.app/) was the easy part. The interesting part was that Blazorators ships as a **standalone Blazor WebAssembly** app — and Pagefind was built for static sites. This post is the story of bridging that gap, and a step-by-step guide you can follow for your own Blazor WebAssembly project.
+
+## 🧭 Why Pagefind
+
+Fun fact: the search box on _this very blog_ is Pagefind too. It was almost effortless here because Astro emits a folder full of static HTML at build time, and Pagefind's whole model is "point me at your built site and I'll index the HTML."
+
+Pagefind is appealing for a client app for the same reasons it's appealing here:
+
+- It runs **entirely on the user's device** — no search server, no API keys, no per-query cost.
+- The index is **static assets**, so it deploys anywhere you can host files, GitHub Pages included.
+- It's **fast** and **tiny**, fetching only the fragments of the index it needs for a given query.
+
+And a detail I cannot resist tipping my hat to: Pagefind's search core is itself WebAssembly — Rust, compiled to WASM. So the finished product is a WASM search engine running inside a WASM app, .NET and Pagefind's Rust core sharing one browser runtime.
+
+The catch is that Blazor WebAssembly doesn't hand Pagefind any HTML to work with.
+
+## 🧱 The catch: WebAssembly has no HTML to crawl
+
+The usual Pagefind workflow is one command against your built output:
+
+```bash
+# Great for a static site. Useless for a Blazor WASM app.
+npx pagefind --site dist
+```
+
+That works because a static site generator has already written every page to disk as HTML. A standalone Blazor WebAssembly app is the opposite: it publishes an almost-empty `index.html` shell, and the entire DOM is constructed at runtime by .NET running in the browser. Point the crawler at that shell and it dutifully indexes... the loading screen.
+
+:::caution[The crawler sees an empty app]
+`pagefind --site` reads HTML from disk. In a client-rendered app, the searchable content only exists _after_ the runtime boots and renders components. There's nothing on disk to index.
+:::
+
+So I flipped the model around. Instead of letting Pagefind discover content by crawling HTML, I **describe the content myself** and feed it to Pagefind's programmatic **Node Indexing API**. At runtime, the Blazor app loads that same index and queries it over JavaScript interop.
+
+There is a second way out — prerender each route to real HTML and crawl _that_ — which trades a build-time renderer for never hand-writing a content model. It is the better answer past a certain size, and I come back to it in **Keeping the catalog honest**. For a couple dozen curated demo routes, owning the records directly is simpler, so that is where I started.
+
+## 🗺️ The shape of the solution
+
+There are two halves: a build-time step that turns a content catalog into a Pagefind index, and a runtime path that loads the index in the browser and queries it from a Blazor component.
+
+<Mermaid alt="Build time in Node: search-catalog.json feeds build-index.mjs, which uses the Pagefind Node API to write a /pagefind/ index bundle and inject a meta marker into index.html. Runtime in the browser: SearchDialog.razor imports search.js via JS interop, which detects the marker and imports pagefind.js, which queries the bundle and returns ranked hits to the component." chart={`
+flowchart TB
+    subgraph Build["Build time — Node"]
+        Catalog["search-catalog.json"]
+        Indexer["build-index.mjs — Pagefind Node API"]
+        Bundle["/pagefind/ index bundle"]
+        Shell["index.html + meta marker"]
+        Catalog --> Indexer
+        Indexer -->|addCustomRecord| Bundle
+        Indexer -->|mark as indexed| Shell
+    end
+
+    subgraph Runtime["Runtime — Browser"]
+        Component["SearchDialog.razor"]
+        Module["search.js"]
+        Pagefind["pagefind.js"]
+        Component -->|import via JS interop| Module
+        Module -->|detect marker, then import| Pagefind
+        Pagefind -->|pagefind.search results| Component
+    end
+
+    Bundle -.->|static web asset| Pagefind
+    Shell -.->|served to| Component
+`} />
+
+Let's build it in that order.
+
+## 1. Describe the content as a catalog
+
+Because there's no HTML to scrape, I decide what's searchable in a plain JSON file, `wwwroot/search-catalog.json`. Each record is one route, with the text to index plus the metadata I want back with every hit.
+
+```json title="wwwroot/search-catalog.json"
+[
+  {
+    "path": "",
+    "title": "Blazorators home",
+    "category": "Overview",
+    "summary": "Source-generated, strongly typed browser APIs for Blazor.",
+    "content": "Explore storage, location, speech, exhaustive DOM interop, focused capability packages, live demos, and setup guides.",
+    "keywords": ["home", "browser APIs", "source generator", "C#", "Blazor", "JavaScript interop"],
+    "icon": "home"
+  },
+  {
+    "path": "dom-e2e/clipboard",
+    "title": "Clipboard",
+    "category": "Essential DOM",
+    "summary": "Write text and verify a real system clipboard round trip.",
+    "content": "Use navigator.clipboard, typed Promise transport, clipboard permissions, copy, paste, and exact value verification.",
+    "keywords": ["clipboard", "copy", "paste", "writeText", "readText"],
+    "icon": "copy"
+  }
+]
+```
+
+A few deliberate choices in that shape:
+
+- **`content`** is the text Pagefind actually indexes and ranks against.
+- **`title`, `summary`, `icon`** ride along as metadata and come back verbatim with each hit, so the UI can render a rich result without a second lookup.
+- **`category`** does double duty — it is the label on each hit (the ESSENTIAL DOM / STORAGE tags in the screenshot) and a Pagefind filter you can opt into at query time.
+- **`path`** is the route, and it becomes the result URL.
+
+That is the whole record — no `weight`, no relevance knobs. Pagefind ranks by how well the `content` matches, which is why the cover screenshot puts the three storage pages first on merit. If you outgrow that, sorting is a one-line opt-in (step 3).
+
+## 2. Build the index with Pagefind's Node API
+
+Pagefind ships a Node package with the same indexer the CLI uses, but exposed as an API. Add it as a dev dependency:
+
+```bash
+npm install --save-dev pagefind
+```
+
+Then a small script reads the catalog and adds each record with [`addCustomRecord`](https://pagefind.app/docs/node-api/#adding-custom-records). This is the whole trick — `addCustomRecord` takes content and metadata directly, no HTML required.
+
+```js title="tools/Blazor.ExampleConsumer.Search/build-index.mjs"
+import { readFile, rm } from 'node:fs/promises'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import * as pagefind from 'pagefind'
+
+const toolDirectory = dirname(fileURLToPath(import.meta.url))
+const repositoryRoot = resolve(toolDirectory, '..', '..')
+const catalogPath = resolve(
+  repositoryRoot,
+  'samples', 'Blazor.ExampleConsumer', 'wwwroot', 'search-catalog.json')
+
+// Where to write the index, and which index.html to mark as searchable.
+const outputPath = resolve(repositoryRoot, process.argv[2] ?? 'artifacts/pagefind')
+const shellPath = process.argv[3] ? resolve(repositoryRoot, process.argv[3]) : null
+
+const records = JSON.parse(await readFile(catalogPath, 'utf8'))
+validateRecords(records)
+
+await rm(outputPath, { recursive: true, force: true })
+
+const { index } = await pagefind.createIndex({
+  forceLanguage: 'en',
+  includeCharacters: '._#', // keep tokens like ".NET", "C#", and "dom-e2e" intact
+  writePlayground: false,
+  verbose: false,
+})
+
+try {
+  for (const record of records) {
+    const { errors } = await index.addCustomRecord({
+      url: record.path ? `/${record.path}/` : '/',
+      content: [record.title, record.summary, record.content, ...record.keywords].join('\n'),
+      language: 'en',
+      meta: {
+        title: record.title,
+        category: record.category,
+        summary: record.summary,
+        icon: record.icon,
+      },
+      filters: { category: [record.category] },
+    })
+
+    if (errors.length > 0) {
+      throw new Error(`Pagefind failed to add '${record.path || '/'}': ${errors.join('; ')}`)
+    }
+  }
+
+  const { errors } = await index.writeFiles({ outputPath })
+  if (errors.length > 0) {
+    throw new Error(`Pagefind failed to write the index: ${errors.join('; ')}`)
+  }
+
+  if (shellPath) {
+    await markShellAsIndexed(shellPath)
+  }
+
+  console.log(`Pagefind indexed ${records.length} Blazorators routes.`)
+} finally {
+  await index.deleteIndex()
+  await pagefind.close()
+}
+```
+
+That `writeFiles` call produces the familiar `/pagefind/` folder — `pagefind.js`, the WASM search core, and the sharded index fragments — exactly what the CLI would have emitted from HTML.
+
+That `includeCharacters: '._#'` earns its place, too: Pagefind splits tokens on punctuation, so without it `.NET`, `C#`, and `dom-e2e` would shatter into `net`, `c`, and `dom`/`e2e` — and a search for "C#" would find nothing.
+
+### Leaving a note for the client
+
+There's one more job. In development I run the app _without_ building an index, so the client needs a reliable way to tell whether a real Pagefind bundle is present. The indexer stamps a marker into the published `index.html`:
+
+```js title="tools/Blazor.ExampleConsumer.Search/build-index.mjs"
+async function markShellAsIndexed(path) {
+  const marker = '    <meta name="blazorators-search-provider" content="pagefind" />\n'
+  let html = await readFile(path, 'utf8')
+  if (html.includes('name="blazorators-search-provider"')) {
+    html = html.replace(/    <meta name="blazorators-search-provider"[^>]*>\r?\n/, marker)
+  } else {
+    html = html.replace('</head>', `${marker}</head>`)
+  }
+  await writeFile(path, html, 'utf8')
+}
+```
+
+The presence of `<meta name="blazorators-search-provider" content="pagefind" />` is the client's signal that a real index exists. It is deliberately cheap — a one-tag string replace beats teaching the client to probe for the bundle. You could drop it entirely and let the dynamic `import()` in the next step fail into the fallback; the marker just spares dev builds a guaranteed 404.
+
+## 3. Load Pagefind in the browser
+
+Blazor talks to Pagefind through a small ES module, `wwwroot/search.js`. It exposes a handful of functions the component imports — but the heart of it is `search`, which prefers Pagefind and falls back to a lightweight in-memory catalog scan when no index is present.
+
+```js title="wwwroot/search.js"
+let catalogPromise
+let pagefindPromise
+
+export async function search(query) {
+  const normalizedQuery = String(query ?? '').trim()
+  if (normalizedQuery.length < 2) {
+    return { provider: 'Local catalog', results: [] }
+  }
+
+  const pagefind = await loadPagefind()
+  if (pagefind) {
+    const response = await pagefind.search(normalizedQuery)
+    const results = await Promise.all(
+      response.results.slice(0, 10).map(async (result) => {
+        const data = await result.data()
+        return {
+          title: data.meta.title ?? data.url,
+          category: data.meta.category ?? 'Blazorators',
+          summary: data.meta.summary ?? stripMarkup(data.excerpt),
+          url: data.url,
+          icon: data.meta.icon ?? 'file',
+        }
+      }))
+
+    return { provider: 'Pagefind', results }
+  }
+
+  // Dev-time fallback: no index was built, so scan the catalog we already ship.
+  const catalog = await loadCatalog()
+  return { provider: 'Local catalog', results: searchCatalog(catalog, normalizedQuery) }
+}
+```
+
+Notice the two-step result read: `pagefind.search()` returns lightweight result handles, and calling `result.data()` loads the full fragment — title, excerpt, and the `meta` I stored during indexing. Only the top ten are hydrated, so a query never fetches more than it shows.
+
+### Relevance, sorting, and filters
+
+By default, `pagefind.search(query)` ranks by relevance, and that is what this sample ships — no `weight`, no manual thumb on the scale. Pagefind _can_ sort and filter, but each is opt-in, so here is how you would switch them on when the catalog earns it:
+
+```js
+// Sorting is opt-in. Register a sortable key at index time...
+await index.addCustomRecord({ /* ...record... */, sort: { weight: String(record.weight) } })
+// ...then ask for it at query time — note this REPLACES relevance ordering:
+const byWeight = await pagefind.search(query, { sort: { weight: 'desc' } })
+
+// Filtering is already wired: the catalog registers `category` as a filter,
+// so a faceted query needs nothing new at index time.
+const inStorage = await pagefind.search(query, { filters: { category: 'Storage' } })
+```
+
+The distinction that trips people up: `sort` **replaces** relevance outright (great for a "show everything in this category" view, wrong for gently boosting one page), while `filters` narrow the set rather than reorder it. For a couple dozen routes, relevance beat anything I would have hand-weighted — so I shipped no `weight` at all and let the best match win.
+
+Loading Pagefind itself is where the marker and the base path come together:
+
+```js title="wwwroot/search.js"
+async function loadPagefind() {
+  if (pagefindPromise) {
+    return pagefindPromise
+  }
+
+  pagefindPromise = (async () => {
+    const provider = document.querySelector(
+      'meta[name="blazorators-search-provider"][content="pagefind"]')
+    if (!provider) {
+      return null // no index in this build — caller uses the local catalog
+    }
+
+    try {
+      const bundleUrl = new URL('pagefind/pagefind.js', document.baseURI)
+      const pagefind = await import(bundleUrl.href)
+      const baseUrl = new URL(document.baseURI).pathname
+      const basePath = new URL('pagefind/', document.baseURI).pathname
+      await pagefind.options({ baseUrl, basePath, excerptLength: 24 })
+      return pagefind
+    } catch (error) {
+      console.warn('[search] Pagefind could not load; using the local catalog.', error)
+      return null
+    }
+  })()
+
+  return pagefindPromise
+}
+```
+
+Two details matter for a real deployment:
+
+- Everything is resolved against **`document.baseURI`**, so the dynamic `import()` and Pagefind's own `baseUrl`/`basePath` follow whatever `<base href>` the app is served under. That's what makes a GitHub Pages sub-path like `/blazorators/` just work.
+- The import is **lazy and memoized** — Pagefind's WASM core is only fetched the first time someone actually searches.
+
+The module has a couple more exports the component leans on — `initialize` wires up a <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> shortcut and returns a subscription id, and `showDialog`/`closeDialog` drive a native `<dialog>` element — but they're ordinary interop, not Pagefind-specific.
+
+## 4. Drive it from a Blazor component
+
+The `SearchDialog` component owns the module reference, debounces keystrokes, and marshals results back as strongly typed records. Here's the interop-relevant core, trimmed of markup:
+
+```razor title="Components/Shared/SearchDialog.razor"
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+@* Trigger button and native <dialog> markup omitted; the search input's
+   @oninput handler calls SearchAsync. *@
+
+@code {
+    const string DialogId = "site-search";
+
+    IJSObjectReference? _module;
+    DotNetObjectReference<SearchDialog>? _selfReference;
+    CancellationTokenSource? _searchCts;
+    int? _shortcutSubscription;
+    string _query = string.Empty;
+    string _provider = "Local catalog";
+    readonly List<SearchResult> _results = [];
+    bool _searching;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        _module = await JS.InvokeAsync<IJSObjectReference>("import", "./search.js");
+        _selfReference = DotNetObjectReference.Create(this);
+        _shortcutSubscription = await _module.InvokeAsync<int>(
+            "initialize", DialogId, _selfReference);
+    }
+
+    // Invoked from JS when the user presses Ctrl/⌘+K.
+    [JSInvokable]
+    public Task OpenFromShortcutAsync() => OpenAsync();
+
+    async Task OpenAsync()
+    {
+        if (_module is null)
+        {
+            return;
+        }
+
+        await _module.InvokeVoidAsync("showDialog", DialogId);
+    }
+
+    async Task SearchAsync()
+    {
+        _searchCts?.Cancel();
+        _searchCts?.Dispose();
+        _searchCts = new CancellationTokenSource();
+        var cancellationToken = _searchCts.Token;
+
+        _results.Clear();
+
+        if (_query.Trim().Length < 2)
+        {
+            _searching = false;
+            return;
+        }
+
+        _searching = true;
+        await InvokeAsync(StateHasChanged);
+
+        try
+        {
+            await Task.Delay(120, cancellationToken); // debounce keystrokes
+            var response = await _module!.InvokeAsync<SearchResponse>(
+                "search", cancellationToken, _query);
+
+            _provider = response.Provider;
+            _results.AddRange(response.Results);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return;
+        }
+        finally
+        {
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                _searching = false;
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        _searchCts?.Cancel();
+        _searchCts?.Dispose();
+
+        if (_module is not null && _shortcutSubscription is int subscription)
+        {
+            await _module.InvokeVoidAsync("dispose", subscription);
+        }
+
+        _selfReference?.Dispose();
+
+        if (_module is not null)
+        {
+            await _module.DisposeAsync();
+        }
+    }
+
+    sealed class SearchResponse
+    {
+        public string Provider { get; set; } = "Local catalog";
+        public List<SearchResult> Results { get; set; } = [];
+    }
+
+    sealed class SearchResult
+    {
+        public string Title { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty;
+        public string Summary { get; set; } = string.Empty;
+        public string Url { get; set; } = string.Empty;
+        public string Icon { get; set; } = "file";
+    }
+}
+```
+
+The pieces worth calling out:
+
+- **The debounce** is a `Task.Delay(120)` guarded by a `CancellationTokenSource`. Each keystroke cancels the previous in-flight search, so fast typing never fires a burst of queries or renders stale results.
+- **The keyboard shortcut** flows JS → .NET through a `DotNetObjectReference` and the `[JSInvokable] OpenFromShortcutAsync` callback.
+- **`DisposeAsync`** unwinds all of it — the shortcut subscription, the `DotNetObjectReference`, and the imported module — because a component that reaches across the interop boundary is responsible for tidying up after itself.
+
+The `SearchResponse`/`SearchResult` records are the C# mirror of the objects `search.js` returns, so the whole round trip stays strongly typed on the Blazor side.
+
+## 5. Wire it into publish and deploy
+
+The index has to be generated against the **published** output and shipped alongside it as static web assets. So the sequence runs after `dotnet publish`:
+
+```bash
+# 1. Publish the Blazor WebAssembly app.
+dotnet publish -c Release -o publish
+
+# 2. Build the Pagefind index straight into the published wwwroot,
+#    and stamp the published index.html as Pagefind-enabled.
+node tools/Blazor.ExampleConsumer.Search/build-index.mjs \
+  publish/wwwroot/pagefind \
+  publish/wwwroot/index.html
+
+# 3. (GitHub Pages) fingerprint entry assets for long-term caching.
+node tools/Blazor.ExampleConsumer.Search/fingerprint-entry-assets.mjs \
+  publish/wwwroot \
+  publish/wwwroot/index.html
+```
+
+You can run those three commands from an MSBuild `Target` that runs after `Publish`, or as sequential steps in CI right before you upload the site artifact — whichever fits your pipeline.
+
+For a **project page** served from a sub-path (Blazorators lives at `ievangelist.github.io/blazorators/`), the published shell needs its base href changed from `<base href="/" />` to `<base href="/blazorators/" />` — the kind of one-line replace you script in CI, not something you hand-edit each deploy. Because `search.js` derives both the `import()` URL and Pagefind's `basePath` from `document.baseURI`, that single change is all it takes for the `/pagefind/` bundle to resolve under the sub-path — no hard-coded paths anywhere.
+
+:::tip[Fingerprinting is optional but nice]
+The `fingerprint-entry-assets.mjs` step content-hashes the `.css`/`.js` entry files referenced by `index.html` and rewrites the tags to match, so you can serve them with immutable, far-future cache headers. It's independent of search — skip it if your host already fingerprints assets.
+:::
+
+## 6. Prove it works
+
+The fallback design pays off here, because search is exercisable at every stage:
+
+- **In development** (`dotnet watch`), no index is built, so there's no marker. `loadPagefind()` returns `null` and the dialog quietly serves results from the shipped catalog. Search works while you iterate, with zero build step.
+- **In a production build**, the marker is present, the `/pagefind/` bundle loads, and the same dialog is now backed by a real full-text index.
+
+:::caution[The fallback is a convenience, not a mirror]
+The local-catalog scan is a _second_, much simpler ranker — it does not share Pagefind's relevance model. Treat dev search as "does this query find the right route," not "do results rank like production." When ordering matters, test against a real index.
+:::
+
+I locked the behavior down with a Playwright end-to-end test that opens the dialog with the keyboard, types, and asserts on real hits:
+
+```csharp title="ExampleSiteTests.cs"
+await page.Keyboard.PressAsync("Control+K");
+
+var dialog = page.GetByRole(AriaRole.Dialog, new() { Name = "Find a browser API" });
+await Assertions.Expect(dialog).ToBeVisibleAsync();
+
+var searchInput = page.Locator("#site-search-input");
+await searchInput.FillAsync("file preview");
+// ...then assert the File System Access route is returned.
+```
+
+## 🧹 Keeping the catalog honest
+
+Time for the uncomfortable part. That `search-catalog.json` is a **second source of truth**. Add a route and you have to remember a record; rename one and the result URL rots silently; edit a page and its summary quietly starts lying. Nothing enforces any of it. For a curated demo site that is a fair trade — the hand-written summaries are arguably an asset — but it does not scale, and "remember to update the JSON" is exactly the kind of instruction that ages badly.
+
+Three ways to make it less lame, from most effort to least:
+
+1. **Prerender, then crawl — and delete the catalog.** Render each route to real HTML at publish time — a prerender pass, or a headless-browser snapshot of the running app — then point the ordinary `pagefind --site` crawler at that output and scope it with `data-pagefind-body` / `data-pagefind-ignore`. The index now mirrors the actual page text, so it cannot drift. The price is a rendering step in the pipeline — which is the whole reason the custom-record approach exists: it buys a working index without standing up a renderer.
+2. **Generate the catalog from C#.** Keep every technique in this post, but stop hand-writing the JSON. The app already knows its routes; let one source describe them — a `[SearchDoc(Title, Summary, Category)]` attribute on each `@page`, harvested at build by reflection or, fittingly for a source-generator project, a source generator that emits `search-catalog.json`. One place to edit, no drift, and the catalog becomes one more thing Blazorators generates for you.
+3. **At least add a drift guard.** If the JSON stays hand-written, make a test fail CI when a routable page has no catalog entry (or an entry points at a route that no longer exists). It does not remove the file, but it stops the file from rotting between reviews.
+
+My rule of thumb: a couple dozen curated routes with real summaries are not worth automating away — the hand-tuning is a feature. The day those summaries drift from the pages, or the route list outgrows a glance, reach for option 2. The technique in this post does not change; only where the records come from does.
+
+## 🎯 The takeaway
+
+Adding search to a client-rendered app is really just one inversion of the usual Pagefind flow:
+
+- On a **static site**, you point Pagefind at HTML and it discovers your content.
+- On **Blazor WebAssembly**, _you_ own the content model — a catalog fed to Pagefind's Node API with `addCustomRecord` — and then load that same static index in the browser and query it over JS interop.
+
+Everything else Pagefind gives you for free still applies: the index is a pile of static files, search runs entirely on the device, and there's no server to run or pay for. The local-catalog fallback keeps the dev loop instant — just remember it is a rougher ranker than the real thing — and the content catalog is a pragmatic shortcut, not the ceiling: when it starts to feel lame, generate it (see **Keeping the catalog honest**) rather than hand-tending it.
+
+If you want to see the whole thing wired together, it's all in the Blazorators repo:
+
+- [`build-index.mjs`](https://github.com/IEvangelist/blazorators/blob/main/tools/Blazor.ExampleConsumer.Search/build-index.mjs) — the Node indexer
+- [`search.js`](https://github.com/IEvangelist/blazorators/blob/main/samples/Blazor.ExampleConsumer/wwwroot/search.js) — the interop module
+- [`SearchDialog.razor`](https://github.com/IEvangelist/blazorators/blob/main/samples/Blazor.ExampleConsumer/Components/Shared/SearchDialog.razor) — the Blazor component
+- [`search-catalog.json`](https://github.com/IEvangelist/blazorators/blob/main/samples/Blazor.ExampleConsumer/wwwroot/search-catalog.json) — the content catalog
+
+Or just try it live on the [Blazorators sample site](https://ievangelist.github.io/blazorators/) — hit <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>K</kbd> and search. For the API surface I leaned on, the [Pagefind Node API docs](https://pagefind.app/docs/node-api/) are excellent.
