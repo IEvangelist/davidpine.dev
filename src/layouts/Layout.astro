@@ -2,14 +2,16 @@
 import '~/styles/global.css'
 import Header from '~/components/Header.astro'
 import Footer from '~/components/Footer.astro'
-import RetroDivider from '~/components/RetroDivider.astro'
 import LightDarkAutoThemeLoader from '~/components/LightDarkAutoThemeLoader.astro'
 import ScrollUpButton from '~/components/ScrollUpButton.astro'
 import SelectThemeLoader from '~/components/SelectThemeLoader.astro'
+import MotionController from '~/components/MotionController.astro'
 import ThemeToneLoader from '~/components/ThemeToneLoader.astro'
+import PointerEffects from '~/components/PointerEffects.astro'
 import siteConfig from '~/site.config'
 import { pick, resolveThemeColorStyles } from '~/utils'
 import crypto from 'crypto'
+import Color from 'color'
 
 interface Props {
   title?: string
@@ -107,10 +109,30 @@ for (const [themeId, themeStyles] of Object.entries(resolvedThemes)) {
     'magenta',
     'cyan',
   ])
+  const accent = Color(relevantStyles.accent)
+  const safeControlColor = (value: string) => {
+    const color = Color(value)
+    if (color.hex().toLowerCase() === '#ffffff') return '#f7f7f5'
+    if (color.hex().toLowerCase() === '#000000') return '#101114'
+    return value
+  }
+  const onAccent = [
+    relevantStyles.foreground,
+    relevantStyles.background,
+    '#101114',
+    '#f7f7f5',
+  ]
+    .map(safeControlColor)
+    .reduce((best, candidate) =>
+      accent.contrast(Color(candidate)) > accent.contrast(Color(best)) ? candidate : best,
+    )
+  const colorScheme = Color(relevantStyles.background).isDark() ? 'dark' : 'light'
   cssLines.push(`:root[data-theme="${themeId}"] {`)
   for (const [key, value] of Object.entries(relevantStyles)) {
     cssLines.push(`--theme-${key}: ${value};`)
   }
+  cssLines.push(`--theme-on-accent: ${onAccent};`)
+  cssLines.push(`color-scheme: ${colorScheme};`)
   cssLines.push(`}`)
 }
 let generatedCss: string = cssLines.join('\n')
@@ -127,6 +149,9 @@ let generatedCss: string = cssLines.join('\n')
 >
   <head>
     <meta charset="UTF-8" />
+    <script is:inline>
+      document.documentElement.classList.add('has-js')
+    </script>
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta name="generator" content={Astro.generator} />
     <meta name="title" content={pageTitle} />
@@ -145,6 +170,12 @@ let generatedCss: string = cssLines.join('\n')
     <link rel="canonical" href={pageUrl} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://api.fontshare.com" />
+    <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap"
+    />
     <link
       rel="alternate"
       type="application/rss+xml"
@@ -158,17 +189,27 @@ let generatedCss: string = cssLines.join('\n')
     {themeMode === 'select' && <SelectThemeLoader />}
     <ThemeToneLoader />
   </head>
-  <body class="w-full h-full m-0 bg-background text-foreground">
-    <div
-      class="flex flex-col max-w-5xl min-h-screen border-accent/10 m-auto p-3 sm:py-5 sm:px-6 md:py-10"
-    >
+  <body class="w-full min-h-[100dvh] m-0 bg-background text-foreground">
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="site-shell flex min-h-[100dvh] flex-col">
       <Header />
-      <main class="flex flex-col py-1">
+      <span class="scroll-top-sentinel" data-scroll-top-sentinel aria-hidden="true"
+      ></span>
+      <main id="main-content" class="flex flex-col">
         <slot />
       </main>
       <ScrollUpButton />
-      <RetroDivider />
       <Footer />
     </div>
+    <MotionController />
+    <PointerEffects />
   </body>
 </html>
+
+<style>
+  .scroll-top-sentinel {
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+  }
+</style>

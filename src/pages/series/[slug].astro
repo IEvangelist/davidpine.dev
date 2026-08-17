@@ -7,23 +7,39 @@ import PostPreview from '~/components/PostPreview.astro'
 
 export const getStaticPaths = (async () => {
   const seriesGroup = await SeriesGroup.build()
-  return seriesGroup.collations.map((series) => {
-    return {
-      params: { slug: series.titleSlug },
-      props: { posts: series.entries, seriesTitle: series.title },
-    }
-  })
+  return seriesGroup.collations.map((series) => ({
+    params: { slug: series.titleSlug },
+    props: { posts: series.entries, seriesTitle: series.title },
+  }))
 }) satisfies GetStaticPaths
 
 const { posts, seriesTitle } = Astro.props
+const previewVariants = ['default', 'reverse'] as const
 ---
 
 <Layout
   title={`Series: ${seriesTitle}`}
   description={`All posts in the ${seriesTitle} series`}
 >
-  <div class="mt-2 sm:mt-0">
-    <PageHeader titlePieces={['series', seriesTitle]} />
-    {posts.map((post) => <PostPreview post={post} />)}
-  </div>
+  <PageHeader
+    title={seriesTitle}
+    titlePieces={['series', seriesTitle]}
+    description={`${posts.length} connected articles in this series.`}
+  />
+  <section class="post-index" aria-label={`${seriesTitle} articles`}>
+    {
+      posts.map((post, index) => (
+        <PostPreview
+          post={post}
+          variant={previewVariants[index % previewVariants.length]}
+        />
+      ))
+    }
+  </section>
 </Layout>
+
+<style>
+  .post-index {
+    padding-top: clamp(3rem, 8vw, 7rem);
+  }
+</style>

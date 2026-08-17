@@ -1,316 +1,96 @@
 ---
 import '@pagefind/default-ui/css/ui.css'
-import IconSearch from '~/icons/search.svg'
+import { Icon } from 'astro-icon/components'
 
 const { trailingSlashes = false } = Astro.props
 ---
 
-<site-search class="ms-auto" id="search" data-trailing-slashes={trailingSlashes}>
+<site-search data-trailing-slashes={trailingSlashes}>
   <button
-    class="hover:text-accent flex cursor-pointer items-center justify-center rounded-md"
+    class="icon-control"
+    type="button"
+    aria-label="Search"
     aria-keyshortcuts="Control+K Meta+K"
-    data-open-modal
+    aria-haspopup="dialog"
+    data-open-search
     disabled
   >
-    <IconSearch class="size-6 text-accent" />
-    <span class="sr-only">Open Search</span>
+    <Icon name="ph:magnifying-glass" aria-hidden="true" />
   </button>
-  <dialog aria-label="search" class="search-dialog">
-    <div class="dialog-frame search-dialog-frame">
-      <button class="search-close-button" aria-label="Close search" data-close-modal>
-        <span aria-hidden="true">X</span>
-      </button>
+
+  <dialog class="search-dialog" aria-labelledby="search-title" data-search-dialog>
+    <div class="dialog-frame">
+      <div class="dialog-header">
+        <div>
+          <p class="ui-label">Find something</p>
+          <h2 id="search-title">Search the site</h2>
+        </div>
+        <button
+          class="icon-control"
+          type="button"
+          aria-label="Close search"
+          data-close-search
+        >
+          <Icon name="ph:x" aria-hidden="true" />
+        </button>
+      </div>
+
       {
         import.meta.env.DEV ? (
-          <div class="search-dev-message">
+          <div class="search-message">
+            <Icon name="ph:info" aria-hidden="true" />
             <p>
-              Search is only available in production builds. <br />
-              Try building and previewing the site to test it out locally.
+              Search is indexed during the production build. Use the local preview to test
+              results.
             </p>
           </div>
         ) : (
-          <div class="search-container">
-            <div id="pagefind-search" class="max-w-full" />
-          </div>
+          <>
+            <p class="search-status" data-search-status>
+              Loading the search index...
+            </p>
+            <div id="pagefind-search" class="search-container" />
+          </>
         )
       }
-      <footer class="search-keyboard-hint" aria-live="polite">
-        <span><kbd>Ctrl</kbd>/<kbd>⌘</kbd> <kbd>K</kbd> search</span>
-        <span><kbd>↑</kbd><kbd>↓</kbd> results</span>
-        <span><kbd>Enter</kbd> open</span>
-        <span><kbd>Esc</kbd> close</span>
-      </footer>
     </div>
   </dialog>
 </site-search>
 
-<style is:global>
-  :root {
-    --pagefind-ui-font: inherit;
-    --pagefind-ui-primary: var(--theme-accent);
-    --pagefind-ui-text: var(--theme-foreground);
-    --pagefind-ui-background: var(--theme-background);
-    --pagefind-ui-border: var(--theme-accent);
-    --pagefind-ui-border-width: 2px;
-  }
-
-  site-search .search-dialog {
-    width: min(92vw, 45rem);
-    max-height: min(84vh, 56rem);
-    min-height: 14rem;
-    margin: clamp(2rem, 8vh, 4rem) auto auto;
-    padding: 0;
-    overflow: hidden;
-    border: 2px solid var(--retro-border) !important;
-    border-radius: 0 !important;
-    background: var(--retro-panel) !important;
-    color: var(--theme-foreground) !important;
-    box-shadow: 8px 8px 0 0 var(--retro-shadow-color);
-  }
-
-  site-search .search-dialog::backdrop {
-    background: color-mix(in oklab, #000 52%, transparent);
-    backdrop-filter: blur(2px);
-  }
-
-  site-search .search-dialog-frame {
-    position: relative;
-    display: flex;
-    max-height: inherit;
-    min-height: inherit;
-    flex-direction: column;
-    gap: 1rem;
-    padding: clamp(1rem, 3vw, 1.5rem);
-  }
-
-  site-search .search-close-button {
-    position: absolute;
-    top: 0.65rem;
-    right: 0.65rem;
-    z-index: 2;
-    display: inline-flex;
-    width: 2.2rem;
-    height: 2.2rem;
-    cursor: pointer;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid var(--retro-border);
-    border-radius: 0;
-    background: var(--retro-panel);
-    box-shadow: var(--retro-shadow-sm);
-    color: var(--theme-accent);
-    font-size: 1rem;
-    font-weight: 900;
-    line-height: 1;
-    padding: 0.25rem;
-    text-transform: uppercase;
-  }
-
-  site-search .search-close-button:hover,
-  site-search .search-close-button:focus-visible {
-    translate: -2px -2px;
-    background: var(--retro-secondary);
-    color: var(--retro-on-accent);
-    box-shadow: var(--retro-shadow);
-    outline: none;
-  }
-
-  site-search .search-container {
-    min-height: 0;
-    overflow: auto;
-    padding-right: 0.25rem;
-  }
-
-  site-search .search-dev-message {
-    display: grid;
-    min-height: 10rem;
-    place-items: center;
-    border: 2px solid var(--retro-border);
-    background: color-mix(in oklab, var(--retro-panel) 88%, var(--theme-foreground) 12%);
-    color: var(--theme-text-light);
-    padding: 1.5rem;
-    text-align: center;
-  }
-
-  site-search .pagefind-ui__form::before {
-    background-color: var(--theme-text-light) !important;
-  }
-
-  site-search .pagefind-ui__search-input {
-    border: 2px solid var(--retro-border) !important;
-    border-radius: 0 !important;
-    background: var(--theme-background) !important;
-    color: var(--theme-foreground) !important;
-    box-shadow: var(--retro-shadow-sm) !important;
-    font-weight: 800 !important;
-  }
-
-  site-search .pagefind-ui__search-input:focus {
-    outline: 2px solid var(--retro-secondary) !important;
-    outline-offset: 3px !important;
-  }
-
-  site-search .pagefind-ui__search-clear {
-    color: var(--theme-foreground) !important;
-    font-weight: 900 !important;
-    text-transform: uppercase !important;
-  }
-
-  .pagefind-ui__results-area {
-    margin: 1rem 0 0;
-  }
-
-  .pagefind-ui__result {
-    overflow-x: hidden !important;
-    border-top: 2px solid var(--retro-secondary) !important;
-    padding: 1.1rem 0.65rem !important;
-    transition:
-      background-color 120ms ease,
-      box-shadow 120ms ease;
-  }
-
-  .pagefind-ui__result[data-active-result='true'] {
-    background: color-mix(
-      in oklab,
-      var(--retro-secondary) 13%,
-      var(--retro-panel)
-    ) !important;
-    box-shadow: inset 5px 0 0 0 var(--retro-secondary);
-  }
-
-  .pagefind-ui__result-inner {
-    max-width: 100% !important;
-  }
-
-  .pagefind-ui__result-link {
-    color: var(--theme-foreground) !important;
-    text-decoration: none !important;
-  }
-
-  .pagefind-ui__result-link:hover,
-  .pagefind-ui__result-link:focus-visible,
-  .pagefind-ui__result-link[data-active-result='true'] {
-    color: var(--retro-secondary) !important;
-    outline: none !important;
-  }
-
-  .pagefind-ui__result-title {
-    font-weight: 900 !important;
-    letter-spacing: 0.03em !important;
-  }
-
-  .pagefind-ui__result-excerpt,
-  .pagefind-ui__result-nested {
-    color: var(--theme-text-light) !important;
-  }
-
-  .pagefind-ui__result-inner mark {
-    background-color: var(--theme-accent) !important;
-    color: var(--theme-background) !important;
-    font-weight: 900 !important;
-    padding: 0 3px !important;
-    border-radius: 0 !important;
-  }
-
-  .pagefind-ui__result-nested .pagefind-ui__result-link:before {
-    content: '>' !important;
-    left: -16px !important;
-    right: unset !important;
-    color: var(--theme-accent) !important;
-    font-weight: 900 !important;
-  }
-
-  site-search .search-keyboard-hint {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem 0.9rem;
-    border-top: 2px solid var(--retro-border);
-    color: var(--theme-text-light);
-    font-size: 0.72rem;
-    font-weight: 900;
-    letter-spacing: 0.08em;
-    padding-top: 0.9rem;
-    text-transform: uppercase;
-  }
-
-  site-search .search-keyboard-hint kbd {
-    display: inline-flex;
-    min-width: 1.45rem;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid var(--retro-border);
-    background: var(--theme-background);
-    box-shadow: var(--retro-shadow-sm);
-    color: var(--theme-foreground);
-    font: inherit;
-    margin-inline: 0.12rem;
-    padding: 0.08rem 0.28rem;
-  }
-</style>
-
 <script>
   class SiteSearch extends HTMLElement {
-    #closeBtn: HTMLButtonElement | null
-    #dialog: HTMLDialogElement | null
-    #dialogFrame: HTMLDivElement | null
-    #openBtn: HTMLButtonElement | null
-    #controller: AbortController
-    #resultObserver: MutationObserver | null
-    #selectedResultIndex: number
-    trailingSlashes: boolean
-    stripTrailingSlash: (path: string) => string
-    formatURL: (path: string) => string
+    #controller = new AbortController()
+    #dialog = this.querySelector<HTMLDialogElement>('[data-search-dialog]')
+    #dialogFrame = this.querySelector<HTMLElement>('.dialog-frame')
+    #openButton = this.querySelector<HTMLButtonElement>('[data-open-search]')
+    #closeButton = this.querySelector<HTMLButtonElement>('[data-close-search]')
+    #trailingSlashes = this.dataset.trailingSlashes === 'true'
 
-    constructor() {
-      super()
-      this.#openBtn = this.querySelector<HTMLButtonElement>('button[data-open-modal]')
-      this.#closeBtn = this.querySelector<HTMLButtonElement>('button[data-close-modal]')
-      this.#dialog = this.querySelector<HTMLDialogElement>('dialog')
-      this.#dialogFrame = this.querySelector('.dialog-frame')
-      this.#controller = new AbortController()
-      this.#resultObserver = null
-      this.#selectedResultIndex = -1
+    connectedCallback() {
+      const options = { signal: this.#controller.signal }
+      this.#openButton?.addEventListener('click', this.#open, options)
+      this.#closeButton?.addEventListener('click', this.#close, options)
+      this.#dialog?.addEventListener('click', this.#onDialogClick, options)
+      this.#dialog?.addEventListener('close', this.#onClose, options)
+      window.addEventListener('keydown', this.#onKeydown, options)
+      if (this.#openButton) this.#openButton.disabled = false
+      this.#initializePagefind()
+    }
 
-      this.trailingSlashes = this.dataset.trailingSlashes === 'true' ? true : false
-      this.stripTrailingSlash = (path: string) => path.replace(/(.)\/(#.*)?$/, '$1$2')
-      this.formatURL = !this.trailingSlashes
-        ? this.stripTrailingSlash
-        : (path: string) => path
+    disconnectedCallback() {
+      this.#controller.abort()
+    }
 
-      // Set up events
-      if (this.#openBtn) {
-        this.#openBtn.addEventListener('click', this.openModal)
-        this.#openBtn.disabled = false
-      } else {
-        console.warn('Search button not found')
-      }
+    #formatURL = (path: string) =>
+      this.#trailingSlashes ? path : path.replace(/(.)\/(#.*)?$/, '$1$2')
 
-      if (this.#closeBtn) {
-        this.#closeBtn.addEventListener('click', this.closeModal)
-      } else {
-        console.warn('Close button not found')
-      }
-
-      if (this.#dialog) {
-        this.#dialog.addEventListener('close', () => {
-          window.removeEventListener('click', this.onWindowClick)
-          const body = document.querySelector('body')
-          body?.classList.remove('overflow-hidden')
-          this.resetActiveResult()
-        })
-        this.#dialog.addEventListener('input', this.onDialogInput)
-      } else {
-        console.warn('Dialog not found')
-      }
-
-      this.setupResultObserver()
-
-      // only add pagefind in production
+    #initializePagefind = () => {
       if (import.meta.env.DEV) return
-      const onIdle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1))
+
+      const onIdle =
+        window.requestIdleCallback || ((callback) => window.setTimeout(callback, 1))
       onIdle(async () => {
         const { PagefindUI } = await import('@pagefind/default-ui')
-
         new PagefindUI({
           baseUrl: import.meta.env.BASE_URL,
           bundlePath: import.meta.env.BASE_URL.replace(/\/$/, '') + '/pagefind/',
@@ -321,179 +101,172 @@ const { trailingSlashes = false } = Astro.props
             url: string
             sub_results: Array<{ url: string }>
           }) => {
-            // Ensure links in search results match the trailing slashes setting
-            result.url = this.formatURL(result.url)
-
-            result.sub_results = result.sub_results.map((res) => {
-              res.url = this.formatURL(res.url)
-              return res
-            })
-
+            result.url = this.#formatURL(result.url)
+            result.sub_results = result.sub_results.map((subResult) => ({
+              ...subResult,
+              url: this.#formatURL(subResult.url),
+            }))
             return result
           },
         })
+        this.querySelector('[data-search-status]')?.remove()
       })
     }
 
-    connectedCallback() {
-      // window events, requires cleanup
-      window.addEventListener('keydown', this.onWindowKeydown, {
-        signal: this.#controller.signal,
-      })
+    #open = () => {
+      this.#dialog?.showModal()
+      document.body.classList.add('dialog-open')
+      window.setTimeout(
+        () => this.#dialog?.querySelector<HTMLInputElement>('input')?.focus(),
+        0,
+      )
     }
 
-    disconnectedCallback() {
-      this.#controller.abort()
-      this.#resultObserver?.disconnect()
-    }
-
-    openModal = (event?: Event) => {
-      if (!this.#dialog) {
-        console.warn('Dialog not found')
-        return
-      }
-
-      document
-        .querySelectorAll<HTMLDialogElement>('select-theme dialog[open]')
-        .forEach((dialog) => dialog.close())
-
-      const body = document.querySelector('body')
-      body?.classList.add('overflow-hidden')
-
-      if (!this.#dialog.open) {
-        this.#dialog.showModal()
-      }
-      requestAnimationFrame(() => this.querySelector('input')?.focus())
-      event?.stopPropagation()
-      window.addEventListener('click', this.onWindowClick, {
-        signal: this.#controller.signal,
-      })
-    }
-
-    closeModal = () => {
+    #close = () => {
       this.#dialog?.close()
-      this.#openBtn?.focus()
     }
 
-    onWindowClick = (event: MouseEvent) => {
-      // check if it's a link
-      const isLink = 'href' in (event.target || {})
-      // make sure the click is either a link or outside of the dialog
+    #onClose = () => {
+      document.body.classList.remove('dialog-open')
+      this.#openButton?.focus()
+    }
+
+    #onDialogClick = (event: MouseEvent) => {
       if (
-        isLink ||
-        (document.body.contains(event.target as Node) &&
-          !this.#dialogFrame?.contains(event.target as Node))
+        event.target === this.#dialog ||
+        !this.#dialogFrame?.contains(event.target as Node)
       ) {
-        this.closeModal()
+        this.#close()
       }
     }
 
-    setupResultObserver = () => {
-      const root = this.querySelector('#pagefind-search')
-      if (!root || this.#resultObserver) return
-
-      this.#resultObserver = new MutationObserver(() => {
-        this.resetActiveResult()
-      })
-      this.#resultObserver.observe(root, {
-        childList: true,
-        subtree: true,
-      })
-    }
-
-    onDialogInput = (event: Event) => {
-      const target = event.target
-      if (target instanceof HTMLElement && target.matches('.pagefind-ui__search-input')) {
-        this.resetActiveResult()
-      }
-    }
-
-    getResultLinks = () => {
-      return Array.from(
-        this.querySelectorAll<HTMLAnchorElement>('.pagefind-ui__result-link[href]'),
-      ).filter((link) => link.getClientRects().length > 0)
-    }
-
-    clearActiveResult = () => {
-      this.querySelectorAll('[data-active-result="true"]').forEach((element) => {
-        element.removeAttribute('data-active-result')
-        element.removeAttribute('aria-current')
-      })
-    }
-
-    resetActiveResult = () => {
-      this.#selectedResultIndex = -1
-      this.clearActiveResult()
-    }
-
-    setActiveResult = (index: number) => {
-      const links = this.getResultLinks()
-      if (links.length === 0) {
-        this.resetActiveResult()
-        return
-      }
-
-      this.clearActiveResult()
-      this.#selectedResultIndex = (index + links.length) % links.length
-      const link = links[this.#selectedResultIndex]
-      link.setAttribute('data-active-result', 'true')
-      link.setAttribute('aria-current', 'true')
-      link.closest('.pagefind-ui__result')?.setAttribute('data-active-result', 'true')
-      link.focus({ preventScroll: true })
-      link.scrollIntoView({ block: 'nearest' })
-    }
-
-    onWindowKeydown = (e: KeyboardEvent) => {
-      if (!this.#dialog) {
-        console.warn('Dialog not found')
-        return
-      }
-      // check if it's the Control+K or ⌘+K shortcut
-      if (
-        (e.metaKey === true || e.ctrlKey === true) &&
-        !e.altKey &&
-        e.key.toLowerCase() === 'k'
-      ) {
-        this.#dialog.open ? this.closeModal() : this.openModal()
-        e.preventDefault()
-        e.stopImmediatePropagation()
-        return
-      }
-
-      if (!this.#dialog.open) {
-        return
-      }
-
-      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-        const links = this.getResultLinks()
-        if (links.length === 0) {
-          return
-        }
-
-        e.preventDefault()
-        e.stopPropagation()
-        this.setActiveResult(this.#selectedResultIndex + (e.key === 'ArrowDown' ? 1 : -1))
-        return
-      }
-
-      if (e.key === 'Enter') {
-        const target = e.target instanceof Element ? e.target : null
-        if (target?.closest('button')) {
-          return
-        }
-
-        const links = this.getResultLinks()
-        if (links.length === 0) {
-          return
-        }
-
-        e.preventDefault()
-        const index = this.#selectedResultIndex >= 0 ? this.#selectedResultIndex : 0
-        this.setActiveResult(index)
-        this.getResultLinks()[this.#selectedResultIndex]?.click()
+    #onKeydown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
+        this.#dialog?.open ? this.#close() : this.#open()
       }
     }
   }
 
-  customElements.define('site-search', SiteSearch)
+  if (!customElements.get('site-search')) {
+    customElements.define('site-search', SiteSearch)
+  }
 </script>
+
+<style>
+  .search-dialog {
+    width: min(calc(100% - 2rem), 48rem);
+    max-width: none;
+    max-height: min(48rem, calc(100dvh - 2rem));
+    margin: 1rem auto auto;
+    padding: 0;
+    border: 1px solid var(--theme-border-strong);
+    border-radius: var(--radius-media);
+    color: var(--theme-foreground);
+    background: var(--theme-background);
+    box-shadow: 0 2rem 7rem var(--theme-shadow);
+  }
+
+  .search-dialog::backdrop {
+    background: color-mix(in oklab, var(--theme-background) 55%, transparent);
+    backdrop-filter: blur(12px);
+  }
+
+  .dialog-frame {
+    padding: clamp(1rem, 4vw, 2.25rem);
+  }
+
+  .dialog-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--theme-border);
+  }
+
+  .dialog-header p {
+    margin: 0 0 0.4rem;
+    color: var(--theme-text-muted);
+  }
+
+  .dialog-header h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+  }
+
+  .search-message {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: 0.8rem;
+    color: var(--theme-text-muted);
+    background: var(--theme-surface);
+  }
+
+  .search-message svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: none;
+    margin-top: 0.15rem;
+    color: var(--theme-accent);
+  }
+
+  .search-message p,
+  .search-status {
+    margin: 0;
+  }
+
+  .search-status {
+    padding-block: 1.5rem;
+    color: var(--theme-text-muted);
+  }
+</style>
+
+<style is:global>
+  :root {
+    --pagefind-ui-font: var(--font-body);
+    --pagefind-ui-primary: var(--theme-accent);
+    --pagefind-ui-text: var(--theme-foreground);
+    --pagefind-ui-background: var(--theme-background);
+    --pagefind-ui-border: var(--theme-border-strong);
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: 0.75rem;
+  }
+
+  .pagefind-ui {
+    padding-top: 1.5rem;
+  }
+
+  .pagefind-ui__search-input {
+    border-radius: 0.75rem !important;
+    color: var(--theme-foreground) !important;
+    background: var(--theme-surface) !important;
+  }
+
+  .pagefind-ui__search-clear {
+    color: var(--theme-foreground) !important;
+    background: transparent !important;
+  }
+
+  .pagefind-ui__result {
+    border-top-color: var(--theme-border) !important;
+  }
+
+  .pagefind-ui__result-link {
+    color: var(--theme-foreground) !important;
+    font-family: var(--font-display);
+    font-size: 1.35rem !important;
+    letter-spacing: -0.025em;
+  }
+
+  .pagefind-ui mark {
+    border-radius: 0.2rem;
+    color: var(--theme-on-accent) !important;
+    background: var(--theme-accent) !important;
+  }
+</style>

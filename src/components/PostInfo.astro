@@ -15,48 +15,79 @@ const seriesFrontmatter = post.data.series
 let series: Collation<'posts'> | undefined
 let seriesPostNumber: number | undefined
 let seriesTotal: number | undefined
+
 if (seriesFrontmatter) {
   const seriesGroup = await SeriesGroup.build()
   series = seriesGroup.match(seriesFrontmatter)
   if (!series) {
-    // This should never happen if the series data is correct
     throw new Error(`Series "${seriesFrontmatter}" not found`)
   }
-  seriesPostNumber = series.entries.findIndex((p) => p.id === post.id) + 1
+  seriesPostNumber = series.entries.findIndex((item) => item.id === post.id) + 1
   seriesTotal = series.entries.length
 }
 ---
 
-<div class:list={[className, 'text-foreground/80']}>
-  <div
-    class="flex flex-col gap-4 sm:gap-2 sm:flex-wrap items-start sm:items-center sm:flex-row"
-  >
-    {
-      series && seriesPostNumber && seriesTotal && (
-        <a
-          class="shrink-0 rounded-2xl py-[3px] px-3.5 bg-foreground/1 me-2.5 hover:bg-foreground/5 transition-colors border-1 border-foreground/16 hover:border-foreground/20"
-          href={series.url}
-        >
-          {series.title} {seriesPostNumber} / {seriesTotal}
-        </a>
-      )
-    }
-    <div class="shrink-0 pl-0.5 text-[17px] sm:text-base">
-      <time>{dateString(post.data.published)}</time>
-      {
-        post.data.author && (
-          <span class="before:content-['·'] before:font-bold before:inline-block before:mx-0.5">
-            {post.data.author}
-          </span>
-        )
-      }
-      {
-        minutesRead && (
-          <span class="before:content-['·'] before:inline-block before:mx-0.5">
-            {minutesRead}
-          </span>
-        )
-      }
-    </div>
+<div class:list={[className, 'post-info']}>
+  {
+    series && seriesPostNumber && seriesTotal && (
+      <a class="series-link" href={series.url}>
+        {series.title}
+        <span>
+          {seriesPostNumber} / {seriesTotal}
+        </span>
+      </a>
+    )
+  }
+  <div class="post-facts">
+    <time datetime={post.data.published.toISOString()}
+      >{dateString(post.data.published)}</time
+    >
+    {post.data.author && <span>{post.data.author}</span>}
+    {minutesRead && <span>{minutesRead}</span>}
   </div>
 </div>
+
+<style>
+  .post-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem 1rem;
+    color: var(--theme-text-muted);
+    font-size: var(--text-sm-fluid);
+  }
+
+  .series-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--theme-foreground);
+    font-weight: 650;
+    text-decoration-color: var(--theme-border-strong);
+    text-underline-offset: 0.25rem;
+  }
+
+  .series-link:hover {
+    color: var(--theme-accent);
+  }
+
+  .series-link span {
+    color: var(--theme-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs-fluid);
+  }
+
+  .post-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs-fluid);
+  }
+
+  .post-facts > * + *::before {
+    margin-right: 0.5rem;
+    color: var(--theme-border-strong);
+    content: '/';
+  }
+</style>

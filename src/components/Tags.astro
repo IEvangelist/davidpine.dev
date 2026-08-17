@@ -8,15 +8,49 @@ interface Props {
 const { tags } = Astro.props
 ---
 
-<div class="flex flex-wrap gap-3 text-sm">
-  {
-    tags.map((tag) => (
-      <a
-        href={tag.url}
-        class="py-1 px-3 bg-accent/1 hover:bg-accent/8 border-1 border-accent/20 text-accent/90 rounded-2xl transition-colors"
-      >
-        {tag.title}
-      </a>
-    ))
-  }
+<div class="tags" aria-label="Topics">
+  {tags.map((tag) => <a href={tag.url}>{tag.title}</a>)}
 </div>
+
+<style>
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 0.8rem;
+    margin-top: 1rem;
+  }
+
+  a {
+    color: color-mix(in oklab, var(--tag-color) 66%, var(--theme-foreground));
+    font-family: var(--font-mono);
+    font-size: var(--text-xs-fluid);
+    text-decoration-color: var(--theme-border-strong);
+    text-underline-offset: 0.25rem;
+    --tag-color: var(--theme-accent);
+  }
+
+  a:nth-child(5n + 2) {
+    --tag-color: var(--theme-blue);
+  }
+
+  a:nth-child(5n + 3) {
+    --tag-color: var(--theme-magenta);
+  }
+
+  a:nth-child(5n + 4) {
+    --tag-color: var(--theme-green);
+  }
+
+  a:nth-child(5n + 5) {
+    --tag-color: var(--theme-yellow);
+  }
+
+  a::before {
+    color: var(--tag-color);
+    content: '#';
+  }
+
+  a:hover {
+    color: var(--theme-foreground);
+  }
+</style>

@@ -1,0 +1,514 @@
+---
+import { Image } from 'astro:assets'
+import { Icon } from 'astro-icon/components'
+import Layout from '~/layouts/Layout.astro'
+import PageHeader from '~/components/PageHeader.astro'
+import TechStack from '~/components/TechStack.astro'
+import GitHubActivityCalendar from '~/components/GitHubActivityCalendar.astro'
+import SocialLinks from '~/components/SocialLinks.astro'
+import siteConfig from '~/site.config'
+import aboutPhoto from '~/assets/pics/132.jpg'
+import bookCover from '~/content/posts/learning-blazor/full-book-cover.png'
+
+const testimonials = [
+  "You are a beacon of light in a grumpy world of developers. Your excitement is infectious. I'm so blessed to know you!",
+  "So David Pine, you are about to embark on your first international speaking engagement. Congratulations, good luck and know that wherever you go, all of us here will be wishing you well. We know they are getting not just a speaker, but someone who represents the best of our developer community values here in the upper Midwest, someone who is eager to share what he knows with others, someone who is generous with his time and patient in his approach. You represent the best of us because you are so invested in the success of others. I couldn't think of a better person they could have asked to come and speak and certainly not one more deserving. You will do an amazing job, and when you get back, we'll have a Spotted Cow, a Brat and some Chicago deep dish pizza waiting for you.",
+  'I had the opportunity to work with David Pine for several years while at Centare. I learned a tremendous amount from him and was always impressed with his upbeat attitude, team leadership, and willingness to tackle problems head on. One thing I learned about David is that if he sets his mind to something- he will do it, and not give up. He has an incredible work ethic and always is willing to stop along the way to help others. He is a great teacher and admired by his peers. I would jump at the opportunity to work with David again and am confident he will be successful in whatever he does.',
+  "It was a blast to learn under David. It didn't take us long to get along as we are both highly motivated people with a drive to make a difference in the software development realm. He helped guide me to through the start of my software development journey when doubt was at an all time high. He works his tail off to get his team past where they need to be meaning that the value coming from his work is remarkable. These are a few of many reasons why I'm sure Microsoft has given him the status of MVP. I would recommend David to any software company.",
+  'David has been a pleasure to work with. He takes great pride in his work and consistently drives for results. I appreciate not only his problem solving skills, but his unique ability to simplify complex issues and concisely convey information to technical and non-technical peers.',
+  'Working with Dave for several months I was impressed with how well he was able to pickup new technologies. His ability to research and understand new things was a great asset to our team and always spot on. He is a true team player and willing to do any task asked of him. If given the chance I would, with out a doubt, have him on future teams that I work on.',
+  'David is a developer with skills and knowledge way beyond the number of years listed on his resume. Never afraid to suggest a better way but willing do what it takes to get things done. He is one of the most thorough programmer I have met in my IT career with a complete grasp all OOP principles and the SDLC. Always available to mentor and lean a hand when others are having difficulties. It was a great honor to have worked with him.',
+]
+
+const previewQuote = (quote: string) => {
+  if (quote.length <= 140) return quote
+  const cut = quote.slice(0, 140)
+  return `${cut.slice(0, cut.lastIndexOf(' '))}...`
+}
+const featuredQuote =
+  'You are a beacon of light in a grumpy world of developers. Your excitement is infectious.'
+---
+
+<Layout
+  title="About David Pine"
+  description="Senior software engineer, author, speaker, and open-source maintainer."
+>
+  <PageHeader
+    title="Hi, I'm David 👋🏽"
+    description="I build developer tools, advocate for .NET, and help people learn through writing, speaking, and open source."
+  />
+
+  <section class="origin-story">
+    <div class="origin-copy" data-reveal>
+      <p>
+        I'm a senior software engineer who loves building things and sharing knowledge. My
+        journey started in middle school when I became fascinated with FPS games like
+        Wolfenstein, Quake, Doom, Duke Nukem, and Half-Life. I didn't just want to play
+        them. I wanted to understand how they worked.
+      </p>
+      <p>
+        In middle school, I taught myself <a href="https://quark.sourceforge.net/"
+          >QuArK (Quake Army Knife)</a
+        > and <a href="https://developer.valvesoftware.com/wiki/Valve_Hammer_Editor"
+          >Valve Hammer</a
+        >, diving into level design and 3D architecture. I loved crafting elaborate
+        spaces, meticulously applying textures, and placing light sources to cast perfect
+        shadows. Building these maps was more rewarding than playing them. Watching
+        thousands of polygons and entities render down into a single <a
+          href="https://en.wikipedia.org/wiki/Binary_space_partitioning"
+          >binary space partition (.bsp)</a
+        > file was incredibly satisfying.
+      </p>
+      <p>
+        That passion for understanding how things work led me to software engineering.
+        Today, I focus on building developer tools, advocating for .NET technologies, and
+        helping others learn through speaking, writing, and open-source contributions.
+      </p>
+    </div>
+    <div class="origin-media" data-reveal style="--reveal-delay: 100ms">
+      <Image
+        priority
+        src={aboutPhoto}
+        alt="David Pine speaking at a developer conference"
+        widths={[640, 960, 1280]}
+        sizes="(max-width: 768px) 100vw, 44vw"
+      />
+    </div>
+  </section>
+
+  <section class="about-section bio-section">
+    <div class="book-media" data-reveal>
+      <Image
+        src={bookCover}
+        alt="Learning Blazor book cover"
+        widths={[320, 560, 800]}
+        sizes="(max-width: 768px) 70vw, 24rem"
+      />
+    </div>
+    <div class="bio-copy" data-reveal style="--reveal-delay: 90ms">
+      <h2 class="section-title">Bio</h2>
+      <p>
+        David Pine is a member of the <strong>Aspire team at Microsoft</strong>, where he
+        helps build <strong>aspire.dev</strong> and focuses on developer experiences across
+        <a href="https://learn.microsoft.com/dotnet">.NET</a>, and <a
+          href="https://learn.microsoft.com/azure">Azure</a
+        >. He is the O'Reilly Media author of <em
+          >Learning Blazor: Build Single-Page Apps with WebAssembly and C#</em
+        > and a <a
+          href="https://dometrain.com/course/from-zero-to-hero-configuration-and-options-in-dotnet/?ref=david-pine"
+          >Dometrain author</a
+        >.
+      </p>
+      <p>
+        David is deeply involved in the developer community, sharing knowledge through <a
+          href="/speaking">speaking engagements</a
+        > around the world, contributing to <a href="https://github.com/IEvangelist"
+          >open source</a
+        >, and advocating for the .NET Foundation, C#, TypeScript, SignalR, Reactive
+        Extensions, Azure, and .NET. He also co-hosts the <a
+          href="https://dotnet.microsoft.com/live/on-dotnet-live">On .NET Live</a
+        > stream, part of the .NET Live TV family.
+      </p>
+      <p>
+        Follow me on social media to stay updated with my latest content and projects!
+      </p>
+      <SocialLinks socialLinks={siteConfig.socialLinks} />
+    </div>
+  </section>
+
+  <section class="about-section tech-section">
+    <header data-reveal>
+      <h2 class="section-title">Tech stack</h2>
+      <p class="lead">
+        Languages, platforms, tools, and frameworks I have worked with across projects and
+        communities.
+      </p>
+    </header>
+    <TechStack />
+  </section>
+
+  <section class="about-section proof-section">
+    <div class="proof-copy" data-reveal>
+      <p class="ui-label">Open source</p>
+      <h2 class="section-title">GitHub contributions</h2>
+      <p class="lead">
+        Consider <a href="https://github.com/sponsors/IEvangelist"
+          >sponsoring my work on GitHub</a
+        >.
+      </p>
+    </div>
+    <div class="calendar-panel" data-reveal style="--reveal-delay: 90ms">
+      <GitHubActivityCalendar username="IEvangelist" />
+    </div>
+    <div class="profile-links" data-reveal>
+      <a href="https://stackoverflow.com/users/2410379/david-pine" target="_blank">
+        <span>
+          <strong>Stack Overflow</strong>
+          <img
+            src="https://stackoverflow.com/users/flair/2410379.png"
+            width="208"
+            height="58"
+            loading="lazy"
+            alt="David Pine's Stack Overflow profile flair"
+          />
+        </span>
+        <Icon name="ph:arrow-up-right" aria-hidden="true" />
+      </a>
+      <a href="https://holopin.io/@ievangelist" target="_blank">
+        <span>
+          <strong>Holopin badges</strong>
+          <img
+            src="https://holopin.me/ievangelist"
+            width="2039"
+            height="641"
+            loading="lazy"
+            alt="David Pine's Holopin badge collection"
+          />
+        </span>
+        <Icon name="ph:arrow-up-right" aria-hidden="true" />
+      </a>
+    </div>
+  </section>
+
+  <section class="about-section testimonials-section">
+    <header class="testimonial-intro" data-reveal>
+      <span class="quote-mark" aria-hidden="true">“</span>
+      <h2 class="section-title">What people are saying</h2>
+      <p class="lead">Words shared by colleagues and friends across the journey.</p>
+    </header>
+    <div class="testimonial-story">
+      <blockquote class="featured-quote" data-reveal>
+        “{featuredQuote}”
+      </blockquote>
+      <div class="quote-archive">
+        {
+          testimonials.map((testimonial, index) => (
+            <details
+              style={{
+                '--quote-color': [
+                  'var(--theme-blue)',
+                  'var(--theme-magenta)',
+                  'var(--theme-green)',
+                  'var(--theme-yellow)',
+                  'var(--theme-cyan)',
+                  'var(--theme-accent)',
+                ][index % 6],
+              }}
+            >
+              <summary>
+                <span class="quote-index">{String(index + 1).padStart(2, '0')}</span>
+                <span>“{previewQuote(testimonial)}”</span>
+                <Icon class="quote-toggle" name="ph:plus" aria-hidden="true" />
+              </summary>
+              <blockquote>{testimonial}</blockquote>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .origin-story,
+  .bio-section {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(22rem, 1.1fr);
+    align-items: center;
+    gap: clamp(3rem, 8vw, 8rem);
+    padding-block: var(--section-space);
+  }
+
+  .origin-copy,
+  .bio-copy {
+    max-width: 42rem;
+    font-size: var(--text-lead-fluid);
+    line-height: 1.55;
+  }
+
+  .origin-copy p,
+  .bio-copy p {
+    margin-block: 0 1.35rem;
+  }
+
+  .origin-copy a,
+  .bio-copy a,
+  .proof-copy a {
+    color: inherit;
+    text-decoration-color: var(--theme-accent);
+    text-underline-offset: 0.22rem;
+  }
+
+  .origin-media {
+    min-height: clamp(32rem, 58vw, 48rem);
+    overflow: hidden;
+    border-radius: var(--radius-media);
+  }
+
+  .origin-media :global(img) {
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    object-fit: cover;
+  }
+
+  .about-section {
+    padding-block: var(--section-space);
+    border-top: 1px solid var(--theme-border);
+  }
+
+  .bio-section {
+    grid-template-columns: minmax(16rem, 0.65fr) minmax(0, 1.35fr);
+  }
+
+  .book-media {
+    justify-self: center;
+  }
+
+  .book-media :global(img) {
+    width: min(100%, 25rem);
+    max-height: 38rem;
+    object-fit: contain;
+    filter: drop-shadow(0 1.5rem 2rem var(--theme-shadow));
+  }
+
+  .bio-copy h2 {
+    margin-bottom: 2rem;
+  }
+
+  .tech-section {
+    display: grid;
+    gap: clamp(3rem, 7vw, 5.5rem);
+  }
+
+  .tech-section header {
+    display: grid;
+    gap: 1.25rem;
+    max-width: 52rem;
+  }
+
+  .tech-section .lead {
+    margin: 0;
+  }
+
+  .proof-section {
+    display: grid;
+    grid-template-columns: minmax(18rem, 0.7fr) minmax(0, 1.3fr);
+    gap: clamp(2rem, 6vw, 6rem);
+  }
+
+  .proof-copy .ui-label {
+    margin: 0 0 1.5rem;
+    color: var(--theme-accent);
+  }
+
+  .proof-copy .lead {
+    margin: 1.5rem 0 0;
+  }
+
+  .calendar-panel {
+    overflow: hidden;
+    padding: clamp(1rem, 3vw, 2rem);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-media);
+    background: var(--theme-surface);
+  }
+
+  .calendar-panel :global(#github-activity-calendar) {
+    width: 100%;
+  }
+
+  .profile-links {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid var(--theme-border);
+  }
+
+  .profile-links a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem;
+    border-right: 1px solid var(--theme-border);
+    color: var(--theme-foreground);
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 3vw, 2.2rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    text-decoration: none;
+  }
+
+  .profile-links a > span {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+  }
+
+  .profile-links strong {
+    font: inherit;
+  }
+
+  .profile-links img {
+    width: auto;
+    max-width: min(100%, 24rem);
+    max-height: 6rem;
+    border: 0;
+    border-radius: 0;
+    object-fit: contain;
+    object-position: left center;
+  }
+
+  .profile-links a:last-child {
+    border-right: 0;
+  }
+
+  .profile-links a:hover {
+    color: var(--theme-accent);
+    background: var(--theme-accent-soft);
+  }
+
+  .profile-links svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .testimonials-section {
+    display: grid;
+    grid-template-columns: minmax(16rem, 0.62fr) minmax(0, 1.38fr);
+    align-items: start;
+    gap: clamp(3rem, 8vw, 8rem);
+  }
+
+  .testimonial-intro {
+    position: sticky;
+    top: 7rem;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .testimonial-intro .lead {
+    margin: 0;
+  }
+
+  .quote-mark {
+    width: max-content;
+    height: 0.72em;
+    overflow: hidden;
+    color: var(--theme-accent);
+    font-family: var(--font-display);
+    font-size: clamp(5rem, 10vw, 9rem);
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .testimonial-story {
+    min-width: 0;
+  }
+
+  .featured-quote {
+    max-width: 32ch;
+    margin: 0 0 clamp(3rem, 7vw, 6rem);
+    padding: 0;
+    border: 0;
+    color: var(--theme-heading1);
+    background: none;
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3.2vw, 3rem);
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+
+  .quote-archive {
+    border-bottom: 1px solid var(--theme-border);
+  }
+
+  .quote-archive details {
+    border-top: 1px solid color-mix(in oklab, var(--quote-color) 40%, var(--theme-border));
+  }
+
+  .quote-archive summary {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr) 1.5rem;
+    align-items: start;
+    gap: clamp(0.75rem, 2vw, 1.5rem);
+    padding-block: 1.35rem;
+    color: var(--theme-foreground);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .quote-archive summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .quote-archive summary > span:nth-child(2) {
+    max-width: 54ch;
+    font-size: clamp(1rem, 1.6vw, 1.2rem);
+    line-height: 1.5;
+  }
+
+  .quote-index {
+    color: color-mix(in oklab, var(--quote-color) 72%, var(--theme-foreground));
+    font-family: var(--font-mono);
+    font-size: var(--text-xs-fluid);
+  }
+
+  .quote-toggle {
+    width: 1.2rem;
+    height: 1.2rem;
+    color: var(--quote-color);
+    transition: transform var(--duration-fast) var(--ease-out-expo);
+  }
+
+  details[open] .quote-toggle {
+    transform: rotate(45deg);
+  }
+
+  .quote-archive blockquote {
+    margin: 0;
+    padding: 0 0 2rem calc(2.5rem + clamp(0.75rem, 2vw, 1.5rem));
+    border: 0;
+    color: var(--theme-text-muted);
+    background: none;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 47.99rem) {
+    .origin-story,
+    .bio-section,
+    .proof-section,
+    .testimonials-section {
+      grid-template-columns: 1fr;
+    }
+
+    .origin-copy,
+    .bio-copy {
+      font-size: var(--text-body-fluid);
+    }
+
+    .profile-links {
+      grid-template-columns: 1fr;
+    }
+
+    .profile-links a {
+      border-right: 0;
+      border-bottom: 1px solid var(--theme-border);
+    }
+
+    .testimonial-intro {
+      position: static;
+    }
+
+    .quote-archive summary {
+      grid-template-columns: 2rem minmax(0, 1fr) 1.25rem;
+    }
+
+    .quote-archive blockquote {
+      padding-left: calc(2rem + 0.75rem);
+    }
+  }
+</style>

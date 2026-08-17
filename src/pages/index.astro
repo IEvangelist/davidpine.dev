@@ -1,16 +1,18 @@
 ---
+import { Image } from 'astro:assets'
+import { Icon } from 'astro-icon/components'
+import { getCollection, render } from 'astro:content'
 import Layout from '~/layouts/Layout.astro'
 import { getSortedPosts } from '~/utils'
-import { getCollection, render } from 'astro:content'
 import PostPreview from '~/components/PostPreview.astro'
-import Pagination from '~/components/Pagination.astro'
-import BlockHeader from '~/components/BlockHeader.astro'
 import HomeBanner from '~/components/HomeBanner.astro'
-import siteConfig from '~/site.config'
 import TagsSection from '~/components/TagsSection.astro'
 import SeriesSection from '~/components/SeriesSection.astro'
-import IconTags from '~/icons/tags.svg'
-import IconNew from '~/icons/new.svg'
+import GitHubActivityCalendar from '~/components/GitHubActivityCalendar.astro'
+import GitHubMark from '~/icons/github.svg'
+import photoStage from '~/assets/pics/70.jpg'
+import photoConference from '~/assets/pics/128.jpg'
+import photoCommunity from '~/assets/pics/60.jpg'
 
 const home = await getCollection('home')
 let HomeContent
@@ -23,62 +25,483 @@ if (home.length > 0) {
   homeAvatarImage = homeEntry.data.avatarImage
   homeGithubCalendar = homeEntry.data.githubCalendar
 }
-const sortedPosts = await getSortedPosts()
-const postsHaveTags = sortedPosts.some(
-  (post) => post.data.tags && post.data.tags.length > 0,
-)
 
+const sortedPosts = await getSortedPosts()
+const newestPosts = [...sortedPosts].reverse()
+const [featuredPost, ...recentPosts] = newestPosts.slice(0, 4)
+const postsHaveTags = sortedPosts.some((post) => post.data.tags?.length)
 const postsHaveSeries = sortedPosts.some((post) => post.data.series)
+
+const credentials = [
+  {
+    label: 'Work',
+    value: 'Microsoft Aspire',
+    url: 'https://aspire.dev',
+    icon: 'ph:brackets-curly',
+  },
+  {
+    label: 'Book',
+    value: 'Learning Blazor',
+    url: 'https://www.amazon.com/Learning-Blazor-Building-Applications-WebAssembly/dp/1098113241',
+    icon: 'ph:book-open-text',
+  },
+  {
+    label: 'Live',
+    value: 'On .NET Live',
+    url: 'https://dotnet.microsoft.com/en-us/live/on-dotnet-live',
+    icon: 'ph:video-camera',
+  },
+  {
+    label: 'Open source',
+    value: 'IEvangelist',
+    url: 'https://github.com/IEvangelist',
+    icon: 'ph:github-logo',
+    officialGitHub: true,
+  },
+]
 ---
 
 <Layout>
   {
     HomeContent && (
-      <HomeBanner avatarImage={homeAvatarImage} githubCalendar={homeGithubCalendar}>
+      <HomeBanner avatarImage={homeAvatarImage}>
         <HomeContent />
       </HomeBanner>
     )
   }
+
+  <section class="credentials" aria-label="Selected credentials" data-reveal>
+    {
+      credentials.map((credential) => (
+        <a href={credential.url} target="_blank" rel="noopener noreferrer">
+          {credential.officialGitHub ? (
+            <GitHubMark aria-hidden="true" />
+          ) : (
+            <Icon name={credential.icon} aria-hidden="true" />
+          )}
+          <span>
+            <small>{credential.label}</small>
+            <strong>{credential.value}</strong>
+          </span>
+          <Icon class="credential-arrow" name="ph:arrow-up-right" aria-hidden="true" />
+        </a>
+      ))
+    }
+  </section>
+
   {
-    postsHaveSeries && (
-      <section>
-        <BlockHeader>Series</BlockHeader>
-        <SeriesSection posts={sortedPosts} />
-      </section>
-    )
-  }
-  {
-    postsHaveTags && (
-      <section>
-        <BlockHeader>
-          <IconTags style="display: inline; vertical-align: middle;" />
-          Tags
-        </BlockHeader>
-        <TagsSection posts={sortedPosts} />
-      </section>
-    )
-  }
-  {
-    sortedPosts.length > 0 && (
-      <section>
-        <BlockHeader>
-          <IconNew style="display: inline; vertical-align: middle;" />
-          Latest Posts
-        </BlockHeader>
-        {sortedPosts
-          .reverse()
-          .slice(0, Math.floor(siteConfig.pageSize / 2))
-          .map((post) => (
-            <PostPreview post={post} />
+    featuredPost && (
+      <section class="home-section writing-section">
+        <header class="section-heading" data-reveal>
+          <h2 class="section-title">Latest writing</h2>
+          <p class="lead">
+            Deep dives into Aspire, .NET, developer tools, open source, and the lessons
+            behind the work.
+          </p>
+        </header>
+
+        <PostPreview post={featuredPost} variant="featured" />
+
+        <div class="recent-writing">
+          {recentPosts.map((post) => (
+            <PostPreview post={post} variant="compact" />
           ))}
-        <Pagination nextLink="/posts" nextText="Archive" />
+        </div>
+
+        <a class="section-link" href="/posts">
+          Browse every article
+          <Icon name="ph:arrow-right" aria-hidden="true" />
+        </a>
       </section>
     )
   }
+
+  {
+    (postsHaveSeries || postsHaveTags) && (
+      <section class="home-section discovery-section">
+        <header class="section-heading" data-reveal>
+          <h2 class="section-title">Follow an idea</h2>
+          <p class="lead">
+            {postsHaveSeries
+              ? 'Start with a complete series or browse the subjects that connect the archive.'
+              : 'Browse the subjects that connect writing across the archive.'}
+          </p>
+        </header>
+
+        <div
+          class:list={[
+            'discovery-grid',
+            !postsHaveSeries && 'discovery-grid--topics-only',
+          ]}
+        >
+          {postsHaveSeries && (
+            <div class="series-directory" data-reveal>
+              <h3>Series</h3>
+              <SeriesSection posts={sortedPosts} limit={5} />
+            </div>
+          )}
+          {postsHaveTags && (
+            <div class="topics-directory" data-reveal style="--reveal-delay: 90ms">
+              <h3>Topics</h3>
+              <TagsSection posts={sortedPosts} limit={18} variant="directory" />
+            </div>
+          )}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    homeGithubCalendar && (
+      <section class="home-section activity-section">
+        <div class="activity-copy" data-reveal>
+          <p class="ui-label">Open source</p>
+          <h2 class="section-title">The work stays visible.</h2>
+          <p class="lead">
+            Code, documentation, samples, and community work continue in the open on
+            GitHub.
+          </p>
+          <a class="section-link" href="https://github.com/IEvangelist">
+            View GitHub
+            <Icon name="ph:arrow-up-right" aria-hidden="true" />
+          </a>
+        </div>
+        <div class="activity-calendar" data-reveal style="--reveal-delay: 90ms">
+          <GitHubActivityCalendar username={homeGithubCalendar} />
+        </div>
+      </section>
+    )
+  }
+
+  <section class="home-section speaking-section">
+    <header class="section-heading" data-reveal>
+      <h2 class="section-title">Sharing the work in person</h2>
+      <p class="lead">
+        Conference talks, community sessions, live shows, and the conversations around
+        them.
+      </p>
+    </header>
+
+    <div class="speaking-gallery" data-reveal>
+      <Image
+        src={photoStage}
+        alt="David Pine presenting with a microphone in a rustic venue"
+        widths={[480, 800, 1200]}
+        sizes="(max-width: 768px) 100vw, 52vw"
+      />
+      <Image
+        src={photoConference}
+        alt="David Pine presenting on a large green conference stage"
+        widths={[360, 640, 960]}
+        sizes="(max-width: 768px) 100vw, 28vw"
+      />
+      <Image
+        src={photoCommunity}
+        alt="David Pine presenting in front of a purple conference screen"
+        widths={[360, 640, 960]}
+        sizes="(max-width: 768px) 100vw, 28vw"
+      />
+    </div>
+
+    <div class="speaking-links" data-reveal>
+      <a class="section-link" href="/speaking">
+        Speaking history
+        <Icon name="ph:arrow-right" aria-hidden="true" />
+      </a>
+      <a class="section-link" href="/pictures">
+        View photographs
+        <Icon name="ph:arrow-right" aria-hidden="true" />
+      </a>
+    </div>
+  </section>
 </Layout>
 
-<style is:global>
-  a.heading-anchor {
-    display: none !important;
+<style>
+  .home-section {
+    padding-block: var(--section-space);
+    border-top: 1px solid
+      color-mix(in oklab, var(--section-color) 42%, var(--theme-border));
+    --section-color: var(--theme-accent);
+  }
+
+  .writing-section {
+    --section-color: var(--theme-blue);
+  }
+
+  .discovery-section {
+    --section-color: var(--theme-magenta);
+  }
+
+  .activity-section {
+    --section-color: var(--theme-green);
+  }
+
+  .speaking-section {
+    --section-color: var(--theme-yellow);
+  }
+
+  .section-heading {
+    display: grid;
+    gap: 1.25rem;
+    max-width: 54rem;
+    margin-bottom: clamp(3rem, 7vw, 6rem);
+  }
+
+  .section-heading .lead {
+    margin: 0;
+  }
+
+  .credentials {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-bottom: 1px solid var(--theme-border);
+  }
+
+  .credentials a {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 7.5rem;
+    padding: 1rem clamp(0.8rem, 2vw, 1.5rem);
+    border-right: 1px solid var(--theme-border);
+    color: var(--theme-foreground);
+    text-decoration: none;
+    transition:
+      color var(--duration-fast) var(--ease-out-expo),
+      background-color var(--duration-fast) var(--ease-out-expo);
+    --credential-color: var(--theme-accent);
+    box-shadow: inset 0 2px 0
+      color-mix(in oklab, var(--credential-color) 72%, transparent);
+  }
+
+  .credentials a:nth-child(2) {
+    --credential-color: var(--theme-blue);
+  }
+
+  .credentials a:nth-child(3) {
+    --credential-color: var(--theme-magenta);
+  }
+
+  .credentials a:nth-child(4) {
+    --credential-color: var(--theme-green);
+  }
+
+  .credentials a:first-child {
+    padding-left: 0;
+  }
+
+  .credentials a:last-child {
+    padding-right: 0;
+    border-right: 0;
+  }
+
+  .credentials a:hover {
+    color: color-mix(in oklab, var(--credential-color) 72%, var(--theme-foreground));
+    background: color-mix(in oklab, var(--credential-color) 9%, transparent);
+  }
+
+  .credentials svg {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+
+  .credentials a > svg:first-child {
+    color: color-mix(in oklab, var(--credential-color) 76%, var(--theme-foreground));
+  }
+
+  .credentials span {
+    display: grid;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  .credentials small {
+    color: var(--theme-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs-fluid);
+    text-transform: uppercase;
+  }
+
+  .credentials strong {
+    overflow: hidden;
+    font-size: var(--text-sm-fluid);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .credential-arrow {
+    width: 1rem !important;
+    height: 1rem !important;
+    color: var(--theme-text-muted);
+  }
+
+  .recent-writing {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0 2rem;
+    margin-top: clamp(3rem, 7vw, 6rem);
+  }
+
+  .section-link {
+    display: inline-flex;
+    width: max-content;
+    align-items: center;
+    gap: 0.55rem;
+    margin-top: 2rem;
+    color: var(--theme-foreground);
+    font-weight: 700;
+    text-decoration-color: var(--theme-accent);
+    text-underline-offset: 0.3rem;
+  }
+
+  .section-link:hover {
+    color: var(--theme-accent);
+  }
+
+  .section-link svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform var(--duration-fast) var(--ease-out-expo);
+  }
+
+  .section-link:hover svg {
+    transform: translateX(0.2rem);
+  }
+
+  .discovery-grid {
+    display: grid;
+    grid-template-columns: minmax(14rem, 0.52fr) minmax(0, 1.48fr);
+    align-items: start;
+    gap: clamp(2.5rem, 6vw, 6rem);
+  }
+
+  .discovery-grid--topics-only {
+    grid-template-columns: 1fr;
+  }
+
+  .discovery-grid h3 {
+    margin: 0 0 1.5rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.5rem);
+    letter-spacing: -0.035em;
+  }
+
+  .series-directory {
+    position: sticky;
+    top: 7rem;
+    padding: clamp(1rem, 2vw, 1.5rem);
+    border: 1px solid color-mix(in oklab, var(--theme-magenta) 34%, var(--theme-border));
+    border-radius: var(--radius-panel);
+    background: var(--theme-surface);
+  }
+
+  .topics-directory {
+    min-width: 0;
+  }
+
+  .activity-section {
+    display: grid;
+    grid-template-columns: minmax(18rem, 0.72fr) minmax(0, 1.28fr);
+    align-items: end;
+    gap: clamp(3rem, 8vw, 8rem);
+  }
+
+  .activity-copy .ui-label {
+    margin: 0 0 1.5rem;
+    color: var(--theme-accent);
+  }
+
+  .activity-copy .lead {
+    margin: 1.5rem 0 0;
+  }
+
+  .activity-calendar {
+    overflow: hidden;
+    padding: clamp(1rem, 3vw, 2rem);
+    border: 1px solid color-mix(in oklab, var(--theme-green) 38%, var(--theme-border));
+    border-radius: var(--radius-media);
+    background: var(--theme-surface);
+  }
+
+  .activity-calendar :global(#github-activity-calendar) {
+    width: 100%;
+  }
+
+  .speaking-gallery {
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(16rem, 0.65fr);
+    grid-template-rows: repeat(2, minmax(13rem, 1fr));
+    gap: 0.75rem;
+    min-height: clamp(36rem, 62vw, 52rem);
+  }
+
+  .speaking-gallery :global(img) {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    border-radius: var(--radius-media);
+    object-fit: cover;
+  }
+
+  .speaking-gallery :global(img:first-child) {
+    grid-row: 1 / 3;
+  }
+
+  .speaking-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+  }
+
+  @media (max-width: 63.99rem) {
+    .credentials {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .credentials a:nth-child(2) {
+      border-right: 0;
+    }
+
+    .credentials a:first-child,
+    .credentials a:nth-child(2) {
+      border-bottom: 1px solid var(--theme-border);
+    }
+
+    .recent-writing {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 47.99rem) {
+    .credentials,
+    .discovery-grid,
+    .activity-section,
+    .speaking-gallery {
+      grid-template-columns: 1fr;
+    }
+
+    .credentials a,
+    .credentials a:first-child,
+    .credentials a:nth-child(2),
+    .credentials a:last-child {
+      min-height: 5.5rem;
+      padding-inline: 0;
+      border-right: 0;
+      border-bottom: 1px solid var(--theme-border);
+    }
+
+    .speaking-gallery {
+      grid-template-rows: repeat(3, 18rem);
+      min-height: auto;
+    }
+
+    .speaking-gallery :global(img:first-child) {
+      grid-row: auto;
+    }
+
+    .series-directory {
+      position: static;
+    }
   }
 </style>

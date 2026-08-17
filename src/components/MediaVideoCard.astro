@@ -1,0 +1,113 @@
+---
+import { Icon } from 'astro-icon/components'
+
+interface Props {
+  id: string
+  title: string
+}
+
+const { id, title } = Astro.props
+---
+
+<article class="video-card">
+  <a
+    href={`https://www.youtube.com/watch?v=${id}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="video-link"
+    aria-label={`Watch ${title} on YouTube`}
+  >
+    <img
+      src={`https://img.youtube.com/vi/${id}/mqdefault.jpg`}
+      alt=""
+      width="320"
+      height="180"
+      loading="lazy"
+    />
+    <span class="video-action" aria-hidden="true">
+      <Icon name="ph:play-fill" />
+    </span>
+  </a>
+  <h3><a href={`https://www.youtube.com/watch?v=${id}`}>{title}</a></h3>
+</article>
+
+<style>
+  .video-card {
+    display: grid;
+    gap: 0.65rem;
+    align-content: start;
+  }
+
+  .video-link {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: var(--radius-media);
+    background: var(--theme-surface);
+  }
+
+  .video-link img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    transition: transform 600ms var(--ease-out-expo);
+  }
+
+  .video-action {
+    position: absolute;
+    right: 0.55rem;
+    bottom: 0.55rem;
+    display: grid;
+    width: 2.25rem;
+    height: 2.25rem;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--theme-on-accent);
+    background: var(--theme-accent);
+    transform: scale(0.9);
+    transition: transform var(--duration-fast) var(--ease-out-expo);
+  }
+
+  .video-action svg {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+
+  .video-link:hover img {
+    transform: scale(1.035);
+  }
+
+  .video-link:hover .video-action {
+    transform: scale(1);
+  }
+
+  h3 {
+    max-width: 34ch;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 1.4vw, 1.2rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+  }
+
+  h3 a {
+    color: var(--theme-foreground);
+    text-decoration-color: transparent;
+    text-underline-offset: 0.2rem;
+  }
+
+  h3 a:hover {
+    color: var(--theme-accent);
+    text-decoration-color: currentColor;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .video-link:hover img,
+    .video-link:hover .video-action {
+      transform: none;
+    }
+  }
+</style>

@@ -1,7 +1,6 @@
 ---
 import Layout from '~/layouts/Layout.astro'
 import PageHeader from '~/components/PageHeader.astro'
-import ScrollUpButton from '~/components/ScrollUpButton.astro'
 import SlidesPage from '~/components/slide/SlidesPage.astro'
 import type { Slide } from '~/components/slide/SlideCard.astro'
 import { getCollection } from 'astro:content'
@@ -63,7 +62,6 @@ const currentTag = Astro.url.searchParams.get('tag') || ''
 
     <SlidesPage slides={slides} tags={tags} tag={currentTag} />
   </article>
-  <ScrollUpButton />
 </Layout>
 
 <style>

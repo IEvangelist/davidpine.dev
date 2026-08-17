@@ -2,11 +2,35 @@
 interface Props {
   text: string
 }
+
 const { text } = Astro.props
 ---
 
-<div class="flex gap-3 items-center my-4">
-  <hr class="flex-1 bg-accent h-0.5 border-none" />
-  <span class="shrink-0 whitespace-nowrap">{text}</span>
-  <hr class="flex-1 bg-accent h-0.5 border-none" />
-</div>
+<header class="divider-heading">
+  <h2>{text}</h2>
+  <span aria-hidden="true"></span>
+</header>
+
+<style>
+  .divider-heading {
+    display: grid;
+    grid-template-columns: auto minmax(3rem, 1fr);
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 3.2rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+
+  span {
+    height: 1px;
+    background: var(--theme-border);
+  }
+</style>

@@ -17,13 +17,20 @@ const fontData = fs.readFileSync(fontPath) // Reads the file as a Buffer
 const avatarPath = path.resolve(siteConfig.socialCardAvatarImage)
 let avatarData: Buffer | undefined
 let avatarBase64: string | undefined
-if (
-  fs.existsSync(avatarPath) &&
-  (path.extname(avatarPath).toLowerCase() === '.jpg' ||
-    path.extname(avatarPath).toLowerCase() === '.jpeg')
-) {
-  avatarData = fs.readFileSync(avatarPath)
-  avatarBase64 = `data:image/jpeg;base64,${avatarData.toString('base64')}`
+if (fs.existsSync(avatarPath)) {
+  const extension = path.extname(avatarPath).toLowerCase()
+  const mimeType =
+    extension === '.png'
+      ? 'image/png'
+      : extension === '.webp'
+        ? 'image/webp'
+        : extension === '.jpg' || extension === '.jpeg'
+          ? 'image/jpeg'
+          : undefined
+  if (mimeType) {
+    avatarData = fs.readFileSync(avatarPath)
+    avatarBase64 = `data:${mimeType};base64,${avatarData.toString('base64')}`
+  }
 }
 
 const defaultTheme =
@@ -57,20 +64,39 @@ const ogOptions: SatoriOptions = {
   width: 1200,
 }
 
+const escapeHtml = (value: string) =>
+  value.replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;',
+      })[character]!,
+  )
+
 const markup = (title: string, pubDate: string | undefined, author: string) =>
-  html(`<div tw="flex flex-col max-w-full justify-center h-full bg-[${bg}] text-[${fg}] p-12">
-    <div style="border-width: 12px; border-radius: 80px;" tw="flex items-center max-w-full p-8 border-[${accent}]/30">
+  html(`<div tw="flex w-full h-full bg-[${bg}] text-[${fg}] p-14">
+    <div tw="flex flex-col flex-1 justify-between border-t-2 border-[${accent}] pt-8">
+      <div tw="flex items-center justify-between">
+      <p tw="text-2xl m-0">${escapeHtml(siteConfig.author)}</p>
+      <p tw="text-xl m-0 text-[${accent}]">davidpine.dev</p>
+      </div>
+      <div tw="flex items-end justify-between">
+      <div tw="flex flex-col flex-1 pr-12">
+        ${pubDate ? `<p tw="text-2xl mb-6 text-[${accent}]">${escapeHtml(pubDate)}</p>` : ''}
+        <h1 tw="text-6xl m-0 leading-tight">${escapeHtml(title)}</h1>
+        ${author !== title ? `<p tw="text-2xl mt-8 mb-0">${escapeHtml(author)}</p>` : ''}
+      </div>
       ${
         avatarBase64
-          ? `<div tw="flex flex-col justify-center items-center w-1/3 h-100">
-            <img src="${avatarBase64}" tw="flex w-full rounded-full border-[${accent}]/30" />
-        </div>`
+          ? `<div tw="flex w-64 h-64 rounded-full overflow-hidden border-4 border-[${accent}]">
+              <img src="${avatarBase64}" tw="flex w-full h-full" style="object-fit: cover;" />
+            </div>`
           : ''
       }
-      <div tw="flex flex-1 flex-col max-w-full justify-center items-center">
-        ${pubDate ? `<p tw="text-3xl max-w-full text-[${accent}]">${pubDate}</p>` : ''}
-        <h1 tw="text-6xl my-14 text-center leading-snug">${title}</h1>
-        ${author !== title ? `<p tw="text-4xl text-[${accent}]">${author}</p>` : ''}
       </div>
     </div>
   </div>`)

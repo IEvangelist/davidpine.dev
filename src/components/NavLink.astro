@@ -6,29 +6,20 @@ interface Props {
 }
 
 const { link } = Astro.props
-
-const normalizePath = (path: string) => {
-  const normalized = path.replace(/\/+$/, '')
-  return normalized || '/'
-}
-
-const currentPath = normalizePath(Astro.url.pathname)
-const linkPath = link.external
-  ? undefined
-  : normalizePath(new URL(link.url, Astro.url).pathname)
-const isActive =
-  linkPath === '/'
-    ? currentPath === '/'
-    : linkPath !== undefined &&
-      (currentPath === linkPath || currentPath.startsWith(`${linkPath}/`))
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/'
+const targetPath = link.external ? '' : link.url.replace(/\/$/, '') || '/'
+const isCurrent =
+  !link.external &&
+  (currentPath === targetPath ||
+    (targetPath === '/posts' && currentPath.startsWith('/posts/')))
 ---
 
 <a
-  class:list={['nav-link', { active: isActive }]}
-  aria-current={isActive ? 'page' : undefined}
+  class="nav-link"
   rel={link.external ? 'noopener noreferrer' : undefined}
   target={link.external ? '_blank' : undefined}
   href={link.url}
+  aria-current={isCurrent ? 'page' : undefined}
 >
   {link.name}
 </a>
@@ -36,22 +27,34 @@ const isActive =
 <style>
   .nav-link {
     position: relative;
+    color: var(--theme-text-muted);
+    font-size: 0.94rem;
+    font-weight: 600;
     text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-out-expo);
+  }
+
+  .nav-link:hover,
+  .nav-link[aria-current='page'] {
+    color: var(--theme-foreground);
   }
 
   .nav-link::after {
-    content: '';
     position: absolute;
+    right: 0;
+    bottom: -0.35rem;
     left: 0;
-    bottom: -4px;
-    width: 0;
-    height: 3px;
-    background-color: currentColor;
-    transition: width 0.3s ease-out;
+    height: 1px;
+    background: var(--theme-accent);
+    content: '';
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform var(--duration-fast) var(--ease-out-expo);
   }
 
   .nav-link:hover::after,
-  .nav-link.active::after {
-    width: 100%;
+  .nav-link[aria-current='page']::after {
+    transform: scaleX(1);
+    transform-origin: left;
   }
 </style>

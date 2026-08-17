@@ -1,13 +1,15 @@
 ---
 import Layout from '~/layouts/Layout.astro'
 import PageHeader from '~/components/PageHeader.astro'
+import { Icon } from 'astro-icon/components'
+import GitHubMark from '~/icons/github.svg'
 
 const projects = [
   {
     name: '6174',
     tagline: 'Kaprekar Explorer',
     description:
-      "An animated React + Vite app that walks 4-digit seeds into Kaprekar's constant 6174 — one subtraction card at a time.",
+      "An animated React + Vite app that walks 4-digit seeds into Kaprekar's constant 6174, one subtraction card at a time.",
     repoUrl: 'https://github.com/IEvangelist/6174',
     pagesUrl: 'https://ievangelist.github.io/6174/',
     lightThumbnail: '/images/projects/6174-light.png',
@@ -19,7 +21,7 @@ const projects = [
     name: 'Azure Cosmos DB Repository .NET SDK',
     tagline: 'IRepository<T> for Cosmos DB',
     description:
-      'A dependency-injection-friendly wrapper around the official Microsoft.Azure.Cosmos SDK — configure once, inject everywhere. 1.2M+ NuGet downloads.',
+      'A dependency-injection-friendly wrapper around the official Microsoft.Azure.Cosmos SDK. Configure once, inject everywhere. 1.2M+ NuGet downloads.',
     repoUrl: 'https://github.com/IEvangelist/azure-cosmos-dotnet-repository',
     pagesUrl: 'https://ievangelist.github.io/azure-cosmos-dotnet-repository/',
     lightThumbnail: '/images/projects/azure-cosmos-repository-light.png',
@@ -31,7 +33,7 @@ const projects = [
     name: 'Nextflix',
     tagline: 'Streaming-style Next.js demo',
     description:
-      'A Netflix-style streaming clone built with Next.js 15, TypeScript, Tailwind, and the TMDB API — hero trailers, hover cards, infinite browsing.',
+      'A Netflix-style streaming clone built with Next.js 15, TypeScript, Tailwind, and the TMDB API, with hero trailers, hover cards, and infinite browsing.',
     repoUrl: 'https://github.com/IEvangelist/nextflix',
     pagesUrl: 'https://nextflix-ai.netlify.app/',
     lightThumbnail: '/images/projects/nextflix-light.png',
@@ -43,7 +45,7 @@ const projects = [
     name: 'Resource Translator',
     tagline: 'Localize .resx with GitHub Actions',
     description:
-      'A GitHub Action that translates .resx and localization resources for .NET apps — drop it in your workflow and ship multilingual builds.',
+      'A GitHub Action that translates .resx and localization resources for .NET apps. Drop it in your workflow and ship multilingual builds.',
     repoUrl: 'https://github.com/IEvangelist/resource-translator',
     pagesUrl: 'https://ievangelist.github.io/resource-translator/',
     lightThumbnail: '/images/projects/resource-translator-light.png',
@@ -67,7 +69,7 @@ const projects = [
     name: 'Netlify Aspire Integration',
     tagline: 'Aspire-powered Netlify hosting',
     description:
-      'A hosting integration that helps deploy Aspire-powered static experiences using Netlify — bring your AppHost, ship to the edge.',
+      'A hosting integration that helps deploy Aspire-powered static experiences using Netlify. Bring your AppHost and ship to the edge.',
     repoUrl: 'https://github.com/IEvangelist/netlify-aspire-integration',
     pagesUrl: 'https://ievangelist.github.io/netlify-aspire-integration/',
     lightThumbnail: '/images/projects/netlify-aspire-integration-light.png',
@@ -79,7 +81,7 @@ const projects = [
     name: 'Blazorators',
     tagline: 'Source-generated JS interop for Blazor',
     description:
-      'Roslyn source generators that author idiomatic, strongly-typed C# wrappers around the browser’s web APIs — no hand-written IJSRuntime glue required.',
+      'Roslyn source generators that author idiomatic, strongly-typed C# wrappers around the browser’s web APIs without hand-written IJSRuntime glue.',
     repoUrl: 'https://github.com/IEvangelist/blazorators',
     pagesUrl: 'https://ievangelist.github.io/blazorators/',
     lightThumbnail: '/images/projects/blazorators-light.png',
@@ -91,7 +93,7 @@ const projects = [
     name: 'Bueler',
     tagline: 'Rust web framework, totally vibed',
     description:
-      'Build reactive web apps entirely in Rust — fine-grained signals, zero JavaScript, direct DOM manipulation, compiled to WebAssembly. Ships with 48 components out of the box.',
+      'Build reactive web apps entirely in Rust with fine-grained signals, zero JavaScript, direct DOM manipulation, and WebAssembly compilation. Ships with 48 components.',
     repoUrl: 'https://github.com/IEvangelist/Bueler',
     pagesUrl: 'https://ievangelist.github.io/Bueler/',
     lightThumbnail: '/images/projects/bueler-light.png',
@@ -103,7 +105,7 @@ const projects = [
     name: 'GitHub Actions Toolkit for C#',
     tagline: 'The unofficial @actions/toolkit, in .NET',
     description:
-      'The .NET equivalent of the official GitHub actions/toolkit — a family of ActionsToolkit.* NuGet packages (Core, Glob, IO, Exec, Octokit, ToolCache, Attest, Cache) for authoring GitHub Actions in C# with native AOT support.',
+      'The .NET equivalent of the official GitHub actions/toolkit. A family of ActionsToolkit.* NuGet packages for authoring GitHub Actions in C# with native AOT support.',
     repoUrl: 'https://github.com/IEvangelist/actions-toolkit-csharp',
     pagesUrl: 'https://www.nuget.org/packages/ActionsToolkit.Core',
     lightThumbnail: '/images/projects/actions-toolkit-csharp-light.png',
@@ -115,7 +117,7 @@ const projects = [
     name: 'GitHub Artifacts Explorer & Asciinema Player',
     tagline: 'CI artifacts and .cast recordings, inside VS Code',
     description:
-      'A VS Code extension that opens GitHub Actions artifacts and plays asciinema .cast recordings inline — paste a PR or workflow-run URL, pick an artifact, the right viewer (Simple Browser, asciinema player, or file picker) takes over.',
+      'A VS Code extension that opens GitHub Actions artifacts and plays asciinema .cast recordings inline. Paste a PR or workflow-run URL and choose the right viewer.',
     repoUrl: 'https://github.com/IEvangelist/asciinema.ext',
     pagesUrl:
       'https://marketplace.visualstudio.com/items?itemName=davidpine-dev.asciinema',
@@ -160,8 +162,8 @@ const ctaTextOn = (toneHex) => {
     return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4
   })
   const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
-  // White (#fff) gives ~7:1 against tones with luminance < 0.18, otherwise pick dark.
-  return lum < 0.18 ? '#ffffff' : '#0b0d10'
+  // Use an off-white foreground for dark tones, otherwise use near-black.
+  return lum < 0.18 ? '#f7f7f5' : '#0b0d10'
 }
 ---
 
@@ -171,8 +173,8 @@ const ctaTextOn = (toneHex) => {
   <article class="max-w-full py-7.5 space-y-8">
     <section class="project-intro rounded-2xl border border-accent/20 p-5 md:p-7">
       <p class="m-0 text-lg md:text-xl">
-        Built in public, shipped in production — quick access to each project’s live docs
-        and source.
+        Built in public and shipped in production. Quick access to each project’s live
+        docs and source.
       </p>
       <div class="mt-4 flex flex-wrap gap-2">
         <span class="meta-chip">{projects.length} Featured Repositories</span>
@@ -216,16 +218,7 @@ const ctaTextOn = (toneHex) => {
               <div class="info-top">
                 {project.repoPath && (
                   <span class="repo-path">
-                    <svg
-                      class="repo-icon"
-                      viewBox="0 0 16 16"
-                      width="13"
-                      height="13"
-                      aria-hidden="true"
-                      fill="currentColor"
-                    >
-                      <path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z" />
-                    </svg>
+                    <Icon class="repo-icon" name="ph:git-fork" aria-hidden="true" />
                     {project.repoPath}
                   </span>
                 )}
@@ -247,16 +240,7 @@ const ctaTextOn = (toneHex) => {
                   class="cta cta-primary"
                 >
                   <span>Open live site</span>
-                  <svg
-                    class="cta-icon"
-                    viewBox="0 0 16 16"
-                    width="13"
-                    height="13"
-                    aria-hidden="true"
-                    fill="currentColor"
-                  >
-                    <path d="M3.75 2A1.75 1.75 0 0 0 2 3.75v8.5C2 13.216 2.784 14 3.75 14h8.5A1.75 1.75 0 0 0 14 12.25v-3.5a.75.75 0 0 0-1.5 0v3.5a.25.25 0 0 1-.25.25h-8.5a.25.25 0 0 1-.25-.25v-8.5a.25.25 0 0 1 .25-.25h3.5a.75.75 0 0 0 0-1.5Zm6.854-.354A.5.5 0 0 1 11 1.5h3.5a.5.5 0 0 1 .5.5V5.5a.5.5 0 0 1-.854.354L13 4.707 8.354 9.354a.5.5 0 1 1-.708-.708L12.293 4 11.146 2.854a.5.5 0 0 1-.292-.708Z" />
-                  </svg>
+                  <Icon class="cta-icon" name="ph:arrow-up-right" aria-hidden="true" />
                 </a>
                 <a
                   href={project.repoUrl}
@@ -264,16 +248,7 @@ const ctaTextOn = (toneHex) => {
                   rel="noopener noreferrer"
                   class="cta cta-secondary"
                 >
-                  <svg
-                    class="cta-icon"
-                    viewBox="0 0 16 16"
-                    width="13"
-                    height="13"
-                    aria-hidden="true"
-                    fill="currentColor"
-                  >
-                    <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z" />
-                  </svg>
+                  <GitHubMark class="cta-icon" aria-hidden="true" />
                   <span>Source</span>
                 </a>
               </div>

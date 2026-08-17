@@ -1,158 +1,189 @@
 ---
 import Layout from '~/layouts/Layout.astro'
 import PageHeader from '~/components/PageHeader.astro'
-import ScrollUpButton from '~/components/ScrollUpButton.astro'
-
 import { Image } from 'astro:assets'
 import type { ImageMetadata } from 'astro'
 import { LightGallery } from 'astro-lightgallery'
 
-// Import all images from assets/pics directory
-const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/pics/*.jpg', {
-  eager: true,
-})
-const imageList = Object.values(images).map((img) => img.default)
+const imageModules = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/pics/*.{jpg,JPG}',
+  {
+    eager: true,
+  },
+)
+const images = Object.entries(imageModules)
+  .map(([path, module]) => ({
+    id: Number(path.match(/(\d+)\.(?:jpg|JPG)$/)?.[1] ?? 0),
+    image: module.default,
+  }))
+  .sort((left, right) => left.id - right.id)
+
+const leadImage = images.find(({ id }) => id === 70)
+const galleryImages = images.filter(({ id }) => id !== 70)
+
+const imageClass = (image: ImageMetadata) => {
+  const ratio = image.width / image.height
+  if (ratio > 1.55) return 'gallery-item gallery-item--wide'
+  if (ratio < 0.75) return 'gallery-item gallery-item--tall'
+  return 'gallery-item'
+}
 ---
 
 <Layout title="Pictures" description="Pictures from various speaking engagements">
-  <PageHeader title="Pictures" />
+  <PageHeader
+    title="Pictures"
+    description="A visual archive of speaking engagements, conferences, and technology communities."
+  />
 
-  <article>
-    <div class="prose">
-      <div class="container">
-        <p class="intro">
-          Click any image to explore the gallery! Here's a collection of photos from my
-          speaking engagements, conferences, and tech community events.
-        </p>
-      </div>
-
-      <LightGallery
-        class="gallery"
-        options={{
-          thumbnail: true,
-          autoplay: true,
-          slideShowInterval: 500,
-        }}
-        addPlugins={['zoom']}
-      >
-        {
-          imageList.map((img, i) => {
-            const aspectRatio = img.width / img.height
-            const isWide = aspectRatio > 1.5
-            const isTall = aspectRatio < 0.7
-            const isLarge = aspectRatio > 1.2 && aspectRatio < 1.5
-
-            let imgClass = 'gallery-img'
-            if (isLarge) {
-              imgClass += ' four-grid-cells'
-            } else if (isWide) {
-              imgClass += ' wide-image'
-            } else if (isTall) {
-              imgClass += ' tall-image'
-            }
-
-            return (
-              <a class={imgClass} href={img.src}>
-                <Image src={img} alt={`Image ${i + 1} of ${imageList.length}`} />
-              </a>
-            )
-          })
-        }
-      </LightGallery>
-    </div>
-  </article>
-
-  <ScrollUpButton />
+  <section class="picture-section">
+    <LightGallery
+      class="editorial-gallery"
+      options={{
+        thumbnail: true,
+        autoplay: false,
+      }}
+      addPlugins={['zoom']}
+    >
+      {
+        leadImage && (
+          <a class="lead-picture" href={leadImage.image.src}>
+            <Image
+              priority
+              src={leadImage.image}
+              alt="David Pine presenting on stage and pointing toward the audience"
+              widths={[768, 1200, 1600]}
+              sizes="(max-width: 1440px) 100vw, 1400px"
+            />
+          </a>
+        )
+      }
+      {
+        galleryImages.map(({ id, image }) => (
+          <a class={imageClass(image)} href={image.src}>
+            <Image
+              src={image}
+              alt={`Photo ${id} from David Pine's event archive`}
+              widths={[360, 640, 960]}
+              sizes="(max-width: 768px) 50vw, 28vw"
+            />
+          </a>
+        ))
+      }
+    </LightGallery>
+  </section>
 </Layout>
 
 <style>
-  .container {
-    margin: 0 auto;
-    max-width: var(--container-5xl);
+  .picture-section {
+    padding-block: var(--section-space);
   }
 
-  .intro {
-    font-size: 1.125rem;
-    text-align: center;
-    color: var(--theme-text-light);
-    margin-left: auto;
-    margin-right: auto;
-    padding-top: 1rem;
-  }
-
-  .gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
-    grid-auto-rows: 8rem;
-    grid-auto-flow: dense;
-    gap: 0.375rem;
-  }
-
-  .gallery-img {
-    position: relative;
+  .lead-picture {
+    display: block;
+    grid-column: 1 / -1;
+    grid-row: span 4;
     overflow: hidden;
-    border: 0.0625rem solid var(--theme-divider);
-    border-radius: 0.25rem;
-    transition: transform 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border-radius: var(--radius-media);
   }
 
-  .gallery-img:hover {
-    transform: scale(1.02);
-    z-index: 1;
-  }
-
-  .gallery-img :global(img) {
+  .lead-picture :global(img) {
+    display: block;
     width: 100%;
     height: 100%;
+    border: 0;
+    border-radius: inherit;
     object-fit: cover;
-    object-position: center;
+  }
+
+  .editorial-gallery {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-auto-rows: clamp(7rem, 10vw, 10rem);
+    grid-auto-flow: dense;
+    gap: 0.55rem;
+  }
+
+  .gallery-item {
+    grid-column: span 3;
+    grid-row: span 2;
+    overflow: hidden;
+    border-radius: var(--radius-media);
+  }
+
+  .gallery-item--wide {
+    grid-column: span 6;
+  }
+
+  .gallery-item--tall {
+    grid-row: span 3;
+  }
+
+  .gallery-item:nth-child(5n + 1) {
+    grid-column: span 5;
+  }
+
+  .gallery-item:nth-child(5n + 2) {
+    grid-column: span 4;
+  }
+
+  .gallery-item:nth-child(5n + 3) {
+    grid-column: span 3;
+  }
+
+  .gallery-item :global(img) {
     display: block;
-    border-radius: 0.25rem;
-    border-style: none;
-    transition: transform 0.2s ease;
-    flex-shrink: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: inherit;
+    object-fit: cover;
+    transition:
+      transform 600ms var(--ease-out-expo),
+      filter 600ms var(--ease-out-expo);
   }
 
-  .four-grid-cells {
-    grid-row: span 2;
-    grid-column: span 2;
+  .gallery-item:hover :global(img) {
+    filter: saturate(1.08);
+    transform: scale(1.025);
   }
 
-  .wide-image {
-    grid-column: span 2;
-  }
-
-  .tall-image {
-    grid-row: span 2;
-  }
-
-  /* Responsive breakpoints */
-  @media (max-width: 48rem) {
-    .gallery {
-      grid-template-columns: repeat(auto-fill, minmax(9.375rem, 1fr));
-      grid-auto-rows: 9.375rem;
-      gap: 0.25rem;
+  @media (max-width: 63.99rem) {
+    .editorial-gallery {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
     }
 
-    .four-grid-cells {
-      grid-row: span 2;
-      grid-column: span 2;
+    .gallery-item,
+    .gallery-item:nth-child(5n + 1),
+    .gallery-item:nth-child(5n + 2),
+    .gallery-item:nth-child(5n + 3) {
+      grid-column: span 3;
+    }
+
+    .gallery-item--wide {
+      grid-column: span 6 !important;
     }
   }
 
-  @media (max-width: 30rem) {
-    .gallery {
-      grid-template-columns: repeat(2, 1fr);
-      grid-auto-rows: 7.5rem;
+  @media (max-width: 39.99rem) {
+    .editorial-gallery {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: 9rem;
     }
 
-    .four-grid-cells,
-    .wide-image {
-      grid-column: span 1;
+    .gallery-item,
+    .gallery-item--wide,
+    .gallery-item--tall,
+    .gallery-item:nth-child(5n + 1),
+    .gallery-item:nth-child(5n + 2),
+    .gallery-item:nth-child(5n + 3) {
+      grid-column: span 1 !important;
       grid-row: span 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gallery-item:hover :global(img) {
+      transform: none;
     }
   }
 </style>

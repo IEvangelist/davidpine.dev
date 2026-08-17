@@ -2,81 +2,86 @@
 import Layout from '~/layouts/Layout.astro'
 
 const devJokes = [
-  "Looks like this page took a mass exodus... to /dev/null",
-  "This page is as missing as semicolons in JavaScript",
+  'Looks like this page took a mass exodus... to /dev/null',
+  'This page is as missing as semicolons in JavaScript',
   "Error 404: Page not found. But hey, at least it's not a 500!",
-  "This page went to get coffee and never came back",
+  'This page went to get coffee and never came back',
   "Segmentation fault (core dumped)... just kidding, it's a 404",
-  "This page is undefined, just like my weekend plans",
+  'This page is undefined, just like my weekend plans',
   "The page you're looking for is in another castle 🏰",
-  "git checkout -- this-page.html (failed)",
-  "This page was mass migrated to a better place",
-  "Oops! Someone forgot to await this page",
-  "This page has mass: none (display: none)",
-  "404: File not found. Also, your car warranty has expired.",
+  'git checkout -- this-page.html (failed)',
+  'This page was mass migrated to a better place',
+  'Oops! Someone forgot to await this page',
+  'This page has mass: none (display: none)',
+  '404: File not found. Also, your car warranty has expired.',
   "The page exists in a quantum superposition until observed... and you just collapsed it to 'not found'",
-  "This page is like my code comments: non-existent",
+  'This page is like my code comments: non-existent',
   "sudo find / -name 'this-page' returned nothing",
-  "This page is NaN (Not a Navigable)",
-  "The page you seek / Does not exist here, friend / Like tears in rain",
+  'This page is NaN (Not a Navigable)',
+  'The page you seek / Does not exist here, friend / Like tears in rain',
   "throw new PageNotFoundException('lol');",
-  "This page failed the vibe check",
-  "Task failed successfully: Page not found",
-  "This page was mass migrated to Azure... or was it AWS? 🤔",
+  'This page failed the vibe check',
+  'Task failed successfully: Page not found',
+  'This page was mass migrated to Azure... or was it AWS? 🤔',
   "rm -rf this-page was a success! Wait, that's bad.",
-  "This page is experiencing an existential crisis",
-  "Have you tried wrapping this URL in a try-catch?",
-  "This page yeeted itself into the void",
-  "The page was mass migrated during a mass transit incident",
+  'This page is experiencing an existential crisis',
+  'Have you tried wrapping this URL in a try-catch?',
+  'This page yeeted itself into the void',
+  'The page was mass migrated during a mass transit incident',
   "Error: Cannot read property 'page' of undefined",
-  "This page is on a mass hiatus",
-  "docker run page:latest → image not found",
-  "This page ghosted you harder than your last Tinder match",
-  "SELECT * FROM pages WHERE url = ? → 0 rows returned",
-  "The page factory is experiencing supply chain issues",
-  "This page took a mass sabbatical to find itself",
-  "git blame: Nobody wants to take responsibility for this",
-  "This page is currently mass meditating in /dev/null",
-  "The page was mass decommissioned. RIP 🪦",
-  "npm install this-page → package not found",
-  "This page is buffering... forever",
+  'This page is on a mass hiatus',
+  'docker run page:latest → image not found',
+  'This page ghosted you harder than your last Tinder match',
+  'SELECT * FROM pages WHERE url = ? → 0 rows returned',
+  'The page factory is experiencing supply chain issues',
+  'This page took a mass sabbatical to find itself',
+  'git blame: Nobody wants to take responsibility for this',
+  'This page is currently mass meditating in /dev/null',
+  'The page was mass decommissioned. RIP 🪦',
+  'npm install this-page → package not found',
+  'This page is buffering... forever',
   "Kernel panic: Page not found. Don't panic though.",
-  "The page has mass evacuated the premises",
+  'The page has mass evacuated the premises',
 ]
 
 const randomJoke = devJokes[Math.floor(Math.random() * devJokes.length)]
 
 const httpCodes = [
-  { code: "100", meaning: "Continue" },
-  { code: "200", meaning: "OK" },
-  { code: "201", meaning: "Created" },
-  { code: "204", meaning: "No Content" },
-  { code: "301", meaning: "Moved Permanently" },
-  { code: "302", meaning: "Found" },
-  { code: "304", meaning: "Not Modified" },
-  { code: "400", meaning: "Bad Request" },
-  { code: "401", meaning: "Unauthorized" },
-  { code: "403", meaning: "Forbidden" },
-  { code: "404", meaning: "Not Found ← You are here" },
-  { code: "418", meaning: "I'm a teapot 🫖" },
-  { code: "429", meaning: "Too Many Requests" },
-  { code: "500", meaning: "Internal Server Error" },
-  { code: "502", meaning: "Bad Gateway" },
-  { code: "503", meaning: "Service Unavailable" },
+  { code: '100', meaning: 'Continue' },
+  { code: '200', meaning: 'OK' },
+  { code: '201', meaning: 'Created' },
+  { code: '204', meaning: 'No Content' },
+  { code: '301', meaning: 'Moved Permanently' },
+  { code: '302', meaning: 'Found' },
+  { code: '304', meaning: 'Not Modified' },
+  { code: '400', meaning: 'Bad Request' },
+  { code: '401', meaning: 'Unauthorized' },
+  { code: '403', meaning: 'Forbidden' },
+  { code: '404', meaning: 'Not Found ← You are here' },
+  { code: '418', meaning: "I'm a teapot 🫖" },
+  { code: '429', meaning: 'Too Many Requests' },
+  { code: '500', meaning: 'Internal Server Error' },
+  { code: '502', meaning: 'Bad Gateway' },
+  { code: '503', meaning: 'Service Unavailable' },
 ]
 ---
 
-<Layout title="404 - Page Not Found" description="The page you're looking for doesn't exist">
+<Layout
+  title="404 - Page Not Found"
+  description="The page you're looking for doesn't exist"
+>
   <div class="error-page">
     <div class="glitch-container">
       <h1 class="glitch" data-text="404">404</h1>
     </div>
-    
+
     <p class="error-subtitle">Page Not Found</p>
-    
+
     <div class="joke-container">
       <p class="joke">{randomJoke}</p>
-      <button id="new-joke" class="joke-btn" title="Get another joke">🎲 Another one</button>
+      <button id="new-joke" class="joke-btn" title="Get another joke"
+        >🎲 Another one</button
+      >
     </div>
 
     <div class="terminal">
@@ -134,14 +139,19 @@ Suggested fixes:
     </details>
 
     <div class="http-codes">
-      <h3>HTTP Status Code Reference <span class="subtitle">(since you're here anyway)</span></h3>
+      <h3>
+        HTTP Status Code Reference <span class="subtitle">(since you're here anyway)</span
+        >
+      </h3>
       <div class="codes-grid">
-        {httpCodes.map((item) => (
-          <div class:list={["code-item", { highlight: item.code === "404" }]}>
-            <span class="code">{item.code}</span>
-            <span class="meaning">{item.meaning}</span>
-          </div>
-        ))}
+        {
+          httpCodes.map((item) => (
+            <div class:list={['code-item', { highlight: item.code === '404' }]}>
+              <span class="code">{item.code}</span>
+              <span class="meaning">{item.meaning}</span>
+            </div>
+          ))
+        }
       </div>
     </div>
 
@@ -153,178 +163,199 @@ Suggested fixes:
 
 <script>
   const jokes = [
-    "Looks like this page took a mass exodus... to /dev/null",
-    "This page is as missing as semicolons in JavaScript",
+    'Looks like this page took a mass exodus... to /dev/null',
+    'This page is as missing as semicolons in JavaScript',
     "Error 404: Page not found. But hey, at least it's not a 500!",
-    "This page went to get coffee and never came back",
+    'This page went to get coffee and never came back',
     "Segmentation fault (core dumped)... just kidding, it's a 404",
-    "This page is undefined, just like my weekend plans",
+    'This page is undefined, just like my weekend plans',
     "The page you're looking for is in another castle 🏰",
-    "git checkout -- this-page.html (failed)",
-    "This page was mass migrated to a better place",
-    "Oops! Someone forgot to await this page",
-    "This page has mass: none (display: none)",
-    "404: File not found. Also, your car warranty has expired.",
+    'git checkout -- this-page.html (failed)',
+    'This page was mass migrated to a better place',
+    'Oops! Someone forgot to await this page',
+    'This page has mass: none (display: none)',
+    '404: File not found. Also, your car warranty has expired.',
     "The page exists in a quantum superposition until observed... and you just collapsed it to 'not found'",
-    "This page is like my code comments: non-existent",
+    'This page is like my code comments: non-existent',
     "sudo find / -name 'this-page' returned nothing",
-    "This page is NaN (Not a Navigable)",
-    "The page you seek / Does not exist here, friend / Like tears in rain",
+    'This page is NaN (Not a Navigable)',
+    'The page you seek / Does not exist here, friend / Like tears in rain',
     "throw new PageNotFoundException('lol');",
-    "This page failed the vibe check",
-    "Task failed successfully: Page not found",
-    "This page was mass migrated to Azure... or was it AWS? 🤔",
+    'This page failed the vibe check',
+    'Task failed successfully: Page not found',
+    'This page was mass migrated to Azure... or was it AWS? 🤔',
     "rm -rf this-page was a success! Wait, that's bad.",
-    "This page is experiencing an existential crisis",
-    "Have you tried wrapping this URL in a try-catch?",
-    "This page yeeted itself into the void",
-    "The page was mass migrated during a mass transit incident",
+    'This page is experiencing an existential crisis',
+    'Have you tried wrapping this URL in a try-catch?',
+    'This page yeeted itself into the void',
+    'The page was mass migrated during a mass transit incident',
     "Error: Cannot read property 'page' of undefined",
-    "This page is on a mass hiatus",
-    "docker run page:latest → image not found",
-    "This page ghosted you harder than your last Tinder match",
-    "SELECT * FROM pages WHERE url = ? → 0 rows returned",
-    "The page factory is experiencing supply chain issues",
-    "This page took a mass sabbatical to find itself",
-    "git blame: Nobody wants to take responsibility for this",
-    "This page is currently mass meditating in /dev/null",
-    "The page was mass decommissioned. RIP 🪦",
-    "npm install this-page → package not found",
-    "This page is buffering... forever",
+    'This page is on a mass hiatus',
+    'docker run page:latest → image not found',
+    'This page ghosted you harder than your last Tinder match',
+    'SELECT * FROM pages WHERE url = ? → 0 rows returned',
+    'The page factory is experiencing supply chain issues',
+    'This page took a mass sabbatical to find itself',
+    'git blame: Nobody wants to take responsibility for this',
+    'This page is currently mass meditating in /dev/null',
+    'The page was mass decommissioned. RIP 🪦',
+    'npm install this-page → package not found',
+    'This page is buffering... forever',
     "Kernel panic: Page not found. Don't panic though.",
-    "The page has mass evacuated the premises",
-  ];
+    'The page has mass evacuated the premises',
+  ]
 
   document.getElementById('new-joke')?.addEventListener('click', () => {
-    const jokeEl = document.querySelector('.joke');
+    const jokeEl = document.querySelector('.joke')
     if (jokeEl) {
-      const currentJoke = jokeEl.textContent;
-      let newJoke = currentJoke;
+      const currentJoke = jokeEl.textContent
+      let newJoke = currentJoke
       // Keep picking until we get a different joke
       while (newJoke === currentJoke && jokes.length > 1) {
-        newJoke = jokes[Math.floor(Math.random() * jokes.length)];
+        newJoke = jokes[Math.floor(Math.random() * jokes.length)]
       }
-      jokeEl.textContent = newJoke;
-      jokeEl.classList.add('joke-change');
-      setTimeout(() => jokeEl.classList.remove('joke-change'), 300);
+      jokeEl.textContent = newJoke
+      jokeEl.classList.add('joke-change')
+      setTimeout(() => jokeEl.classList.remove('joke-change'), 300)
     }
-  });
+  })
 
   document.getElementById('copy-error')?.addEventListener('click', async () => {
-    const stackTrace = document.querySelector('.stack-trace pre code')?.textContent || '';
+    const stackTrace = document.querySelector('.stack-trace pre code')?.textContent || ''
     try {
-      await navigator.clipboard.writeText(stackTrace);
-      const btn = document.getElementById('copy-error');
+      await navigator.clipboard.writeText(stackTrace)
+      const btn = document.getElementById('copy-error')
       if (btn) {
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<span class="btn-icon">✅</span> Copied!';
-        setTimeout(() => btn.innerHTML = originalText, 2000);
+        const originalText = btn.innerHTML
+        btn.innerHTML = '<span class="btn-icon">✅</span> Copied!'
+        setTimeout(() => (btn.innerHTML = originalText), 2000)
       }
     } catch (err) {
-      console.error('Failed to copy:', err);
+      console.error('Failed to copy:', err)
     }
-  });
+  })
 
   // Konami code easter egg (keyboard and mobile touch)
-  const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-  let konamiIndex = 0;
-  
+  const konamiCode = [
+    'ArrowUp',
+    'ArrowUp',
+    'ArrowDown',
+    'ArrowDown',
+    'ArrowLeft',
+    'ArrowRight',
+    'ArrowLeft',
+    'ArrowRight',
+    'b',
+    'a',
+  ]
+  let konamiIndex = 0
+
   // Mobile touch support
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let tapCount = 0;
-  let tapTimer: number | null = null;
-  
+  let touchStartX = 0
+  let touchStartY = 0
+  let tapCount = 0
+  let tapTimer: number | null = null
+
   function triggerPartyMode() {
-    document.body.classList.add('party-mode');
-    const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdH2JkYyIgHRwaHB4gIuRkI2Hf3ZwbnF4gImPkI2IgHdycHJ4gIiOj42HgHdxcHN5gYiNjo2Hf3dxcXR5gYeMjYyGf3ZxcnV6gYaLjIuFfnZxc3Z7gYWKi4qEfXVyc3d7gYSJioqDfHVydHh8gYOIiYmCe3RydXl9gYKHiIiBeXRzdnp+gIGGh4eBd3RzeHuAgICFhoaAd3N0eXyAf3+EhYV/dnN1en2AfoCDhIR+dXN2e36AfX+Cg4N9dHN3fH+AfH6BgoJ8c3N4fYCAe32AgYF7cnN5foGAen2Af4B5cXN6f4GAeXx+fnx3cXR7gIGAdnt9fXp2cXV8gYGAdXp8fHh0cXZ9gYGAdHl7e3dzcHd+gYF/c3h6endxcHh/gYF+c3d5eXZxcHl/gYF9cnZ4eHVwcHqAgYB8cXV3d3RwcHuAgX97cHR2dnNwcXyAgH56b3N1dXJwcX2Af356bnJ0dHFwcn6Afn14bXFzc3Bwc3+Afn13bHByc29wdH+Bfn12a28ycm5wdYCBfnx1amx');
-    audio.play().catch(() => {});
-    
+    document.body.classList.add('party-mode')
+    const audio = new Audio(
+      'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdH2JkYyIgHRwaHB4gIuRkI2Hf3ZwbnF4gImPkI2IgHdycHJ4gIiOj42HgHdxcHN5gYiNjo2Hf3dxcXR5gYeMjYyGf3ZxcnV6gYaLjIuFfnZxc3Z7gYWKi4qEfXVyc3d7gYSJioqDfHVydHh8gYOIiYmCe3RydXl9gYKHiIiBeXRzdnp+gIGGh4eBd3RzeHuAgICFhoaAd3N0eXyAf3+EhYV/dnN1en2AfoCDhIR+dXN2e36AfX+Cg4N9dHN3fH+AfH6BgoJ8c3N4fYCAe32AgYF7cnN5foGAen2Af4B5cXN6f4GAeXx+fnx3cXR7gIGAdnt9fXp2cXV8gYGAdXp8fHh0cXZ9gYGAdHl7e3dzcHd+gYF/c3h6endxcHh/gYF+c3d5eXZxcHl/gYF9cnZ4eHVwcHqAgYB8cXV3d3RwcHuAgX97cHR2dnNwcXyAgH56b3N1dXJwcX2Af356bnJ0dHFwcn6Afn14bXFzc3Bwc3+Afn13bHByc29wdH+Bfn12a28ycm5wdYCBfnx1amx',
+    )
+    audio.play().catch(() => {})
+
     // Add confetti
     for (let i = 0; i < 100; i++) {
-      const confetti = document.createElement('div');
-      confetti.className = 'confetti';
-      confetti.style.left = Math.random() * 100 + '%';
-      confetti.style.animationDelay = Math.random() * 3 + 's';
-      confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 80%, 60%)`;
-      document.body.appendChild(confetti);
-      setTimeout(() => confetti.remove(), 4000);
+      const confetti = document.createElement('div')
+      confetti.className = 'confetti'
+      confetti.style.left = Math.random() * 100 + '%'
+      confetti.style.animationDelay = Math.random() * 3 + 's'
+      confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 80%, 60%)`
+      document.body.appendChild(confetti)
+      setTimeout(() => confetti.remove(), 4000)
     }
-    
-    setTimeout(() => document.body.classList.remove('party-mode'), 5000);
+
+    setTimeout(() => document.body.classList.remove('party-mode'), 5000)
   }
-  
+
   // Keyboard support
   document.addEventListener('keydown', (e) => {
     if (e.key === konamiCode[konamiIndex]) {
-      konamiIndex++;
+      konamiIndex++
       if (konamiIndex === konamiCode.length) {
-        konamiIndex = 0;
-        triggerPartyMode();
+        konamiIndex = 0
+        triggerPartyMode()
       }
     } else {
-      konamiIndex = 0;
+      konamiIndex = 0
     }
-  });
-  
+  })
+
   // Mobile touch support: 5 quick taps on the easter egg hint
-  const easterEgg = document.querySelector('.easter-egg');
+  const easterEgg = document.querySelector('.easter-egg')
   if (easterEgg) {
     easterEgg.addEventListener('click', () => {
-      tapCount++;
-      
+      tapCount++
+
       if (tapTimer) {
-        clearTimeout(tapTimer);
+        clearTimeout(tapTimer)
       }
-      
+
       if (tapCount >= 5) {
-        tapCount = 0;
-        triggerPartyMode();
+        tapCount = 0
+        triggerPartyMode()
       } else {
         tapTimer = setTimeout(() => {
-          tapCount = 0;
-        }, 2000);
+          tapCount = 0
+        }, 2000)
       }
-    });
+    })
   }
-  
+
   // Touch swipe support for Konami code on mobile
-  document.addEventListener('touchstart', (e) => {
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-  }, { passive: true });
-  
-  document.addEventListener('touchend', (e) => {
-    const touchEndX = e.changedTouches[0].clientX;
-    const touchEndY = e.changedTouches[0].clientY;
-    const deltaX = touchEndX - touchStartX;
-    const deltaY = touchEndY - touchStartY;
-    const minSwipeDistance = 50;
-    
-    let direction = '';
-    
-    if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      // Horizontal swipe
-      if (Math.abs(deltaX) > minSwipeDistance) {
-        direction = deltaX > 0 ? 'ArrowRight' : 'ArrowLeft';
+  document.addEventListener(
+    'touchstart',
+    (e) => {
+      touchStartX = e.touches[0].clientX
+      touchStartY = e.touches[0].clientY
+    },
+    { passive: true },
+  )
+
+  document.addEventListener(
+    'touchend',
+    (e) => {
+      const touchEndX = e.changedTouches[0].clientX
+      const touchEndY = e.changedTouches[0].clientY
+      const deltaX = touchEndX - touchStartX
+      const deltaY = touchEndY - touchStartY
+      const minSwipeDistance = 50
+
+      let direction = ''
+
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Horizontal swipe
+        if (Math.abs(deltaX) > minSwipeDistance) {
+          direction = deltaX > 0 ? 'ArrowRight' : 'ArrowLeft'
+        }
+      } else {
+        // Vertical swipe
+        if (Math.abs(deltaY) > minSwipeDistance) {
+          direction = deltaY > 0 ? 'ArrowDown' : 'ArrowUp'
+        }
       }
-    } else {
-      // Vertical swipe
-      if (Math.abs(deltaY) > minSwipeDistance) {
-        direction = deltaY > 0 ? 'ArrowDown' : 'ArrowUp';
+
+      if (direction && direction === konamiCode[konamiIndex]) {
+        konamiIndex++
+        if (konamiIndex === konamiCode.length) {
+          konamiIndex = 0
+          triggerPartyMode()
+        }
+      } else if (direction) {
+        konamiIndex = 0
       }
-    }
-    
-    if (direction && direction === konamiCode[konamiIndex]) {
-      konamiIndex++;
-      if (konamiIndex === konamiCode.length) {
-        konamiIndex = 0;
-        triggerPartyMode();
-      }
-    } else if (direction) {
-      konamiIndex = 0;
-    }
-  }, { passive: true });
+    },
+    { passive: true },
+  )
 </script>
 
 <style>
@@ -348,7 +379,7 @@ Suggested fixes:
     font-weight: 900;
     color: var(--theme-accent);
     position: relative;
-    text-shadow: 
+    text-shadow:
       0.05em 0 0 rgba(255, 0, 0, 0.75),
       -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
       0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
@@ -357,43 +388,43 @@ Suggested fixes:
 
   @keyframes glitch {
     0% {
-      text-shadow: 
+      text-shadow:
         0.05em 0 0 rgba(255, 0, 0, 0.75),
         -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
         0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
     }
     14% {
-      text-shadow: 
+      text-shadow:
         0.05em 0 0 rgba(255, 0, 0, 0.75),
         -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
         0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
     }
     15% {
-      text-shadow: 
+      text-shadow:
         -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
         0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
         -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
     }
     49% {
-      text-shadow: 
+      text-shadow:
         -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
         0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
         -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
     }
     50% {
-      text-shadow: 
+      text-shadow:
         0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
         0.05em 0 0 rgba(0, 255, 0, 0.75),
         0 -0.05em 0 rgba(0, 0, 255, 0.75);
     }
     99% {
-      text-shadow: 
+      text-shadow:
         0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
         0.05em 0 0 rgba(0, 255, 0, 0.75),
         0 -0.05em 0 rgba(0, 0, 255, 0.75);
     }
     100% {
-      text-shadow: 
+      text-shadow:
         -0.025em 0 0 rgba(255, 0, 0, 0.75),
         -0.025em -0.025em 0 rgba(0, 255, 0, 0.75),
         -0.025em -0.05em 0 rgba(0, 0, 255, 0.75);
@@ -428,8 +459,14 @@ Suggested fixes:
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .joke-btn {
@@ -440,12 +477,15 @@ Suggested fixes:
     border-radius: 0.5rem;
     cursor: pointer;
     font-size: 0.875rem;
-    transition: all 0.2s ease;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease;
   }
 
   .joke-btn:hover {
     background: var(--theme-accent);
-    color: var(--theme-background);
+    color: var(--theme-on-accent);
     border-color: var(--theme-accent);
   }
 
@@ -475,9 +515,15 @@ Suggested fixes:
     border-radius: 50%;
   }
 
-  .terminal-btn.red { background: #ff5f56; }
-  .terminal-btn.yellow { background: #ffbd2e; }
-  .terminal-btn.green { background: #27c93f; }
+  .terminal-btn.red {
+    background: #ff5f56;
+  }
+  .terminal-btn.yellow {
+    background: #ffbd2e;
+  }
+  .terminal-btn.green {
+    background: #27c93f;
+  }
 
   .terminal-title {
     margin-left: auto;
@@ -511,8 +557,14 @@ Suggested fixes:
   }
 
   @keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
+    0%,
+    50% {
+      opacity: 1;
+    }
+    51%,
+    100% {
+      opacity: 0;
+    }
   }
 
   .actions {
@@ -531,7 +583,11 @@ Suggested fixes:
     border-radius: 0.5rem;
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.2s ease;
     cursor: pointer;
     border: none;
     font-size: 1rem;
@@ -539,7 +595,7 @@ Suggested fixes:
 
   .btn.primary {
     background: var(--theme-accent);
-    color: var(--theme-background);
+    color: var(--theme-on-accent);
   }
 
   .btn.primary:hover {
@@ -633,7 +689,7 @@ Suggested fixes:
 
   .code-item.highlight {
     background: var(--theme-accent);
-    color: var(--theme-background);
+    color: var(--theme-on-accent);
     border-color: var(--theme-accent);
   }
 
@@ -664,7 +720,7 @@ Suggested fixes:
   .easter-egg:hover {
     opacity: 0.6;
   }
-  
+
   @media (hover: none) {
     .easter-egg {
       opacity: 0.5;
@@ -676,8 +732,12 @@ Suggested fixes:
   }
 
   @keyframes rainbow {
-    0% { filter: hue-rotate(0deg); }
-    100% { filter: hue-rotate(360deg); }
+    0% {
+      filter: hue-rotate(0deg);
+    }
+    100% {
+      filter: hue-rotate(360deg);
+    }
   }
 
   :global(.confetti) {
@@ -696,7 +756,7 @@ Suggested fixes:
       opacity: 0;
     }
   }
-  
+
   /* Prevent horizontal scrollbar from confetti */
   :global(body.party-mode) {
     overflow-x: hidden;
@@ -726,3 +786,201 @@ Suggested fixes:
   }
 </style>
 
+<style>
+  .error-page {
+    align-items: flex-start;
+    justify-content: flex-start;
+    min-height: auto;
+    padding: clamp(4rem, 10vw, 9rem) 0;
+    text-align: left;
+  }
+
+  .glitch-container {
+    margin: 0;
+  }
+
+  .glitch {
+    margin: 0;
+    color: var(--theme-accent);
+    font-family: var(--font-display);
+    font-size: clamp(7rem, 22vw, 18rem);
+    line-height: 0.72;
+    letter-spacing: -0.09em;
+  }
+
+  .error-subtitle {
+    margin: 1.5rem 0 3rem;
+    color: var(--theme-foreground);
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    opacity: 1;
+  }
+
+  .joke-container {
+    align-items: flex-start;
+    max-width: 44rem;
+    margin-bottom: 3rem;
+  }
+
+  .joke {
+    max-width: 42rem;
+    margin: 0;
+    color: var(--theme-text-muted);
+    font-family: var(--font-body);
+    font-size: var(--text-lead-fluid);
+    font-style: normal;
+    line-height: 1.5;
+  }
+
+  .joke-btn {
+    min-height: 2.75rem;
+    padding: 0.65rem 1rem;
+    border: 1px solid var(--theme-border-strong);
+    border-radius: var(--radius-control);
+    color: var(--theme-foreground);
+    background: transparent;
+    font-weight: 700;
+    transition:
+      color var(--duration-fast) var(--ease-out-expo),
+      background-color var(--duration-fast) var(--ease-out-expo),
+      border-color var(--duration-fast) var(--ease-out-expo),
+      transform var(--duration-fast) var(--ease-out-expo);
+  }
+
+  .joke-btn:hover {
+    border-color: var(--theme-accent);
+    color: var(--theme-on-accent);
+    background: var(--theme-accent);
+  }
+
+  .terminal {
+    max-width: 52rem;
+    margin-bottom: 3rem;
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-media);
+    background: var(--theme-surface);
+    box-shadow: 0 1.25rem 4rem var(--theme-shadow);
+    font-family: var(--font-mono);
+  }
+
+  .terminal-header {
+    border-bottom: 1px solid var(--theme-border);
+    background: var(--theme-surface-raised);
+  }
+
+  .terminal-title,
+  .terminal-body p,
+  .response {
+    color: var(--theme-text-muted);
+  }
+
+  .terminal-body {
+    padding: clamp(1rem, 4vw, 2rem);
+  }
+
+  .prompt {
+    color: var(--theme-accent);
+  }
+
+  .actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-bottom: 3rem;
+  }
+
+  .actions .btn {
+    width: auto;
+    min-height: 3rem;
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--theme-border-strong);
+    border-radius: var(--radius-control);
+    color: var(--theme-foreground);
+    background: transparent;
+    box-shadow: none;
+    text-decoration: none;
+  }
+
+  .actions .btn.primary,
+  .actions .btn:hover {
+    border-color: var(--theme-accent);
+    color: var(--theme-on-accent);
+    background: var(--theme-accent);
+  }
+
+  .stack-trace,
+  .http-codes {
+    width: min(100%, 62rem);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-panel);
+    background: var(--theme-surface);
+  }
+
+  .stack-trace {
+    margin-bottom: 3rem;
+  }
+
+  .stack-trace summary {
+    padding: 1rem;
+    cursor: pointer;
+  }
+
+  .stack-trace pre {
+    margin: 0;
+    padding: 1.25rem;
+    border-top: 1px solid var(--theme-border);
+    overflow-x: auto;
+    white-space: pre-wrap;
+  }
+
+  .stack-trace code {
+    display: block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .http-codes {
+    padding: clamp(1rem, 4vw, 2rem);
+  }
+
+  .http-codes h3 {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2.4rem);
+    letter-spacing: -0.03em;
+  }
+
+  .codes-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .code-item {
+    border-color: var(--theme-border);
+    background: transparent;
+  }
+
+  .code-item.highlight {
+    border-color: var(--theme-accent);
+    color: var(--theme-on-accent);
+    background: var(--theme-accent);
+  }
+
+  .easter-egg {
+    align-self: flex-start;
+    color: var(--theme-text-muted);
+  }
+
+  @media (max-width: 47.99rem) {
+    .codes-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .glitch,
+    .cursor,
+    .confetti {
+      animation: none !important;
+    }
+  }
+</style>

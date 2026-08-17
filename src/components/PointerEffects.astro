@@ -1,0 +1,129 @@
+<script>
+  const finePointer = window.matchMedia('(pointer: fine)')
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+
+  const initializePointerEffects = () => {
+    if (!finePointer.matches || reducedMotion.matches) return
+
+    const spotlightSelector = [
+      '.credentials a',
+      '.post-media',
+      '.tech-badge',
+      '.video-card',
+      '.profile-links a',
+      '.project-row',
+      '.slide-card',
+      '.theme-grid button',
+    ].join(',')
+
+    document.querySelectorAll<HTMLElement>(spotlightSelector).forEach((element) => {
+      if (element.dataset.spotlightReady === 'true') return
+      element.dataset.spotlightReady = 'true'
+      element.dataset.spotlight = ''
+
+      let frame = 0
+      let pointerX = 0
+      let pointerY = 0
+
+      element.addEventListener('pointermove', (event) => {
+        const rect = element.getBoundingClientRect()
+        pointerX = event.clientX - rect.left
+        pointerY = event.clientY - rect.top
+        if (frame) return
+        frame = requestAnimationFrame(() => {
+          element.style.setProperty('--pointer-x', `${pointerX}px`)
+          element.style.setProperty('--pointer-y', `${pointerY}px`)
+          frame = 0
+        })
+      })
+    })
+
+    const magneticSelector = [
+      '.primary-action',
+      '.secondary-action',
+      '.section-link',
+      '.icon-control',
+      '.social-links a',
+      '.scroll-up',
+    ].join(',')
+
+    document.querySelectorAll<HTMLElement>(magneticSelector).forEach((element) => {
+      if (element.dataset.magneticReady === 'true') return
+      element.dataset.magneticReady = 'true'
+      element.dataset.magnetic = ''
+
+      let frame = 0
+      let offsetX = 0
+      let offsetY = 0
+
+      element.addEventListener('pointermove', (event) => {
+        const rect = element.getBoundingClientRect()
+        offsetX = ((event.clientX - rect.left) / rect.width - 0.5) * 10
+        offsetY = ((event.clientY - rect.top) / rect.height - 0.5) * 8
+        if (frame) return
+        frame = requestAnimationFrame(() => {
+          element.style.setProperty('--magnetic-x', `${offsetX}px`)
+          element.style.setProperty('--magnetic-y', `${offsetY}px`)
+          frame = 0
+        })
+      })
+
+      element.addEventListener('pointerleave', () => {
+        element.style.setProperty('--magnetic-x', '0px')
+        element.style.setProperty('--magnetic-y', '0px')
+      })
+    })
+  }
+
+  initializePointerEffects()
+  document.addEventListener('astro:page-load', initializePointerEffects)
+</script>
+
+<style is:global>
+  [data-spotlight] {
+    position: relative;
+    isolation: isolate;
+    --pointer-x: 50%;
+    --pointer-y: 50%;
+    --spotlight-color: var(--credential-color, var(--badge-color, var(--theme-accent)));
+  }
+
+  [data-spotlight]::after {
+    position: absolute;
+    z-index: 4;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      22rem circle at var(--pointer-x) var(--pointer-y),
+      color-mix(in oklab, var(--spotlight-color) 17%, transparent),
+      transparent 58%
+    );
+    content: '';
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-fast) var(--ease-out-expo);
+  }
+
+  [data-spotlight]:hover::after {
+    opacity: 1;
+  }
+
+  [data-magnetic] {
+    translate: var(--magnetic-x, 0) var(--magnetic-y, 0);
+    transition:
+      translate 260ms var(--ease-out-expo),
+      color var(--duration-fast) var(--ease-out-expo),
+      background-color var(--duration-fast) var(--ease-out-expo),
+      border-color var(--duration-fast) var(--ease-out-expo);
+  }
+
+  @media (pointer: coarse), (prefers-reduced-motion: reduce) {
+    [data-spotlight]::after {
+      display: none;
+    }
+
+    [data-magnetic] {
+      translate: none;
+    }
+  }
+</style>

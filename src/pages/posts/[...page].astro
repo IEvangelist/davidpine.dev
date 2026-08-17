@@ -7,7 +7,6 @@ import siteConfig from '~/site.config'
 import PostPreview from '~/components/PostPreview.astro'
 import PageHeader from '~/components/PageHeader.astro'
 
-// Note: Pagination like '/', '/2', '/3' only works with spread param like [...page]
 export const getStaticPaths = (async ({ paginate }) => {
   const sortedPosts = await getSortedPosts()
   return paginate(sortedPosts.reverse(), { pageSize: siteConfig.pageSize })
@@ -15,17 +14,52 @@ export const getStaticPaths = (async ({ paginate }) => {
 
 const { page } = Astro.props
 const pageTitle = 'Blog' + (page.currentPage > 1 ? ` - Page ${page.currentPage}` : '')
+const [firstPost, ...remainingPosts] = page.data
+const previewVariants = ['default', 'reverse'] as const
 ---
 
-<Layout title={pageTitle} description="All posts in the blog">
-  <div class="mt-2 sm:mt-0">
-    <PageHeader title="Blog" />
-    {page.data.map((post) => <PostPreview post={post} />)}
-    <Pagination
-      prevLink={page.url.prev ? page.url.prev : undefined}
-      prevText="Newer Posts"
-      nextLink={page.url.next ? page.url.next : undefined}
-      nextText="Older Posts"
-    />
-  </div>
+<Layout
+  title={pageTitle}
+  description="Writing about Aspire, .NET, developer tools, open source, and software engineering."
+>
+  <PageHeader
+    title="Blog"
+    description="Writing about Aspire, .NET, developer tools, open source, and software engineering."
+  />
+
+  <section class="post-index" aria-label="Articles">
+    {
+      firstPost && (
+        <PostPreview
+          post={firstPost}
+          variant={page.currentPage === 1 ? 'featured' : 'default'}
+        />
+      )
+    }
+    {
+      remainingPosts.map((post, index) => (
+        <PostPreview
+          post={post}
+          variant={previewVariants[index % previewVariants.length]}
+        />
+      ))
+    }
+  </section>
+
+  <Pagination
+    prevLink={page.url.prev ? page.url.prev : undefined}
+    prevText="Newer posts"
+    nextLink={page.url.next ? page.url.next : undefined}
+    nextText="Older posts"
+  />
 </Layout>
+
+<style>
+  .post-index {
+    padding-top: clamp(3rem, 8vw, 7rem);
+  }
+
+  .post-index :global(.post-preview--featured) {
+    margin-bottom: clamp(4rem, 9vw, 8rem);
+  }
+</style>

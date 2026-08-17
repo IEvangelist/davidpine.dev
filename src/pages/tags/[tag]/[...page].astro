@@ -7,34 +7,49 @@ import siteConfig from '~/site.config'
 import PostPreview from '~/components/PostPreview.astro'
 import PageHeader from '~/components/PageHeader.astro'
 
-// Note: Pagination like '/', '/2', '/3' only works with spread param like [...page]
 export const getStaticPaths = (async ({ paginate }) => {
   const tagsGroup = await TagsGroup.build()
-  const pages = tagsGroup.collations.flatMap((tags) => {
-    // Use flatMap to lift the posts for each tag into a single array
-    return paginate(tags.entries.reverse(), {
+  return tagsGroup.collations.flatMap((tags) =>
+    paginate(tags.entries.reverse(), {
       props: { tagTitle: tags.title },
       params: { tag: tags.titleSlug },
       pageSize: siteConfig.pageSize,
-    })
-  })
-  return pages
+    }),
+  )
 }) satisfies GetStaticPaths
 
 const { page, tagTitle } = Astro.props
 const pageTitle =
   `Tag: ${tagTitle}` + (page.currentPage > 1 ? ` - Page ${page.currentPage}` : '')
+const previewVariants = ['default', 'reverse'] as const
 ---
 
 <Layout title={pageTitle} description={`All posts tagged with ${tagTitle}`}>
-  <div class="mt-2 sm:mt-0">
-    <PageHeader titlePieces={['tags', tagTitle]} />
-    {page.data.map((post) => <PostPreview post={post} />)}
-    <Pagination
-      prevLink={page.url.prev ? encodeURI(page.url.prev) : undefined}
-      prevText="Newer Posts"
-      nextLink={page.url.next ? encodeURI(page.url.next) : undefined}
-      nextText="Older Posts"
-    />
-  </div>
+  <PageHeader
+    title={tagTitle}
+    titlePieces={['topics', tagTitle]}
+    description={`${page.total} articles filed under this topic.`}
+  />
+  <section class="post-index" aria-label={`${tagTitle} articles`}>
+    {
+      page.data.map((post, index) => (
+        <PostPreview
+          post={post}
+          variant={previewVariants[index % previewVariants.length]}
+        />
+      ))
+    }
+  </section>
+  <Pagination
+    prevLink={page.url.prev ? encodeURI(page.url.prev) : undefined}
+    prevText="Newer posts"
+    nextLink={page.url.next ? encodeURI(page.url.next) : undefined}
+    nextText="Older posts"
+  />
 </Layout>
+
+<style>
+  .post-index {
+    padding-top: clamp(3rem, 8vw, 7rem);
+  }
+</style>

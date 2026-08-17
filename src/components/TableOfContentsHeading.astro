@@ -10,32 +10,34 @@ const {
 } = Astro.props
 ---
 
-<li class="flex items-stretch border-foreground/20">
-  <div class="flex items-stretch">
-    {
-      Array.from({ length: depth - 1 }, (_v, _k) => (
-        <div class="toc-lines flex flex-col items-stretch">
-          <span class="top-box w-4 xl:w-3 basis-4 border-b-1 border-foreground/20 xl:border-foreground/15" />
-          <span class="bottom-box w-4 min-h-1/2 xl:w-3 flex-1 border-t-1 border-foreground/20 xl:border-foreground/15" />
-        </div>
-      ))
-    }
-  </div>
-  <a
-    class="inline-block line-clamp-2 ml-3 xl:ml-2 py-1 ps-1 hover:text-accent"
-    href={`#${slug}`}>{text}</a
-  >
+<li style={{ '--toc-depth': depth - 2 }}>
+  <a href={`#${slug}`}>{text}</a>
 </li>
 
 <style>
-  .toc-lines:first-child span {
-    border-left-width: 2px;
+  li {
+    margin: 0;
+    padding: 0 0 0 calc(var(--toc-depth) * 0.85rem);
+    list-style: none;
   }
-  li:last-child .toc-lines:first-child span.bottom-box {
-    border-left-width: 0 !important;
+
+  a {
+    display: block;
+    color: inherit;
+    line-height: 1.35;
+    text-decoration: none;
+    transition:
+      color var(--duration-fast) var(--ease-out-expo),
+      transform var(--duration-fast) var(--ease-out-expo);
   }
-  li.active-heading a {
+
+  a:hover,
+  a[aria-current] {
     color: var(--theme-accent);
-    font-weight: 600;
+    transform: translateX(0.2rem);
+  }
+
+  a[aria-current] {
+    font-weight: 700;
   }
 </style>

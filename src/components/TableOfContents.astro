@@ -7,48 +7,103 @@ interface Props {
 }
 
 const { headings } = Astro.props
-
 const filteredHeadings = headings.filter(({ depth }) => depth >= 2 && depth <= 3)
 ---
 
-<details
-  open
-  class="toc relative md:mx-2 lg:mx-0 text-foreground/90 text-sm bg-foreground/5 lg:bg-transparent px-8 lg:pr-0 py-6 mt-5 lg:mt-0 lg:w-full rounded-xl border-3 lg:border-none border-accent/10 lg:sticky lg:top-10 lg:basis-[274px] 2xl:basis-[320px] lg:order-2 lg:shrink-0 lg:opacity-90"
->
-  <summary
-    class="list-none marker:hidden marker:content-[''] before:content-['>'] before:text-accent before:font-semibold before:absolute before:left-3 cursor-pointer"
-    >Table of Contents</summary
-  >
-  <nav class="w-full text-sm lg:-ml-1">
-    <ul class="mt-4 flex flex-col max-w-full">
+<details class="toc" open>
+  <summary>On this page</summary>
+  <nav aria-label="Table of contents">
+    <ol>
       {filteredHeadings.map((heading) => <TOCHeading heading={heading} />)}
-    </ul>
+    </ol>
   </nav>
 </details>
 
 <script>
-  const anchors = document.querySelectorAll('h2[id], h3[id]')
-  const links = document.querySelectorAll('details.toc > nav > ul > li')
-  if (anchors.length === links.length && anchors.length > 0) {
-    window.addEventListener('scroll', (_event) => {
-      let scrollTop = window.scrollY
-      let highlighted = false
-      // then iterate backwards, on the first match highlight it and break
-      for (var i = anchors.length - 1; i >= 0; i--) {
-        const anchor = anchors[i] as HTMLElement
-        if (!highlighted && scrollTop > anchor.offsetTop - 75) {
-          links[i].classList.add('active-heading')
-          highlighted = true
-        } else {
-          links[i].classList.remove('active-heading')
-        }
-      }
-    })
+  const toc = document.querySelector<HTMLElement>('.toc')
+  const links = Array.from(toc?.querySelectorAll<HTMLAnchorElement>('a[href^="#"]') ?? [])
+  const headings = links
+    .map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1))))
+    .filter((heading): heading is HTMLElement => Boolean(heading))
+
+  if (headings.length > 0 && 'IntersectionObserver' in window) {
+    const setActive = (id: string) => {
+      links.forEach((link) => {
+        const active = decodeURIComponent(link.hash.slice(1)) === id
+        link.toggleAttribute('aria-current', active)
+      })
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort(
+            (left, right) => left.boundingClientRect.top - right.boundingClientRect.top,
+          )
+        if (visible[0]?.target.id) setActive(visible[0].target.id)
+      },
+      {
+        rootMargin: '-18% 0px -68% 0px',
+        threshold: [0, 1],
+      },
+    )
+
+    headings.forEach((heading) => observer.observe(heading))
   }
 </script>
 
 <style>
-  details[open] summary:before {
-    transform: rotate(90deg);
+  .toc {
+    position: sticky;
+    top: 6.25rem;
+    align-self: start;
+    color: var(--theme-text-muted);
+    font-size: var(--text-sm-fluid);
+  }
+
+  summary {
+    color: var(--theme-foreground);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs-fluid);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::before {
+    display: inline-block;
+    width: 1rem;
+    color: var(--theme-accent);
+    content: '+';
+  }
+
+  details[open] summary::before {
+    content: '-';
+  }
+
+  ol {
+    display: grid;
+    gap: 0.65rem;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (max-width: 63.99rem) {
+    .toc {
+      position: static;
+      width: 100%;
+      padding: 1rem;
+      border: 1px solid var(--theme-border);
+      border-radius: var(--radius-panel);
+      background: var(--theme-surface);
+    }
   }
 </style>

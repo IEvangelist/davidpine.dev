@@ -1,0 +1,127 @@
+---
+import Layout from '~/layouts/Layout.astro'
+import PageHeader from '~/components/PageHeader.astro'
+
+const conclusions = [
+  {
+    title: 'Life',
+    statement:
+      "Like an aggressive contagion seeking the next victim, negativity can plague an entire team's morale. Negativity is contagious!",
+  },
+  {
+    title: 'Optimism is a choice',
+    statement: 'Expect nothing, but be grateful for everything.',
+  },
+  {
+    title: 'Programming',
+    statement:
+      'In programming there isn\'t a "right way" but there is always a "wrong way". There is however a "better way", until you run out of time.',
+  },
+  {
+    title: 'Negotiations',
+    statement:
+      "Developers are actually negotiators! We negotiate more than we develop. We negotiate with the keyboard all day long, we negotiate with ourselves determining if we've taken the right course of action. We negotiate with our peers, arguing our point of views. We negotiate with the stakeholders of the application and the end-users too.",
+  },
+  {
+    title: 'Motto',
+    statement: 'Changing the world, one line of code at a time.',
+  },
+]
+---
+
+<Layout title="Conclusions" description="Sometimes situations result in an epiphany.">
+  <PageHeader
+    title="Conclusions"
+    description="Various conclusions and aphorisms that I've arrived at throughout my career and life experiences."
+  />
+
+  <section class="conclusions-layout">
+    <div class="duck-column" data-reveal>
+      <img src="/duck.webp" width="768" height="768" alt="A pixel-art duck" />
+    </div>
+    <ol class="conclusions-list">
+      {
+        conclusions.map((conclusion, index) => (
+          <li data-reveal style={{ '--reveal-delay': `${Math.min(index * 45, 150)}ms` }}>
+            <p class="conclusion-title">{conclusion.title}</p>
+            <blockquote>{conclusion.statement}</blockquote>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</Layout>
+
+<style>
+  .conclusions-layout {
+    display: grid;
+    grid-template-columns: minmax(14rem, 0.45fr) minmax(0, 1.55fr);
+    gap: clamp(3rem, 8vw, 8rem);
+    padding-block: var(--section-space);
+  }
+
+  .duck-column {
+    position: sticky;
+    top: 7rem;
+    align-self: start;
+  }
+
+  .duck-column img {
+    width: min(100%, 22rem);
+    height: auto;
+    image-rendering: pixelated;
+    filter: drop-shadow(0 1.5rem 2.5rem var(--theme-shadow));
+  }
+
+  .conclusions-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .conclusions-list li {
+    margin: 0;
+    padding-block: clamp(2.5rem, 6vw, 5rem);
+    border-top: 1px solid var(--theme-border);
+    list-style: none;
+  }
+
+  .conclusion-title {
+    margin: 0 0 1.5rem;
+    color: var(--theme-accent);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs-fluid);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  blockquote {
+    max-width: 24ch;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: var(--theme-foreground);
+    background: none;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 4.6rem);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.045em;
+    text-wrap: balance;
+  }
+
+  @media (max-width: 47.99rem) {
+    .conclusions-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .duck-column {
+      position: static;
+    }
+
+    .duck-column img {
+      width: 9rem;
+    }
+  }
+</style>

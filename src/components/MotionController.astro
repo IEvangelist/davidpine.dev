@@ -1,0 +1,35 @@
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  let observer: IntersectionObserver | undefined
+
+  const initializeReveals = () => {
+    observer?.disconnect()
+    const revealItems = Array.from(
+      document.querySelectorAll<HTMLElement>('[data-reveal]'),
+    )
+
+    if (reduceMotion || !('IntersectionObserver' in window)) {
+      revealItems.forEach((item) => item.classList.add('is-revealed'))
+      return
+    }
+
+    observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          entry.target.classList.add('is-revealed')
+          observer?.unobserve(entry.target)
+        })
+      },
+      {
+        rootMargin: '0px 0px -10% 0px',
+        threshold: 0.12,
+      },
+    )
+
+    revealItems.forEach((item) => observer.observe(item))
+  }
+
+  initializeReveals()
+  document.addEventListener('astro:page-load', initializeReveals)
+</script>

@@ -1,19 +1,18 @@
 ---
-import IconChevronsRight from '~/icons/chevrons-right.svg'
 import type { CollectionEntry } from 'astro:content'
 import { render } from 'astro:content'
 import Tags from '~/components/Tags.astro'
 import PostInfo from '~/components/PostInfo.astro'
-import ThemeImage from '~/components/ThemeImage.astro'
 import type { Collation } from '~/types'
 import { TagsGroup } from '~/utils'
+import ThemeImage from '~/components/ThemeImage.astro'
 
 interface Props {
   post: CollectionEntry<'posts'>
+  variant?: 'default' | 'featured' | 'compact' | 'reverse'
 }
 
-const { post } = Astro.props
-
+const { post, variant = 'default' } = Astro.props
 const { remarkPluginFrontmatter } = await render(post)
 const description = remarkPluginFrontmatter.description || post.data.description
 let tags: Collation<'posts'>[] | undefined
@@ -25,46 +24,217 @@ const samePage = Astro.url.pathname === `/posts/${post.id}`
 const articleLink = samePage ? `#${post.id}` : `/posts/${post.id}`
 ---
 
-<article class="post-card w-full p-5 sm:p-6 my-4 md:my-6">
-  <div class="flex flex-col sm:flex-row gap-4">
-    {
-      post.data.coverImage && (
-        <a href={articleLink} class="flex-shrink-0">
-          <ThemeImage
-            src={post.data.coverImage.src}
-            lightSrc={post.data.coverImage.lightSrc}
-            alt={post.data.coverImage.alt}
-            class="w-full sm:w-48 md:w-64 lg:w-72"
-            imageClass="rounded-lg"
-          />
-        </a>
-      )
-    }
-    <div class="flex-1 min-w-0">
-      <h1 class="mb-3 text-xl sm:text-2xl text-heading1 font-semibold">
-        <a href={articleLink}>{post.data.title}</a>
-      </h1>
-      <PostInfo post={post} class="mb-3 mt-2 sm:mt-4" />
-      {
-        description && (
-          <p class="pl-0.5 my-3 sm:my-4 text-sm sm:text-base/7 text-foreground line-clamp-3">
-            {description}
-          </p>
-        )
-      }
-    </div>
-  </div>
+<article
+  class:list={[
+    'post-preview',
+    `post-preview--${variant}`,
+    post.data.coverImage ? 'has-media' : 'no-media',
+  ]}
+  data-reveal
+>
   {
-    tags && (
-      <div class="mb-6 mt-4">
-        <Tags tags={tags} />
-      </div>
+    post.data.coverImage && variant !== 'compact' && (
+      <a href={articleLink} class="post-media" tabindex="-1" aria-hidden="true">
+        <ThemeImage
+          src={post.data.coverImage.src}
+          lightSrc={post.data.coverImage.lightSrc}
+          alt=""
+          class="post-media-theme"
+        />
+      </a>
     )
   }
-  <div>
-    <a class="button flex items-center !pl-3.5" href={articleLink}>
-      {samePage ? 'Continue' : 'Read'}
-      <IconChevronsRight class="size-5 ml-2" />
-    </a>
+  <div class="post-copy">
+    <PostInfo post={post} class="post-meta" />
+    <h2>
+      <a href={articleLink}>{post.data.title}</a>
+    </h2>
+    {
+      description && variant !== 'compact' && (
+        <p class="post-description">{description}</p>
+      )
+    }
+    {tags && !['featured', 'compact'].includes(variant) && <Tags tags={tags} />}
   </div>
 </article>
+
+<style>
+  .post-preview {
+    width: 100%;
+  }
+
+  .post-preview h2 {
+    max-width: 24ch;
+    margin: 0.75rem 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.65rem, 3vw, 2.6rem);
+    font-weight: 600;
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+
+  .post-preview h2 a {
+    color: var(--theme-heading1);
+    text-decoration-color: transparent;
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.16em;
+    transition:
+      color var(--duration-fast) var(--ease-out-expo),
+      text-decoration-color var(--duration-fast) var(--ease-out-expo);
+  }
+
+  .post-preview h2 a:hover {
+    color: var(--theme-accent);
+    text-decoration-color: currentColor;
+  }
+
+  .post-media {
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    padding: clamp(0.4rem, 1vw, 0.8rem);
+    border-radius: var(--radius-media);
+    background: var(--theme-surface);
+  }
+
+  .post-media :global(img) {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 700ms var(--ease-out-expo);
+  }
+
+  .post-media :global(.post-media-theme) {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    place-items: center;
+  }
+
+  .post-media:hover :global(img) {
+    transform: scale(1.025);
+  }
+
+  .post-description {
+    max-width: 58ch;
+    margin: 1rem 0 0;
+    color: var(--theme-text-muted);
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+
+  .post-meta {
+    margin: 0;
+    color: var(--theme-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs-fluid);
+  }
+
+  .post-preview--featured {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(20rem, 0.85fr);
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 4rem);
+  }
+
+  .post-preview--featured .post-media {
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+  }
+
+  .post-preview--featured h2 {
+    max-width: 16ch;
+    font-size: clamp(2.35rem, 5vw, 4.6rem);
+    line-height: 0.94;
+  }
+
+  .post-preview--featured .post-copy {
+    padding-block: 1rem;
+  }
+
+  .post-preview--default,
+  .post-preview--reverse {
+    display: grid;
+    grid-template-columns: minmax(18rem, 24rem) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(1.25rem, 4vw, 3rem);
+    min-height: 17rem;
+    padding-block: 2.25rem;
+    border-top: 1px solid var(--theme-border);
+  }
+
+  .post-preview--default .post-media,
+  .post-preview--reverse .post-media {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+
+  .post-preview--reverse {
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 24rem);
+  }
+
+  .post-preview--reverse .post-media {
+    grid-column: 2;
+  }
+
+  .post-preview--reverse .post-copy {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  .post-preview.no-media {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+
+  .post-preview.no-media .post-copy {
+    grid-row: auto;
+    grid-column: auto;
+    max-width: 58rem;
+  }
+
+  .post-preview--compact {
+    padding-block: 1.5rem;
+    border-top: 1px solid var(--theme-border);
+  }
+
+  .post-preview--compact h2 {
+    max-width: 28ch;
+    margin-top: 0.55rem;
+    font-size: clamp(1.4rem, 2.3vw, 2rem);
+  }
+
+  @media (max-width: 47.99rem) {
+    .post-preview--featured,
+    .post-preview--default,
+    .post-preview--reverse {
+      grid-template-columns: 1fr;
+      min-height: 0;
+    }
+
+    .post-preview--featured {
+      align-items: start;
+    }
+
+    .post-preview--featured .post-media,
+    .post-preview--default .post-media,
+    .post-preview--reverse .post-media {
+      aspect-ratio: 16 / 9;
+    }
+
+    .post-preview--reverse .post-media,
+    .post-preview--reverse .post-copy {
+      grid-row: auto;
+      grid-column: auto;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .post-media:hover :global(img) {
+      transform: none;
+    }
+  }
+</style>

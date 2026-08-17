@@ -1,12 +1,15 @@
 ---
 import Layout from '~/layouts/Layout.astro'
 import PageHeader from '~/components/PageHeader.astro'
-import ScrollUpButton from '~/components/ScrollUpButton.astro'
+import MediaVideoCard from '~/components/MediaVideoCard.astro'
 
 const videos = [
   { id: 'Rp36LqdQm10', title: 'OpenGraph Preview Canvas for the GitHub Copilot App' },
   { id: '2tD8itLsYMg', title: 'Stop Rewriting. Start with Aspire.' },
-  { id: 'vWsgwd9QN6w', title: 'From Localhost to Liftoff: Aspire for Newbies - Aspire Conf 2026' },
+  {
+    id: 'vWsgwd9QN6w',
+    title: 'From Localhost to Liftoff: Aspire for Newbies - Aspire Conf 2026',
+  },
   { id: '1K5riRctUIg', title: 'Introduction to Azure Key Vault and Aspire' },
   { id: 'KRb7T1LZZj0', title: "Let's Learn .NET - Write your first code using C#" },
   { id: 'PDDAUtX6E7c', title: "Let's Learn .NET - Git & GitHub" },
@@ -45,7 +48,7 @@ const videos = [
   { id: 'UEajhQHBa3Y', title: '#MVPBuzzChat CollabTalk' },
   { id: '5jCy7oHbDaE', title: 'Serbia, National News' },
   { id: 'MjS_lVg0G8E', title: 'AskTHAT | Episode 35' },
-  { id: 'VW7b0WU_UDM', title: "Microsoft's Channel 9 — Magic Mirror" },
+  { id: 'VW7b0WU_UDM', title: "Microsoft's Channel 9 - Magic Mirror" },
 ]
 
 const podcasts = [
@@ -101,7 +104,7 @@ const publications = [
       'In this series, we will explore some of the benefits .NET Core and how it can benefit not only traditional .NET developers but all technologists that need to bring robust, performant and economical solutions to market.',
   },
   {
-    title: 'TypeScript – A Tour of Generics',
+    title: 'TypeScript - A Tour of Generics',
     url: 'http://www.dotnetcurry.com/typescript/1439/typescript-generics',
     description:
       'TypeScript is an amazing innovation with how we as developers write JavaScript applications. TypeScript boasts its language services as a first-class citizen. These language services empower your favorite integrated development environment with advanced statement completion, refactoring, type-checking, compilation and even flow analysis.',
@@ -189,103 +192,31 @@ const fridayFive = [
     description="Various media, podcasts, webcasts and publication appearances"
   />
 
-  <article class="max-w-full py-7.5">
-    <div class="container prose">
-      <img src="/media/media.jpg" alt="Media Attention" class="hero-image" />
-
-      <p class="intro">
-        This page is a collection of podcasts, webcasts, news and other various
-        publications that I've been a part of. Enjoy!
-      </p>
-
-      <section class="section">
-        <h2>On .NET Live — 🎬 Live Stream</h2>
-        <p>
-          I'm one of several co-hosts that run the <a
-            href="https://dotnet.microsoft.com/en-us/live/on-dotnet-live"
-            target="_blank"
-            rel="noopener noreferrer">official <strong>On .NET Live</strong> stream</a
-          >. We air weekly on Mondays from 11:00 AM US Central Time to noon. We're live
-          on:
+  <article class="media-page">
+    <div class="media-content">
+      <div class="media-intro" data-reveal>
+        <img
+          src="/media/media.jpg"
+          alt="David Pine media appearances"
+          class="hero-image"
+          width="837"
+          height="341"
+        />
+        <p class="intro">
+          This page is a collection of podcasts, webcasts, news and other various
+          publications that I've been a part of. Enjoy!
         </p>
-        <ul>
-          <li>
-            <strong
-              ><a
-                href="https://www.youtube.com/@dotnet"
-                target="_blank"
-                rel="noopener noreferrer">.NET — YouTube</a
-              ></strong
-            >
-          </li>
-          <li>
-            <strong
-              ><a
-                href="https://www.twitch.tv/visualstudio"
-                target="_blank"
-                rel="noopener noreferrer">Visual Studio — Twitch.tv</a
-              ></strong
-            >
-          </li>
-          <li>
-            <strong
-              ><a href="https://x.com/dotnet" target="_blank" rel="noopener noreferrer"
-                >.NET — X (Twitter)</a
-              ></strong
-            >
-          </li>
-          <li>
-            <strong
-              ><a
-                href="https://www.facebook.com/dotnet"
-                target="_blank"
-                rel="noopener noreferrer">.NET — Facebook</a
-              ></strong
-            >
-          </li>
-        </ul>
-        <p>
-          For a complete playlist of on-demand episodes, check out the <a
-            href="https://www.youtube.com/playlist?list=PLdo4fOcmZ0oV2fcY7wsQHx4RNWXEDKgm4"
-            target="_blank"
-            rel="noopener noreferrer">On .NET Live playlist</a
-          >.
-        </p>
-      </section>
+      </div>
 
-      <section class="section">
-        <h2>Video 🎥 Appearances</h2>
-        <div class="video-grid">
-          {
-            videos.map((video) => (
-              <div class="video-card">
-                <a
-                  href={`https://www.youtube.com/watch?v=${video.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="video-link"
-                >
-                  <img
-                    src={`https://img.youtube.com/vi/${video.id}/mqdefault.jpg`}
-                    alt={video.title}
-                    class="video-thumbnail"
-                    loading="lazy"
-                  />
-                  <div class="video-overlay">
-                    <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </div>
-                </a>
-                <h3 class="video-title">{video.title}</h3>
-              </div>
-            ))
-          }
+      <section class="section videos-section">
+        <h2>Video appearances</h2>
+        <div class="video-library-grid">
+          {videos.map((video) => <MediaVideoCard id={video.id} title={video.title} />)}
         </div>
       </section>
 
-      <section class="section">
-        <h2>Podcasts 🎙️ Appearances</h2>
+      <section class="section podcasts-section">
+        <h2>Podcast appearances</h2>
         <div class="content-grid">
           {
             podcasts.map((podcast) => (
@@ -302,8 +233,8 @@ const fridayFive = [
         </div>
       </section>
 
-      <section class="section">
-        <h2>Publications 📄 Articles</h2>
+      <section class="section publications-section">
+        <h2>Publications</h2>
         <div class="content-grid">
           {
             publications.map((pub) => (
@@ -320,7 +251,7 @@ const fridayFive = [
         </div>
       </section>
 
-      <section class="section">
+      <section class="section friday-section">
         <h2>Featured On Microsoft's Friday Five</h2>
         <div class="friday-five-list">
           {
@@ -337,7 +268,6 @@ const fridayFive = [
       </section>
     </div>
   </article>
-  <ScrollUpButton />
 </Layout>
 
 <style>
@@ -351,9 +281,7 @@ const fridayFive = [
     width: 100%;
     max-width: 800px;
     height: auto;
-    border: 2px solid var(--retro-border);
-    border-radius: 0;
-    box-shadow: var(--retro-shadow);
+    border-radius: 8px;
     margin: 2rem auto;
     display: block;
   }
@@ -387,12 +315,10 @@ const fridayFive = [
   }
 
   .section ul li::before {
-    content: '■';
+    content: '▸';
     position: absolute;
     left: 0;
     color: var(--theme-accent);
-    font-size: 0.7em;
-    line-height: 2;
   }
 
   .video-grid {
@@ -405,23 +331,20 @@ const fridayFive = [
   .video-card {
     display: flex;
     flex-direction: column;
-    gap: 0;
-    overflow: hidden;
-    padding: 0;
+    gap: 0.75rem;
   }
 
   .video-link {
     position: relative;
     display: block;
-    border-bottom: 2px solid var(--retro-border);
-    border-radius: 0;
+    border-radius: 8px;
     overflow: hidden;
     aspect-ratio: 16 / 9;
-    transition: none;
+    transition: transform 0.2s ease;
   }
 
   .video-link:hover {
-    transform: none;
+    transform: scale(1.02);
   }
 
   .video-thumbnail {
@@ -437,38 +360,31 @@ const fridayFive = [
     left: 0;
     right: 0;
     bottom: 0;
-    background: color-mix(in oklab, #000 38%, transparent);
+    background: rgba(0, 0, 0, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 1;
-    transition: background-color 120ms ease;
+    opacity: 0;
+    transition: opacity 0.2s ease;
   }
 
   .video-link:hover .video-overlay {
-    background: color-mix(in oklab, var(--theme-accent) 32%, #000 38%);
+    opacity: 1;
   }
 
   .play-icon {
-    width: 56px;
-    height: 56px;
-    border: 2px solid var(--retro-border);
-    background: var(--retro-primary);
-    color: var(--retro-on-accent);
-    filter: none;
-    padding: 0.65rem;
-    box-shadow: var(--retro-shadow-sm);
+    width: 64px;
+    height: 64px;
+    color: var(--theme-on-accent);
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
   }
 
   .video-title {
-    padding: 1rem;
     font-size: 0.95rem;
-    font-weight: 800;
+    font-weight: 500;
     line-height: 1.4;
     margin: 0;
     color: var(--theme-text);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
   }
 
   .content-grid {
@@ -479,28 +395,17 @@ const fridayFive = [
   }
 
   .content-card {
-    position: relative;
     padding: 1.5rem;
-    border: 2px solid var(--retro-border);
-    border-radius: 0;
-    background: var(--retro-panel);
-    box-shadow: var(--retro-shadow);
+    border: 1px solid var(--theme-divider);
+    border-radius: 8px;
     transition:
-      translate 120ms ease,
-      box-shadow 120ms ease;
-  }
-
-  .content-card::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto;
-    height: 0.45rem;
-    background: var(--retro-primary);
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   .content-card:hover {
-    translate: -2px -2px;
-    box-shadow: var(--retro-shadow);
+    border-color: var(--theme-accent);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
   .content-card h3 {
@@ -510,7 +415,7 @@ const fridayFive = [
   }
 
   .content-card h3 a {
-    color: var(--retro-primary);
+    color: var(--theme-text);
     text-decoration: none;
   }
 
@@ -534,35 +439,26 @@ const fridayFive = [
 
   .friday-five-item {
     display: flex;
-    align-items: center;
     gap: 1rem;
     padding: 1rem;
-    border: 2px solid var(--retro-border);
-    border-radius: 0;
-    background: var(--retro-panel);
-    box-shadow: var(--retro-shadow-sm);
+    border-left: 3px solid var(--theme-accent);
+    background: var(--theme-bg-offset);
+    border-radius: 4px;
     transition:
-      translate 120ms ease,
-      box-shadow 120ms ease;
+      background-color 0.2s ease,
+      transform 0.2s ease;
   }
 
   .friday-five-item:hover {
-    background: var(--retro-panel);
-    translate: -2px -2px;
-    box-shadow: var(--retro-shadow);
+    background: var(--theme-bg-hover);
+    transform: translateX(4px);
   }
 
   .friday-five-date {
-    border: 2px solid var(--retro-border);
-    background: var(--retro-primary);
-    color: var(--retro-on-accent);
-    box-shadow: var(--retro-shadow-sm);
-    font-weight: 800;
+    font-weight: 600;
     min-width: 100px;
+    color: var(--theme-text-light);
     font-size: 0.9rem;
-    padding: 0.25rem 0.5rem;
-    text-align: center;
-    text-transform: uppercase;
   }
 
   .friday-five-item a {
@@ -596,6 +492,197 @@ const fridayFive = [
 
     .friday-five-date {
       min-width: auto;
+    }
+  }
+</style>
+
+<style>
+  .media-page {
+    padding-block: var(--section-space);
+  }
+
+  .media-content {
+    width: 100%;
+  }
+
+  .media-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(16rem, 0.75fr);
+    align-items: end;
+    gap: clamp(2rem, 6vw, 6rem);
+    padding-bottom: var(--section-space);
+  }
+
+  .hero-image {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    min-height: 22rem;
+    margin: 0;
+    border-radius: var(--radius-media);
+    object-fit: cover;
+  }
+
+  .intro {
+    margin: 0;
+    color: var(--theme-text-muted);
+    font-size: var(--text-lead-fluid);
+    line-height: 1.5;
+    text-align: left;
+  }
+
+  .section {
+    margin: 0;
+    padding-block: var(--section-space);
+    border-top: 1px solid var(--theme-border);
+  }
+
+  .section > h2 {
+    max-width: 18ch;
+    margin: 0 0 clamp(2.5rem, 6vw, 5rem);
+    color: var(--theme-foreground);
+    font-family: var(--font-display);
+    font-size: var(--text-h2-fluid);
+    font-weight: 600;
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+  }
+
+  .video-library-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.35rem, 2.5vw, 2rem) 0.9rem;
+    margin: 0;
+  }
+
+  .video-library-grid :global(.video-card) {
+    min-width: 0;
+  }
+
+  @media (max-width: 63.99rem) {
+    .video-library-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .content-grid {
+    display: grid;
+    gap: 0 2rem;
+    margin: 0;
+  }
+
+  .podcasts-section .content-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .publications-section .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .content-card {
+    padding: 1.5rem 0;
+    border: 0;
+    border-top: 1px solid var(--theme-border);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .content-card:hover {
+    border-color: var(--theme-accent);
+    box-shadow: none;
+  }
+
+  .content-card h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2.5vw, 1.75rem);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+  }
+
+  .content-card h3 a {
+    color: var(--theme-foreground);
+    text-decoration-color: transparent;
+    text-underline-offset: 0.22rem;
+  }
+
+  .content-card h3 a:hover {
+    color: var(--theme-accent);
+    text-decoration-color: currentColor;
+  }
+
+  .content-card p {
+    max-width: 64ch;
+    margin: 0.8rem 0 0;
+    color: var(--theme-text-muted);
+    font-size: var(--text-body-fluid);
+    line-height: 1.6;
+  }
+
+  .publications-section .content-card {
+    display: grid;
+    grid-template-columns: minmax(15rem, 0.65fr) minmax(0, 1.35fr);
+    gap: clamp(1.5rem, 5vw, 5rem);
+  }
+
+  .publications-section .content-card p {
+    margin: 0;
+  }
+
+  .friday-five-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 2rem;
+    margin: 0;
+  }
+
+  .friday-five-item {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr);
+    gap: 1rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--theme-border);
+    border-left: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .friday-five-item:hover {
+    background: transparent;
+    transform: none;
+  }
+
+  .friday-five-date {
+    min-width: 0;
+    color: var(--theme-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs-fluid);
+  }
+
+  .friday-five-item a {
+    color: var(--theme-foreground);
+    text-decoration-color: var(--theme-accent);
+    text-underline-offset: 0.22rem;
+  }
+
+  .friday-five-item a:hover {
+    color: var(--theme-accent);
+  }
+
+  @media (max-width: 47.99rem) {
+    .media-intro,
+    .publications-section .content-card {
+      grid-template-columns: 1fr;
+    }
+
+    .podcasts-section .content-grid,
+    .friday-five-list {
+      grid-template-columns: 1fr;
+    }
+
+    .video-library-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>

@@ -1,112 +1,97 @@
 ---
+import { Icon } from 'astro-icon/components'
 import type { SocialLinks } from '~/types'
-import IconGithub from '~/icons/github.svg'
-import IconMastodon from '~/icons/mastodon.svg'
-import IconTwitter from '~/icons/twitter.svg'
-import IconLinkedin from '~/icons/linkedin.svg'
-import IconBluesky from '~/icons/bluesky.svg'
-import IconEmail from '~/icons/email.svg'
-import IconRss from '~/icons/rss.svg'
+import GitHubMark from '~/icons/github.svg'
 
 interface Props {
   socialLinks: SocialLinks
 }
 
 const { socialLinks } = Astro.props
+const links: Array<{
+  label: string
+  href: string
+  icon: string
+  external?: boolean
+  rel?: string
+  officialGitHub?: boolean
+}> = []
+
+if (socialLinks.github) {
+  links.push({
+    label: 'GitHub',
+    href: socialLinks.github,
+    icon: 'ph:github-logo',
+    external: true,
+    officialGitHub: true,
+  })
+}
+if (socialLinks.bluesky) {
+  links.push({
+    label: 'Bluesky',
+    href: socialLinks.bluesky,
+    icon: 'ph:butterfly',
+    external: true,
+  })
+}
+if (socialLinks.linkedin) {
+  links.push({
+    label: 'LinkedIn',
+    href: socialLinks.linkedin,
+    icon: 'ph:linkedin-logo',
+    external: true,
+  })
+}
+if (socialLinks.email) {
+  links.push({
+    label: 'Email',
+    href: `mailto:${socialLinks.email}`,
+    icon: 'ph:envelope-simple',
+  })
+}
+if (socialLinks.mastodon) {
+  links.push({
+    label: 'Mastodon',
+    href: socialLinks.mastodon,
+    icon: 'ph:mastodon-logo',
+    external: true,
+    rel: 'me noopener noreferrer',
+  })
+}
+if (socialLinks.twitter) {
+  links.push({
+    label: 'X',
+    href: socialLinks.twitter,
+    icon: 'ph:x-logo',
+    external: true,
+  })
+}
+if (socialLinks.rss) {
+  links.push({
+    label: 'RSS',
+    href: '/rss.xml',
+    icon: 'ph:rss-simple',
+  })
+}
 ---
 
-<div class="social-links">
+<div class="social-links" aria-label="Social links">
   {
-    socialLinks.github && (
+    links.map((link) => (
       <a
-        href={socialLinks.github}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="social-link"
+        href={link.href}
+        target={link.external ? '_blank' : undefined}
+        rel={link.rel ?? (link.external ? 'noopener noreferrer' : undefined)}
+        aria-label={link.label}
+        title={link.label}
       >
-        <span class="sr-only">GitHub</span>
-        <IconGithub class="size-7" />
+        {link.officialGitHub ? (
+          <GitHubMark aria-hidden="true" />
+        ) : (
+          <Icon name={link.icon} aria-hidden="true" />
+        )}
       </a>
-    )
-  }
-  {
-    socialLinks.bluesky && (
-      <a
-        href={socialLinks.bluesky}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="social-link"
-      >
-        <span class="sr-only">Bluesky</span>
-        <IconBluesky class="size-7" />
-      </a>
-    )
-  }
-  {
-    socialLinks.linkedin && (
-      <a
-        href={socialLinks.linkedin}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="social-link"
-      >
-        <span class="sr-only">LinkedIn</span>
-        <IconLinkedin class="size-7" />
-      </a>
-    )
-  }
-  {
-    socialLinks.email && (
-      <a
-        href={`mailto:${socialLinks.email}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="social-link"
-      >
-        <span class="sr-only">Email</span>
-        <IconEmail class="size-7" />
-      </a>
-    )
-  }
-  {
-    socialLinks.mastodon && (
-      <>
-        <a
-          href={socialLinks.mastodon}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="social-link"
-        >
-          <span class="sr-only">Mastodon</span>
-          <IconMastodon class="size-7" />
-        </a>
-
-        <a style="display:none;" rel="me" href="https://dotnet.social/@davidpine">
-          Mastodon
-        </a>
-      </>
-    )
-  }
-  {
-    socialLinks.twitter && (
-      <a
-        href={socialLinks.twitter}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="social-link"
-      >
-        <span class="sr-only">Twitter</span>
-        <IconTwitter class="size-7" />
-      </a>
-    )
-  }
-  {
-    socialLinks.rss && (
-      <a href="/rss.xml" class="social-link">
-        <span class="sr-only">RSS</span>
-        <IconRss class="size-7" />
-      </a>
-    )
+    ))
   }
 </div>
 
@@ -114,55 +99,38 @@ const { socialLinks } = Astro.props
   .social-links {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 0.85rem;
-    width: 100%;
-    max-width: 100%;
-    margin-block: 0.5rem;
-    padding: 0;
+    gap: 0.45rem;
   }
 
-  .social-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.55rem;
-    border: 2px solid var(--retro-border);
-    background: var(--theme-background);
-    box-shadow: var(--retro-shadow-sm);
-    color: var(--retro-secondary);
+  a {
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    border: 1px solid var(--theme-border);
+    border-radius: 50%;
+    color: var(--theme-foreground);
     text-decoration: none;
     transition:
-      translate 0.12s ease,
-      box-shadow 0.12s ease,
-      background 0.12s ease,
-      color 0.12s ease;
+      color var(--duration-fast) var(--ease-out-expo),
+      background-color var(--duration-fast) var(--ease-out-expo),
+      border-color var(--duration-fast) var(--ease-out-expo),
+      transform var(--duration-fast) var(--ease-out-expo);
   }
 
-  .social-link:nth-child(4n + 1) {
-    color: var(--retro-primary);
-  }
-  .social-link:nth-child(4n + 2) {
-    color: var(--retro-secondary);
-  }
-  .social-link:nth-child(4n + 3) {
-    color: var(--retro-green);
-  }
-  .social-link:nth-child(4n + 4) {
-    color: var(--retro-purple);
+  a:hover {
+    border-color: var(--theme-accent);
+    color: var(--theme-on-accent);
+    background: var(--theme-accent);
+    transform: translateY(-2px);
   }
 
-  .social-link:hover,
-  .social-link:focus-visible {
-    translate: -2px -2px;
-    background: var(--retro-secondary);
-    color: var(--retro-on-accent);
-    box-shadow: var(--retro-shadow);
-    outline: none;
+  a:active {
+    transform: translateY(0) scale(0.96);
   }
 
-  .social-link :global(svg) {
-    display: block;
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
   }
 </style>

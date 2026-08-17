@@ -1,121 +1,90 @@
 ---
-import IconChevronUp from '~/icons/chevron-up.svg'
-
-interface Props {
-  /**
-   * CSS selector for the element to observe for showing/hiding the button.
-   * Defaults to 'article div.prose'.
-   */
-  observeSelector?: string
-}
-
-const { observeSelector = 'article div.prose' } = Astro.props
+import { Icon } from 'astro-icon/components'
 ---
 
-<button
-  hidden
-  aria-label="Scroll to top"
-  class="scroll-up size-11 fixed flex items-center justify-center bg-background z-100 bottom-3 right-3 rounded-full border-2 border-accent/20 hover:bg-accent/10 md:size-12 md:bottom-5 md:right-5 lg:size-13 lg:bottom-6 lg:right-6"
-  data-observe={observeSelector}
->
-  <IconChevronUp class="text-accent/50 size-8 lg:size-9" />
+<button hidden type="button" aria-label="Scroll to top" class="scroll-up" data-magnetic>
+  <Icon name="ph:arrow-up" aria-hidden="true" />
 </button>
 
 <script>
-  function transitionHiddenElement(
-    element: HTMLElement,
-    transitionProperty: string,
-    transitionClass: string,
-  ) {
-    const listener = (e: TransitionEvent) => {
-      if (e.target === element && e.propertyName === transitionProperty) {
-        element.setAttribute('hidden', 'true')
-        element.removeEventListener('transitionend', listener)
-      }
-    }
-    return {
-      show() {
-        element.removeEventListener('transitionend', listener)
-        element.removeAttribute('hidden')
-        // Force a browser re-paint
-        const _reflow = element.offsetHeight
-        element.classList.add(transitionClass)
-      },
-      hide() {
-        element.addEventListener('transitionend', listener)
-        element.classList.remove(transitionClass)
-      },
-    }
-  }
+  const button = document.querySelector<HTMLButtonElement>('button.scroll-up')
+  const sentinel = document.querySelector<HTMLElement>('[data-scroll-top-sentinel]')
 
-  function init() {
-    const button = document.querySelector('button.scroll-up') as HTMLButtonElement
-    if (!button) {
-      console.warn('Scroll up button not found in the document.')
-      return
-    }
-
-    const observeSelector = button.dataset.observe || 'article div.prose'
+  if (button && sentinel) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 
     button.addEventListener('click', () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      window.scrollTo({
+        top: 0,
+        behavior: reduceMotion.matches ? 'auto' : 'smooth',
+      })
     })
 
-    // Use IntersectionObserver to show/hide the button
-    const observeElement = document.querySelector(observeSelector)
-    if (!observeElement) {
-      console.warn(`Observe element not found: ${observeSelector}`)
-      return
+    const setVisible = (visible: boolean) => {
+      if (visible) {
+        button.hidden = false
+        requestAnimationFrame(() => button.classList.add('is-visible'))
+      } else {
+        button.classList.remove('is-visible')
+      }
     }
 
-    const btnControl = transitionHiddenElement(button, 'opacity', 'active')
+    button.addEventListener('transitionend', (event) => {
+      if (event.propertyName === 'opacity' && !button.classList.contains('is-visible')) {
+        button.hidden = true
+      }
+    })
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            btnControl.show()
-          } else {
-            btnControl.hide()
-          }
-        })
-      },
-      // Only consider the top 5% of the viewport
-      { rootMargin: `0px 0px -95% 0px` },
-    )
-    observer.observe(observeElement)
+    new IntersectionObserver(([entry]) => setVisible(!entry.isIntersecting), {
+      threshold: 0,
+    }).observe(sentinel)
   }
-
-  init()
 </script>
 
 <style>
-  /* When button appears, slide it in from the bottom */
-  button.scroll-up {
-    border: 2px solid var(--retro-border, var(--theme-accent)) !important;
-    border-radius: 0 !important;
-    background: var(--retro-primary, var(--theme-background)) !important;
-    color: var(--retro-on-accent, var(--theme-foreground));
-    box-shadow: var(--retro-shadow-sm, 3px 3px 0 0 #000);
-    opacity: 1;
-    transform: translateY(0);
-    transition:
-      background-color 120ms ease,
-      box-shadow 120ms ease,
-      opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-      transform 0.3s ease-in-out,
-      translate 120ms ease;
-  }
-  button.scroll-up:hover {
-    background: var(--retro-secondary, var(--theme-accent)) !important;
-    box-shadow: var(--retro-shadow, 6px 6px 0 0 #000);
-    translate: -2px -2px;
-  }
-  button.scroll-up :global(svg) {
-    color: currentColor;
-  }
-  button.scroll-up:not(.active) {
-    transform: translateY(10px);
+  .scroll-up {
+    position: fixed;
+    z-index: var(--z-overlay);
+    right: clamp(1rem, 3vw, 2rem);
+    bottom: clamp(1rem, 3vw, 2rem);
+    display: grid;
+    width: 3.1rem;
+    height: 3.1rem;
+    min-height: 0;
+    padding: 0;
+    place-items: center;
+    border: 1px solid var(--theme-accent);
+    border-radius: 50%;
+    color: var(--theme-on-accent);
+    background: var(--theme-accent);
+    box-shadow: 0 0.8rem 2.4rem var(--theme-shadow);
     opacity: 0;
+    transform: translateY(0.75rem) scale(0.92);
+    transition:
+      opacity var(--duration-fast) var(--ease-out-expo),
+      transform var(--duration-fast) var(--ease-out-expo),
+      color var(--duration-fast) var(--ease-out-expo),
+      background-color var(--duration-fast) var(--ease-out-expo);
+  }
+
+  .scroll-up.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .scroll-up:hover {
+    color: var(--theme-surface);
+    background: var(--theme-foreground);
+  }
+
+  .scroll-up svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-up {
+      transform: none;
+    }
   }
 </style>

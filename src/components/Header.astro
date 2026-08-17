@@ -1,194 +1,421 @@
 ---
+import { Icon } from 'astro-icon/components'
+import { Image } from 'astro:assets'
 import siteConfig from '~/site.config'
 import LightDarkAutoButton from '~/components/LightDarkAutoButton.astro'
 import Search from '~/components/Search.astro'
 import SelectTheme from '~/components/SelectTheme.astro'
 import NavLink from '~/components/NavLink.astro'
-import IconGitHub from '~/icons/github.svg'
+import avatarImage from '~/content/avatar.png'
+import GitHubMark from '~/icons/github.svg'
 
 const lightDarkAutoTheme = siteConfig.themes.mode === 'light-dark-auto'
 const selectTheme =
   siteConfig.themes.mode === 'select' && siteConfig.themes.include.length > 1
+
+const primaryNames = new Set(['Blog', 'Projects', 'About', 'Speaking'])
+const exploreNames = new Set(['Media', 'Slides', 'Conclusions', 'Pictures'])
+const primaryLinks = siteConfig.navLinks.filter((link) => primaryNames.has(link.name))
+const exploreLinks = siteConfig.navLinks.filter((link) => exploreNames.has(link.name))
+const githubUrl = siteConfig.socialLinks.github
+const mobileLinks = siteConfig.navLinks.filter((link) => link.name !== 'Home')
 ---
 
-<header>
-  <div class="relative flex items-center justify-between bg-accent/10 rounded-xl">
-    <a
-      id="logo"
-      href="/"
-      class="block px-4 py-1.5 max-w-full no-underline items-center bg-accent text-background font-bold rounded-xl"
-    >
-      {siteConfig.title}
+<site-header>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="David Pine, home">
+      <Image class="brand-avatar" src={avatarImage} alt="" width={42} height={42} />
+      <span class="brand-name">David Pine</span>
     </a>
-    <div class="flex items-center gap-3 sm:mr-3">
+
+    <nav class="desktop-nav" aria-label="Primary navigation">
+      <ul>
+        {
+          primaryLinks.map((link) => (
+            <li>
+              <NavLink link={link} />
+            </li>
+          ))
+        }
+        <li>
+          <details class="explore-menu">
+            <summary>
+              Explore
+              <Icon name="ph:caret-down" aria-hidden="true" />
+            </summary>
+            <div class="explore-panel">
+              {exploreLinks.map((link) => <NavLink link={link} />)}
+            </div>
+          </details>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="header-tools">
       <Search trailingSlashes={siteConfig.trailingSlashes} />
       {lightDarkAutoTheme && <LightDarkAutoButton />}
       {selectTheme && <SelectTheme />}
-      <a
-        href="https://github.com/IEvangelist"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="GitHub"
-        class="hover:text-accent flex cursor-pointer items-center justify-center rounded-md no-underline"
+      {
+        githubUrl && (
+          <a
+            class="icon-control github-control"
+            href={githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+          >
+            <GitHubMark aria-hidden="true" />
+          </a>
+        )
+      }
+      <button
+        class="icon-control mobile-menu-trigger"
+        type="button"
+        aria-label="Open navigation"
+        aria-haspopup="dialog"
+        data-open-mobile-menu
       >
-        <IconGitHub class="size-6 text-accent" />
-        <span class="sr-only">GitHub</span>
-      </a>
-      <nav id="nav-mobile" aria-label="Menu" class="p-0 text-accent sm:hidden">
+        <Icon name="ph:list" aria-hidden="true" />
+      </button>
+    </div>
+  </header>
+
+  <dialog class="mobile-menu" aria-labelledby="mobile-menu-title" data-mobile-menu>
+    <div class="mobile-menu-frame">
+      <div class="mobile-menu-header">
+        <p id="mobile-menu-title" class="font-display">Navigate</p>
         <button
-          id="nav-mobile-button"
-          class="nav-mobile-button"
+          class="icon-control"
           type="button"
-          aria-expanded="false"
-          aria-controls="nav-mobile-list"
+          aria-label="Close navigation"
+          data-close-mobile-menu
         >
-          <span aria-hidden="true">▾</span>
-          <span class="sr-only">Toggle navigation menu</span>
+          <Icon name="ph:x" aria-hidden="true" />
         </button>
-        <ul id="nav-mobile-list" class="nav-mobile-list" hidden>
+      </div>
+      <nav aria-label="Mobile navigation">
+        <ul>
           {
-            siteConfig.navLinks.map((link) => (
-              <li class="p-1" aria-expanded="false">
+            mobileLinks.map((link) => (
+              <li>
                 <NavLink link={link} />
               </li>
             ))
           }
         </ul>
       </nav>
+      <p class="mobile-menu-note">
+        Writing, software, speaking, and the work behind them.
+      </p>
     </div>
-  </div>
-  <nav aria-label="Menu" class="p-0 mt-4 ml-0.5 text-accent hidden sm:block">
-    <ul class="flex flex-row text-accent">
-      {
-        siteConfig.navLinks.map((link) => (
-          <li class="mr-5" aria-expanded="true">
-            <NavLink link={link} />
-          </li>
-        ))
-      }
-    </ul>
-  </nav>
-</header>
+  </dialog>
+</site-header>
 
 <script>
-  function initMobileNav() {
-    const navMobile = document.getElementById('nav-mobile')
-    const navMobileButton = document.getElementById('nav-mobile-button')
-    const navMobileList = document.getElementById('nav-mobile-list')
-    const navMobileListItems = navMobileList?.querySelectorAll('li')
+  class SiteHeader extends HTMLElement {
+    #controller = new AbortController()
+    #dialog = this.querySelector<HTMLDialogElement>('[data-mobile-menu]')
+    #openButton = this.querySelector<HTMLButtonElement>('[data-open-mobile-menu]')
+    #closeButton = this.querySelector<HTMLButtonElement>('[data-close-mobile-menu]')
 
-    if (
-      !(navMobile instanceof HTMLElement) ||
-      !(navMobileButton instanceof HTMLButtonElement) ||
-      !(navMobileList instanceof HTMLUListElement) ||
-      navMobile.dataset.initialized === 'true'
-    ) {
-      return
-    }
+    connectedCallback() {
+      const options = { signal: this.#controller.signal }
+      this.#openButton?.addEventListener('click', this.#open, options)
+      this.#closeButton?.addEventListener('click', this.#close, options)
+      this.#dialog?.addEventListener('click', this.#onDialogClick, options)
+      this.#dialog?.addEventListener('close', this.#onClose, options)
 
-    navMobile.dataset.initialized = 'true'
-
-    const setNavMobileMenu = (isOpen: boolean) => {
-      navMobileList.hidden = !isOpen
-      navMobileButton.setAttribute('aria-expanded', isOpen ? 'true' : 'false')
-      navMobileListItems?.forEach((listItem) => {
-        listItem.setAttribute('aria-expanded', isOpen ? 'true' : 'false')
+      this.querySelectorAll<HTMLAnchorElement>('.mobile-menu a').forEach((link) => {
+        link.addEventListener('click', this.#close, options)
       })
     }
 
-    navMobileButton.addEventListener('click', (event) => {
-      event.stopPropagation()
-      setNavMobileMenu(navMobileList.hidden)
-    })
+    disconnectedCallback() {
+      this.#controller.abort()
+    }
 
-    navMobileList.addEventListener('click', (event) => {
-      const target = event.target
-      if (target instanceof Element && target.closest('a')) {
-        setNavMobileMenu(false)
-      }
-    })
+    #open = () => {
+      this.#dialog?.showModal()
+      document.body.classList.add('dialog-open')
+    }
 
-    document.addEventListener('click', (event) => {
-      const target = event.target
-      if (!(target instanceof Node) || !navMobile.contains(target)) {
-        setNavMobileMenu(false)
-      }
-    })
+    #close = () => {
+      this.#dialog?.close()
+    }
 
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        setNavMobileMenu(false)
-        navMobileButton.focus()
+    #onClose = () => {
+      document.body.classList.remove('dialog-open')
+      this.#openButton?.focus()
+    }
+
+    #onDialogClick = (event: MouseEvent) => {
+      if (event.target === this.#dialog) {
+        this.#close()
       }
-    })
+    }
   }
 
-  initMobileNav()
-  document.addEventListener('astro:page-load', initMobileNav)
+  if (!customElements.get('site-header')) {
+    customElements.define('site-header', SiteHeader)
+  }
 </script>
 
 <style>
-  #nav-mobile {
-    position: relative;
-    align-self: stretch;
+  site-header {
+    position: sticky;
+    z-index: var(--z-sticky);
+    top: 0;
+    display: block;
+    padding-top: 0.75rem;
   }
 
-  .nav-mobile-button {
-    display: inline-flex;
-    height: 100%;
-    min-height: 3.1rem;
-    min-width: 3.1rem;
-    cursor: pointer;
+  .site-header {
+    display: grid;
+    grid-template-columns: minmax(12rem, 1fr) auto minmax(12rem, 1fr);
     align-items: center;
-    justify-content: center;
-    border: 0;
-    border-left: 2px solid var(--retro-outline);
-    border-radius: 0;
-    background: var(--retro-panel);
-    box-shadow: none;
-    color: var(--retro-secondary);
-    font-weight: 900;
-    transition:
-      background 0.12s ease,
-      color 0.12s ease;
+    min-height: 4.5rem;
+    padding: 0.55rem 0.65rem;
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-control);
+    background: color-mix(in oklab, var(--theme-background) 82%, transparent);
+    box-shadow: 0 0.75rem 2.5rem var(--theme-shadow);
+    backdrop-filter: blur(18px) saturate(130%);
   }
 
-  .nav-mobile-button[aria-expanded='true'] {
-    background: var(--retro-primary);
-    color: var(--retro-on-accent);
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    width: max-content;
+    color: var(--theme-foreground);
+    text-decoration: none;
   }
 
-  .nav-mobile-button:hover,
-  .nav-mobile-button:focus-visible {
-    background: var(--retro-primary);
-    color: var(--retro-on-accent);
-    outline: none;
+  .brand-avatar {
+    width: 2.65rem;
+    height: 2.65rem;
+    border: 2px solid var(--theme-accent);
+    border-radius: 50%;
+    object-fit: cover;
   }
 
-  .nav-mobile-list {
-    position: absolute;
-    top: calc(100% + 0.65rem);
-    right: 0;
-    z-index: 80;
+  .brand-name {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+
+  .desktop-nav > ul {
     display: flex;
-    width: min(17rem, calc(100vw - 2rem));
-    max-width: calc(100vw - 2rem);
-    flex-direction: column;
-    gap: 0.35rem;
-    border: 2px solid var(--retro-border);
-    border-radius: 0;
-    background: var(--retro-panel);
-    box-shadow: var(--retro-shadow);
-    color: var(--retro-secondary);
+    align-items: center;
+    gap: clamp(1rem, 2vw, 2rem);
     margin: 0;
-    padding: 0.75rem;
+    padding: 0;
+    list-style: none;
   }
 
-  .nav-mobile-list[hidden] {
+  .desktop-nav li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .explore-menu {
+    position: relative;
+  }
+
+  .explore-menu summary {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--theme-text-muted);
+    font-size: 0.94rem;
+    font-weight: 600;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .explore-menu summary::-webkit-details-marker {
     display: none;
   }
 
-  .nav-mobile-list li {
-    padding: 0.35rem;
+  .explore-menu summary svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    transition: transform var(--duration-fast) var(--ease-out-expo);
+  }
+
+  .explore-menu[open] summary svg {
+    transform: rotate(180deg);
+  }
+
+  .explore-panel {
+    position: absolute;
+    top: calc(100% + 1.2rem);
+    left: 50%;
+    display: grid;
+    min-width: 13rem;
+    padding: 0.65rem;
+    border: 1px solid var(--theme-border);
+    border-radius: 1rem;
+    background: var(--theme-background);
+    box-shadow: 0 1.25rem 4rem var(--theme-shadow);
+    transform: translateX(-50%);
+  }
+
+  .explore-panel :global(.nav-link) {
+    padding: 0.7rem 0.8rem;
+    border-radius: 0.65rem;
+  }
+
+  .explore-panel :global(.nav-link:hover),
+  .explore-panel :global(.nav-link[aria-current='page']) {
+    background: var(--theme-accent-soft);
+  }
+
+  .header-tools {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.25rem;
+  }
+
+  :global(.icon-control) {
+    display: inline-grid;
+    width: 2.65rem;
+    height: 2.65rem;
+    min-height: 0;
+    padding: 0;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    color: var(--theme-foreground);
+    background: transparent;
+    text-decoration: none;
+    transition:
+      color var(--duration-fast) var(--ease-out-expo),
+      background-color var(--duration-fast) var(--ease-out-expo),
+      transform var(--duration-fast) var(--ease-out-expo);
+  }
+
+  :global(.icon-control:hover) {
+    color: var(--theme-on-accent);
+    background: var(--theme-accent);
+  }
+
+  :global(.icon-control:active) {
+    transform: scale(0.94);
+  }
+
+  :global(.icon-control svg) {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+
+  .mobile-menu-trigger {
+    display: none;
+  }
+
+  .mobile-menu {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: var(--theme-foreground);
+    background: var(--theme-background);
+  }
+
+  .mobile-menu::backdrop {
+    background: color-mix(in oklab, var(--theme-background) 55%, transparent);
+    backdrop-filter: blur(10px);
+  }
+
+  .mobile-menu-frame {
+    display: flex;
+    min-height: 100dvh;
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .mobile-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--theme-border);
+  }
+
+  .mobile-menu-header p {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 600;
+  }
+
+  .mobile-menu ul {
+    margin: 0;
+    padding: 1.25rem 0 0;
+    list-style: none;
+  }
+
+  .mobile-menu li {
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid var(--theme-border);
+    list-style: none;
+  }
+
+  .mobile-menu :global(.nav-link) {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.85rem 0;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 10vw, 3.25rem);
+    line-height: 1;
+    letter-spacing: -0.045em;
+  }
+
+  .mobile-menu :global(.nav-link)::after {
+    content: '↗';
+    color: var(--theme-text-muted);
+    font-family: var(--font-body);
+    font-size: 1rem;
+  }
+
+  .mobile-menu-note {
+    max-width: 26rem;
+    margin: auto 0 0;
+    padding-top: 2rem;
+    color: var(--theme-text-muted);
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .site-header {
+      background: var(--theme-background);
+    }
+  }
+
+  @media (max-width: 63.99rem) {
+    .site-header {
+      grid-template-columns: 1fr auto;
+    }
+
+    .desktop-nav,
+    .github-control {
+      display: none;
+    }
+
+    .mobile-menu-trigger {
+      display: inline-grid;
+    }
+  }
+
+  @media (max-width: 32rem) {
+    .brand-name {
+      display: none;
+    }
   }
 </style>

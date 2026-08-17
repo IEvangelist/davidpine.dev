@@ -1,6 +1,5 @@
 ---
-import IconChevronsLeft from '~/icons/chevrons-left.svg'
-import IconChevronsRight from '~/icons/chevrons-right.svg'
+import { Icon } from 'astro-icon/components'
 
 interface Props {
   prevLink?: string
@@ -12,32 +11,78 @@ interface Props {
 const { prevLink, prevText, nextLink, nextText } = Astro.props
 ---
 
-<div class="my-5 flex flex-row flex-wrap gap-3 justify-center">
+<nav class="pagination" aria-label="Pagination">
   {
-    prevLink && (
-      <a
-        href={prevLink}
-        aria-label="Previous Page"
-        class="button flex-row items-center justify-center w-full !pr-3.5 sm:w-min"
-      >
-        <IconChevronsLeft class="mr-2 text-xl size-5" />
-        {prevText || 'Previous'}
+    prevLink ? (
+      <a href={prevLink} rel="prev">
+        <Icon name="ph:arrow-left" aria-hidden="true" />
+        <span>{prevText || 'Previous'}</span>
       </a>
+    ) : (
+      <span />
     )
   }
   {
     nextLink && (
-      <a
-        href={nextLink}
-        aria-label="Next Page"
-        class:list={[
-          'button flex-row items-center justify-center w-full !pl-3.5 sm:w-min',
-          prevLink && 'ml-auto',
-        ]}
-      >
-        {nextText || 'Next'}
-        <IconChevronsRight class="ml-2 text-xl size-5" />
+      <a href={nextLink} rel="next">
+        <span>{nextText || 'Next'}</span>
+        <Icon name="ph:arrow-right" aria-hidden="true" />
       </a>
     )
   }
-</div>
+</nav>
+
+<style>
+  .pagination {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 1rem;
+    margin-top: clamp(3rem, 7vw, 6rem);
+    padding-top: 2rem;
+    border-top: 1px solid var(--theme-border);
+  }
+
+  a {
+    display: inline-flex;
+    width: max-content;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--theme-foreground);
+    font-weight: 700;
+    text-decoration-color: var(--theme-accent);
+    text-underline-offset: 0.3rem;
+  }
+
+  a:last-child {
+    justify-self: end;
+  }
+
+  a:hover {
+    color: var(--theme-accent);
+  }
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform var(--duration-fast) var(--ease-out-expo);
+  }
+
+  a:first-child:hover svg {
+    transform: translateX(-0.2rem);
+  }
+
+  a:last-child:hover svg {
+    transform: translateX(0.2rem);
+  }
+
+  @media (max-width: 31.99rem) {
+    .pagination {
+      grid-template-columns: 1fr;
+    }
+
+    a:last-child {
+      justify-self: start;
+    }
+  }
+</style>

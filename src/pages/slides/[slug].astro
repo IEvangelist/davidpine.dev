@@ -3,6 +3,7 @@ import Layout from '~/layouts/Layout.astro'
 import { SlideViewer } from '~/components/slide/slide-viewer'
 import { getCollection } from 'astro:content'
 import { getImage } from 'astro:assets'
+import { Icon } from 'astro-icon/components'
 
 const slideImageAssets = import.meta.glob<{ default: ImageMetadata }>(
   '/src/assets/slides/**/*.{png,jpg,jpeg,webp}',
@@ -82,30 +83,13 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
               title="Toggle auto-play"
               data-auto-slide={slide.data.autoSlide}
             >
-              <svg
+              <Icon
                 id="autoslide-play-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                stroke="none"
+                name="ph:play-fill"
+                aria-hidden="true"
                 style="display:none;"
-              >
-                <polygon points="6 3 20 12 6 21 6 3" />
-              </svg>
-              <svg
-                id="autoslide-pause-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                stroke="none"
-              >
-                <rect x="6" y="4" width="4" height="16" />
-                <rect x="14" y="4" width="4" height="16" />
-              </svg>
+              />
+              <Icon id="autoslide-pause-icon" name="ph:pause-fill" aria-hidden="true" />
             </button>
           )
         }
@@ -115,62 +99,16 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
           class="print-button"
           title="Print / Export PDF"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="6 9 6 2 18 2 18 9"></polyline>
-            <path
-              d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"
-            ></path>
-            <rect x="6" y="14" width="12" height="8"></rect>
-          </svg>
+          <Icon name="ph:printer" aria-hidden="true" />
         </a>
         <button id="expand-btn" class="expand-button" title="Expand slides">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="15 3 21 3 21 9"></polyline>
-            <polyline points="9 21 3 21 3 15"></polyline>
-            <line x1="21" y1="3" x2="14" y2="10"></line>
-            <line x1="3" y1="21" x2="10" y2="14"></line>
-          </svg>
+          <Icon name="ph:arrows-out" aria-hidden="true" />
         </button>
       </div>
     </div>
     <div class="slide-container" id="slide-container">
       <button id="collapse-btn" class="collapse-button" title="Exit expanded view">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <polyline points="4 14 10 14 10 20"></polyline>
-          <polyline points="20 10 14 10 14 4"></polyline>
-          <line x1="14" y1="10" x2="21" y2="3"></line>
-          <line x1="3" y1="21" x2="10" y2="14"></line>
-        </svg>
+        <Icon name="ph:arrows-in" aria-hidden="true" />
       </button>
       <SlideViewer
         client:only="react"
@@ -323,7 +261,7 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
 
   .slide-viewer-page.slides-expanded {
     padding: 0;
-    min-height: 100vh;
+    min-height: 100dvh;
     position: fixed;
     inset: 0;
     z-index: 100;
@@ -391,23 +329,21 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     border: 2px solid var(--theme-accent);
     border-radius: 0;
     cursor: pointer;
+    color: var(--theme-accent);
     transition:
       background 0.2s ease,
       transform 0.2s ease;
   }
 
   .autoslide-button svg {
-    fill: var(--theme-accent);
-    transition: fill 0.2s ease;
+    color: currentColor;
+    transition: color 0.2s ease;
   }
 
   .autoslide-button:hover {
     background: var(--theme-accent);
+    color: var(--theme-on-accent);
     transform: scale(1.05);
-  }
-
-  .autoslide-button:hover svg {
-    fill: var(--theme-background);
   }
 
   .slides-expanded .autoslide-button {
@@ -423,23 +359,21 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     border: 2px solid var(--theme-accent);
     border-radius: 0;
     cursor: pointer;
+    color: var(--theme-accent);
     transition:
       background 0.2s ease,
       transform 0.2s ease;
   }
 
   .expand-button svg {
-    stroke: var(--theme-accent);
-    transition: stroke 0.2s ease;
+    color: currentColor;
+    transition: color 0.2s ease;
   }
 
   .expand-button:hover {
     background: var(--theme-accent);
+    color: var(--theme-on-accent);
     transform: scale(1.05);
-  }
-
-  .expand-button:hover svg {
-    stroke: var(--theme-background);
   }
 
   .slides-expanded .expand-button {
@@ -464,6 +398,7 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     border: 2px solid var(--theme-accent);
     border-radius: 0;
     cursor: pointer;
+    color: var(--theme-accent);
     transition:
       background 0.2s ease,
       transform 0.2s ease;
@@ -471,29 +406,26 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
   }
 
   .print-button svg {
-    stroke: var(--theme-accent);
-    transition: stroke 0.2s ease;
+    color: currentColor;
+    transition: color 0.2s ease;
   }
 
   .print-button:hover {
     background: var(--theme-accent);
+    color: var(--theme-on-accent);
     transform: scale(1.05);
-  }
-
-  .print-button:hover svg {
-    stroke: var(--theme-background);
   }
 
   .slides-expanded .print-button {
     display: none;
   }
 
-  /* Print mode — full-viewport layout for PDF export (applied client-side) */
+  /* Full-viewport print layout for PDF export. */
   .slide-viewer-page.print-mode {
     padding: 0;
     z-index: 200;
     background: var(--theme-background);
-    min-height: 100vh;
+    min-height: 100dvh;
   }
 
   .slide-container.print-mode {
@@ -524,7 +456,15 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     overflow: hidden;
     border: 2px solid var(--retro-border);
     box-shadow: var(--retro-shadow);
-    transition: all 0.3s ease;
+    transition:
+      width 0.3s ease,
+      height 0.3s ease,
+      max-width 0.3s ease,
+      min-height 0.3s ease,
+      max-height 0.3s ease,
+      border-color 0.3s ease,
+      border-radius 0.3s ease,
+      box-shadow 0.3s ease;
   }
 
   .slide-container.expanded {
@@ -549,9 +489,10 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     right: 1rem;
     z-index: 102;
     padding: 0.75rem;
-    background: rgba(0, 0, 0, 0.7);
-    border: 2px solid rgba(255, 255, 255, 0.4);
+    border: 2px solid var(--theme-border-strong);
     border-radius: 0;
+    color: var(--theme-foreground);
+    background: color-mix(in oklab, var(--theme-background) 88%, transparent);
     cursor: pointer;
     transition:
       background 0.2s ease,
@@ -561,18 +502,15 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
   }
 
   .collapse-button svg {
-    stroke: rgba(255, 255, 255, 0.9);
-    transition: stroke 0.2s ease;
+    color: currentColor;
+    transition: color 0.2s ease;
   }
 
   .collapse-button:hover {
-    background: rgba(0, 0, 0, 0.9);
-    border-color: rgba(255, 255, 255, 0.7);
+    border-color: var(--theme-accent);
+    color: var(--theme-on-accent);
+    background: var(--theme-accent);
     transform: scale(1.05);
-  }
-
-  .collapse-button:hover svg {
-    stroke: white;
   }
 
   .slide-container.expanded .collapse-button {
@@ -624,7 +562,7 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     opacity: 1;
   }
 
-  /* Vertical navigation — down arrow indicator */
+  /* Vertical navigation down-arrow indicator */
   .slide-container :global(.reveal .controls .navigate-down) {
     color: var(--theme-accent);
   }
@@ -665,7 +603,7 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     opacity: 0.8;
   }
 
-  /* Search plugin overlay — terminal theme */
+  /* Search plugin overlay with terminal styling */
   .slide-container :global(.reveal .searchbox) {
     position: absolute !important;
     top: 0.5rem !important;
@@ -751,7 +689,7 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     text-transform: uppercase;
     letter-spacing: 0.05em;
     background: var(--theme-accent);
-    color: var(--theme-background);
+    color: var(--theme-on-accent);
     border-radius: 0 0.75rem 0 0.5rem;
     z-index: 1;
     opacity: 0.9;
@@ -768,7 +706,7 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
     text-transform: uppercase;
     letter-spacing: 0.05em;
     background: var(--theme-accent);
-    color: var(--theme-background);
+    color: var(--theme-on-accent);
     border-radius: 0 0.75rem 0 0.5rem;
     z-index: 1;
     opacity: 0.9;
@@ -903,7 +841,7 @@ const fullContent = `${coverMD}\n---\n${rawContent}`
   .slide-instructions kbd {
     padding: 0.125rem 0.5rem;
     background: var(--theme-accent);
-    color: var(--theme-background);
+    color: var(--theme-on-accent);
     border-radius: 0.25rem;
     font-family: inherit;
     font-weight: 600;

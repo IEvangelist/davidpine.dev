@@ -45,6 +45,20 @@ const createCss = (styles: ColorStyles) => {
   // const cyan = styles.cyan
 
   const altBackground = muted(foreground, 5).mix(Color(background), 0.5).hex()
+  const accentColor = Color(accent)
+  const safeControlColor = (value: string) => {
+    const color = Color(value)
+    if (color.hex().toLowerCase() === '#ffffff') return '#f7f7f5'
+    if (color.hex().toLowerCase() === '#000000') return '#101114'
+    return value
+  }
+  const onAccent = [foreground, background, '#101114', '#f7f7f5']
+    .map(safeControlColor)
+    .reduce((best, candidate) =>
+      accentColor.contrast(Color(candidate)) > accentColor.contrast(Color(best))
+        ? candidate
+        : best,
+    )
   return `
 /*!
  * Modified from GitHub's Dark Dimmed theme, licensed under the MIT License
@@ -83,7 +97,7 @@ main {
   --color-btn-active-bg: ${muted(accent, 70)};
   --color-btn-active-border: transparent;
   --color-btn-selected-bg: ${muted(accent, 70)};
-  --color-btn-primary-text: ${background};
+  --color-btn-primary-text: ${onAccent};
   --color-btn-primary-bg: ${muted(accent, 80)};
   --color-btn-primary-border: transparent;
   --color-btn-primary-shadow: 0 0 transparent;

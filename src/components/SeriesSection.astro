@@ -4,27 +4,108 @@ import { SeriesGroup } from '~/utils'
 
 interface Props {
   posts: CollectionEntry<'posts'>[]
+  limit?: number
 }
 
-const { posts } = Astro.props
-
-const seriesGroup = await SeriesGroup.build(posts)
+const { posts, limit } = Astro.props
+const series = (await SeriesGroup.build(posts)).sortCollationsMostRecent()
+const initialSeries = limit ? series.slice(0, limit) : series
+const remainingSeries = limit ? series.slice(limit) : []
 ---
 
-<ul class="flex flex-wrap gap-x-3 gap-y-4 my-5">
+<div class="series-list">
+  <ul>
+    {
+      initialSeries.map((item) => (
+        <li>
+          <a href={item.url}>
+            <span>{item.title}</span>
+            <span>{item.entries.length} posts</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
   {
-    seriesGroup.sortCollationsMostRecent().map((series) => (
-      <li>
-        <a
-          href={series.url}
-          class="flex items-start gap-2.5 py-2 pl-4 pr-3 bg-accent/7 rounded-3xl border-transparent hover:border-accent/20 border-1 text-foreground/90"
-        >
-          {series.title}
-          <span class="rounded-full bg-foreground/7 text-foreground/90 px-2 py-1 text-xs font-semibold">
-            {series.entries.length}
-          </span>
-        </a>
-      </li>
-    ))
+    remainingSeries.length > 0 && (
+      <details>
+        <summary>Show all {series.length} series</summary>
+        <ul>
+          {remainingSeries.map((item) => (
+            <li>
+              <a href={item.url}>
+                <span>{item.title}</span>
+                <span>{item.entries.length} posts</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
+    )
   }
-</ul>
+</div>
+
+<style>
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--theme-border);
+    list-style: none;
+  }
+
+  a {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 1rem;
+    padding-block: 1rem;
+    color: var(--theme-foreground);
+    text-decoration: none;
+  }
+
+  a span:first-child {
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2vw, 1.65rem);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+
+  a span:last-child {
+    color: var(--theme-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs-fluid);
+  }
+
+  a:hover {
+    color: var(--theme-accent);
+  }
+
+  details {
+    margin-top: 1rem;
+  }
+
+  summary {
+    width: max-content;
+    padding: 0.65rem 1rem;
+    border: 1px solid var(--theme-border-strong);
+    border-radius: var(--radius-control);
+    cursor: pointer;
+    font-weight: 650;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  details ul {
+    margin-top: 1rem;
+  }
+</style>

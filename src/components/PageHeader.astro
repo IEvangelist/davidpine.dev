@@ -2,71 +2,95 @@
 interface Props {
   title?: string
   titlePieces?: string[]
+  description?: string
 }
 
-const { title, titlePieces } = Astro.props
-
-const splitPath: string[] = Astro.url.pathname
+const { title, titlePieces, description } = Astro.props
+const splitPath = Astro.url.pathname
   .split('/')
-  .filter(Boolean) // Remove empty parts
-  .map((part) => decodeURIComponent(part)) // For Unicode chars kept by github-slugger
-
+  .filter(Boolean)
+  .map((part) => decodeURIComponent(part))
 const pieces = titlePieces ?? splitPath
-
-if (pieces.length === 0) {
-  pieces.push('home')
-}
-
-const titleFromPieces = pieces.map((part) => `/ ${part}`)
+const displayTitle =
+  title ?? (pieces.at(-1) === 'posts' ? 'Blog' : (pieces.at(-1) ?? 'Home'))
+const breadcrumbs = pieces.slice(0, -1)
 ---
 
-<div class="page-header">
-  <h1 class="page-header-title">
-    {title ? <span>// {title}</span> : titleFromPieces.map((part) => <span>{part}</span>)}
-  </h1>
-  <span class="page-header-bar" aria-hidden="true"></span>
-</div>
+<header class="page-header" data-reveal>
+  {
+    breadcrumbs.length > 0 && (
+      <nav aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        {breadcrumbs.map((piece) => (
+          <>
+            <span aria-hidden="true">/</span>
+            <span class="breadcrumb-label">{piece}</span>
+          </>
+        ))}
+      </nav>
+    )
+  }
+  <h1>{displayTitle}</h1>
+  {description && <p>{description}</p>}
+</header>
 
 <style>
   .page-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    width: 100%;
-    margin-block: clamp(1.25rem, 4vw, 2rem) 1rem;
-    border: 2px solid var(--retro-border);
-    background:
-      linear-gradient(
-        135deg,
-        color-mix(in oklab, var(--retro-primary) 12%, transparent),
-        transparent 52%
-      ),
-      var(--retro-panel);
-    box-shadow: var(--retro-shadow);
-    padding: clamp(0.75rem, 2vw, 1.1rem) clamp(0.9rem, 2.5vw, 1.4rem);
+    display: grid;
+    gap: 1.25rem;
+    padding-block: clamp(4.5rem, 11vw, 9rem);
+    border-bottom: 1px solid transparent;
+    border-image: linear-gradient(
+        90deg,
+        var(--theme-accent),
+        var(--theme-blue),
+        var(--theme-magenta),
+        var(--theme-border) 72%
+      )
+      1;
   }
 
-  .page-header-title {
-    display: inline-flex;
+  nav {
+    display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.4rem 0.85rem;
-    margin: 0;
-    color: var(--retro-secondary);
-    font-size: clamp(1.5rem, 4vw, 2rem);
-    font-weight: 900;
-    letter-spacing: 0.04em;
-    line-height: 1;
-    text-transform: uppercase;
+    gap: 0.55rem;
+    color: var(--theme-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs-fluid);
   }
 
-  .page-header-bar {
-    flex: 0 0 auto;
-    width: clamp(2.5rem, 12vw, 5rem);
-    height: 0.75rem;
-    margin-left: auto;
-    border: 2px solid var(--retro-border);
-    background: var(--retro-primary);
-    box-shadow: var(--retro-shadow-sm);
+  nav a {
+    color: inherit;
+    text-underline-offset: 0.25rem;
+  }
+
+  .breadcrumb-label {
+    text-transform: capitalize;
+  }
+
+  nav a:hover {
+    color: var(--theme-accent);
+  }
+
+  h1 {
+    max-width: 15ch;
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h1-fluid);
+    font-weight: 600;
+    line-height: 0.9;
+    letter-spacing: -0.055em;
+    color: var(--theme-heading1);
+    text-wrap: balance;
+  }
+
+  p {
+    max-width: 58ch;
+    margin: 0;
+    color: var(--theme-text-muted);
+    font-size: var(--text-lead-fluid);
+    line-height: 1.5;
+    text-wrap: pretty;
   }
 </style>
