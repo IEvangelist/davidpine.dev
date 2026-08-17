@@ -45,6 +45,7 @@ const createCss = (styles: ColorStyles) => {
   // const cyan = styles.cyan
 
   const altBackground = muted(foreground, 5).mix(Color(background), 0.5).hex()
+  const colorScheme = Color(background).luminosity() < 0.5 ? 'dark' : 'light'
   const accentColor = Color(accent)
   const safeControlColor = (value: string) => {
     const color = Color(value)
@@ -65,6 +66,15 @@ const createCss = (styles: ColorStyles) => {
  * Copyright (c) 2018 GitHub Inc.
  * https://github.com/primer/primitives/blob/main/LICENSE
  */
+
+:root {
+  color-scheme: ${colorScheme};
+}
+
+html,
+body {
+  background: transparent !important;
+}
 
 main {
   --color-prettylights-syntax-comment: ${comment};
@@ -141,6 +151,7 @@ main {
   /*! Extensions from @primer/css/alerts/flash.scss */
   --color-social-reaction-bg-hover: var(--color-scale-gray-7);
   --color-social-reaction-bg-reacted-hover: ${muted(accent, 10)};
+  background: transparent;
 }
 
 main .pagination-loader-container {
@@ -152,6 +163,19 @@ main .pagination-loader-container {
 textarea::placeholder,
 input::placeholder {
   color: ${muted(foreground, 80)} !important;
+}
+
+textarea,
+input:not([type]),
+input[type='search'],
+input[type='text'] {
+  border-color: ${muted(foreground, 20)} !important;
+  color: ${foreground} !important;
+  background-color: ${altBackground} !important;
+}
+
+textarea {
+  min-height: 7.5rem !important;
 }
 
 .gsc-reactions-count {

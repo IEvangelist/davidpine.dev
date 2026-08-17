@@ -132,7 +132,12 @@ const relatedPosts = series
     relatedPosts.length > 0 && (
       <section class="article-followup">
         <DividerText text={series ? `More from ${series.title}` : 'Keep reading'} />
-        <div class="related-grid">
+        <div
+          class:list={[
+            'related-grid',
+            `related-grid--${Math.min(relatedPosts.length, 3)}`,
+          ]}
+        >
           {relatedPosts.map((relatedPost) => (
             <PostPreview post={relatedPost} variant="compact" />
           ))}
@@ -151,7 +156,13 @@ const relatedPosts = series
     siteConfig.giscus && (
       <section class="comments-section">
         <DividerText text="Comments" />
-        <GiscusLoader />
+        <p class="comments-intro">
+          Questions, corrections, and additions are welcome. Sign in with GitHub to join
+          the discussion.
+        </p>
+        <div class="comments-panel">
+          <GiscusLoader />
+        </div>
       </section>
     )
   }
@@ -267,6 +278,7 @@ const relatedPosts = series
 
   .article-followup,
   .comments-section {
+    width: 100%;
     max-width: var(--content-medium);
     margin: var(--section-space) auto 0;
     padding-top: clamp(3rem, 6vw, 5rem);
@@ -275,8 +287,40 @@ const relatedPosts = series
 
   .related-grid {
     display: grid;
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .related-grid--1 {
+    grid-template-columns: minmax(0, 40rem);
+  }
+
+  .related-grid--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .related-grid--3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0 2rem;
+  }
+
+  .comments-intro {
+    max-width: 58ch;
+    margin: -0.5rem 0 2rem;
+    color: var(--theme-text-muted);
+    line-height: 1.6;
+    text-wrap: pretty;
+  }
+
+  .comments-panel {
+    width: 100%;
+    min-height: 12rem;
+    padding: clamp(0.75rem, 2.5vw, 2rem);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-panel);
+    background: var(--theme-surface);
+  }
+
+  .comments-panel :global(.giscus) {
+    width: 100%;
   }
 
   .series-index-link {
@@ -316,7 +360,8 @@ const relatedPosts = series
   }
 
   @media (max-width: 47.99rem) {
-    .related-grid {
+    .related-grid--2,
+    .related-grid--3 {
       grid-template-columns: 1fr;
     }
   }

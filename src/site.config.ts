@@ -7,7 +7,7 @@ const config: SiteConfig = {
   title: 'David Pine | @IEvangelist',
   // The description of your site, used for SEO and RSS feed.
   description:
-    'Senior software engineer at Microsoft building aspire.dev, former Google Developer Expert in web technologies. Bestselling author, international speaker, and open source enthusiast.',
+    'David Pine is a Microsoft software engineer on the Aspire team, an author, speaker, and open-source maintainer writing about .NET and developer experience.',
   // The author of the site, used in the footer, SEO, and RSS feed.
   author: 'David Pine',
   // Keywords for SEO, used in the meta tags.

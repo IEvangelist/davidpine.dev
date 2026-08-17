@@ -11,6 +11,7 @@ const repoId = giscusConfig.repoId
 const category = giscusConfig.category
 const categoryId = giscusConfig.categoryId
 const reactionsEnabled = giscusConfig.reactionsEnabled ? '1' : '0'
+const themeVersion = process.env.COMMIT_REF ?? process.env.GITHUB_SHA ?? 'local'
 ---
 
 <div
@@ -21,9 +22,20 @@ const reactionsEnabled = giscusConfig.reactionsEnabled ? '1' : '0'
   data-category={category}
   data-category-id={categoryId}
   data-reactions-enabled={reactionsEnabled}
+  data-theme-version={themeVersion}
 >
 </div>
 <script>
+  function resolveGiscusTheme(origin: string, theme: string, version: string) {
+    if (['127.0.0.1', 'localhost'].includes(window.location.hostname)) {
+      return document.documentElement.getAttribute('data-ui-tone') === 'light'
+        ? 'light'
+        : 'transparent_dark'
+    }
+
+    return `${origin}/giscus/${theme}.css?v=${version}`
+  }
+
   function loadGiscus() {
     const giscusDiv = document.querySelector('.giscus')
     if (!giscusDiv) {
@@ -35,6 +47,7 @@ const reactionsEnabled = giscusConfig.reactionsEnabled ? '1' : '0'
     const category = giscusDiv.getAttribute('data-category')
     const categoryId = giscusDiv.getAttribute('data-category-id')
     const reactionsEnabled = giscusDiv.getAttribute('data-reactions-enabled')
+    const themeVersion = giscusDiv.getAttribute('data-theme-version')
     const theme = document.documentElement.getAttribute('data-theme')
     if (
       !origin ||
@@ -43,6 +56,7 @@ const reactionsEnabled = giscusConfig.reactionsEnabled ? '1' : '0'
       !category ||
       !categoryId ||
       !reactionsEnabled ||
+      !themeVersion ||
       !theme
     ) {
       throw new Error('Giscus configuration missing in the Giscus div.')
@@ -57,33 +71,41 @@ const reactionsEnabled = giscusConfig.reactionsEnabled ? '1' : '0'
     script.setAttribute('data-strict', '0')
     script.setAttribute('data-reactions-enabled', reactionsEnabled)
     script.setAttribute('data-emit-metadata', '0')
-    // Setting this to 'bottom' doesn't work. Not sure why.
     script.setAttribute('data-input-position', 'top')
-    script.setAttribute('data-theme', `${origin}/giscus/${theme}.css`)
+    script.setAttribute('data-theme', resolveGiscusTheme(origin, theme, themeVersion))
     script.setAttribute('data-lang', 'en')
-    script.setAttribute('loading', 'lazy')
+    script.setAttribute('data-loading', 'lazy')
     script.crossOrigin = 'anonymous'
     script.async = true
-    document.body.appendChild(script)
+    giscusDiv.appendChild(script)
   }
+
   async function updateTheme(theme: string) {
-    console.log('Updating Giscus theme to:', theme)
+    const giscusDiv = document.querySelector('.giscus')
+    const origin = giscusDiv?.getAttribute('data-origin')
+    const themeVersion = giscusDiv?.getAttribute('data-theme-version')
+    if (!origin || !themeVersion) {
+      throw new Error('Giscus theme configuration is missing.')
+    }
+
     let giscusFrame
-    // Try to find the Giscus iframe 3 times, in case it takes a moment to load
     for (let i = 0; i < 3; i++) {
       giscusFrame = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame')
       if (giscusFrame) break
-      console.log('Giscus iframe not found, retrying...')
-      // Wait a moment before trying again
       await new Promise((resolve) => setTimeout(resolve, 1000))
     }
-    // If the iframe is still not found, log an error and return
+
     if (!giscusFrame) {
       console.error('Giscus iframe not found after retries')
       return
     }
+
     giscusFrame.contentWindow?.postMessage(
-      { giscus: { setConfig: { theme: `${origin}/giscus/${theme}.css` } } },
+      {
+        giscus: {
+          setConfig: { theme: resolveGiscusTheme(origin, theme, themeVersion) },
+        },
+      },
       'https://giscus.app',
     )
   }
@@ -110,7 +132,14 @@ const reactionsEnabled = giscusConfig.reactionsEnabled ? '1' : '0'
 </script>
 
 <style is:global>
+  .giscus {
+    width: 100%;
+  }
+
   iframe.giscus-frame {
-    margin-block: 32px;
+    display: block;
+    width: 100%;
+    margin: 0;
+    color-scheme: inherit;
   }
 </style>

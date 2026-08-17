@@ -13,10 +13,10 @@ const { avatarImage } = Astro.props
 <section class="home-hero">
   <div class="hero-copy" data-reveal>
     <p class="ui-label">Software engineer / Author / Speaker</p>
-    <h1 class="display-title">I build software. I share what I learn.</h1>
+    <h1 class="display-title">Software in practice.</h1>
     <p class="hero-lead">
-      Microsoft engineer, author, speaker, and open-source maintainer sharing lessons from
-      real work.
+      I work on Aspire at Microsoft, maintain open-source projects, and write about .NET,
+      AI, developer experience, and the web.
     </p>
     <div class="hero-actions">
       <a class="primary-action" href="/posts">Read the blog</a>
@@ -69,8 +69,13 @@ const { avatarImage } = Astro.props
   }
 
   .hero-copy .display-title {
-    max-width: 12ch;
-    font-size: clamp(3.75rem, 7vw, 6.75rem);
+    max-width: 11ch;
+    font-family: var(--font-body);
+    font-size: clamp(3.35rem, 6.6vw, 6.4rem);
+    font-weight: 650;
+    line-height: 0.98;
+    letter-spacing: -0.052em;
+    text-wrap: balance;
   }
 
   .hero-copy .ui-label {
@@ -237,6 +242,12 @@ const { avatarImage } = Astro.props
       grid-template-columns: 1fr;
       min-height: auto;
       padding-top: 4.5rem;
+    }
+
+    .hero-copy .display-title {
+      max-width: 11ch;
+      font-size: clamp(3rem, 15vw, 4.65rem);
+      letter-spacing: -0.042em;
     }
 
     .hero-media {

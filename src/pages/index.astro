@@ -95,7 +95,7 @@ const credentials = [
         <header class="section-heading" data-reveal>
           <h2 class="section-title">Latest writing</h2>
           <p class="lead">
-            Deep dives into Aspire, .NET, open source, and the decisions behind the work.
+            Articles on .NET, Aspire, AI, and the web, grounded in real projects.
           </p>
         </header>
 
@@ -122,8 +122,8 @@ const credentials = [
           <h2 class="section-title">Browse by topic</h2>
           <p class="lead">
             {postsHaveSeries
-              ? 'Find articles by subject, or follow a connected series from beginning to end.'
-              : 'Find articles by subject across the complete writing archive.'}
+              ? 'Start with a technology or idea, or read a connected series from beginning to end.'
+              : 'Start with a technology or idea, then explore every related article.'}
           </p>
         </header>
 
@@ -157,7 +157,7 @@ const credentials = [
           <p class="ui-label">Open source</p>
           <h2 class="section-title">Open-source work</h2>
           <p class="lead">
-            Code, documentation, samples, and community contributions on GitHub.
+            Explore the code, documentation, samples, and fixes I contribute on GitHub.
           </p>
           <a class="section-link" href="https://github.com/IEvangelist">
             View GitHub
@@ -175,26 +175,29 @@ const credentials = [
     <header class="section-heading" data-reveal>
       <h2 class="section-title">Speaking and community</h2>
       <p class="lead">
-        Conference talks, community sessions, live shows, and conversations with
-        developers.
+        Talks and conversations about .NET, developer experience, open source, and
+        building software.
       </p>
     </header>
 
     <div class="speaking-gallery" data-reveal>
       <Image
         src={photoStage}
+        class="speaking-photo speaking-photo--rustic-stage"
         alt="David Pine presenting with a microphone in a rustic venue"
         widths={[480, 800, 1200]}
         sizes="(max-width: 768px) 100vw, 52vw"
       />
       <Image
         src={photoConference}
+        class="speaking-photo speaking-photo--green-stage"
         alt="David Pine presenting on a large green conference stage"
         widths={[360, 640, 960]}
         sizes="(max-width: 768px) 100vw, 28vw"
       />
       <Image
         src={photoCommunity}
+        class="speaking-photo speaking-photo--purple-stage"
         alt="David Pine presenting in front of a purple conference screen"
         widths={[360, 640, 960]}
         sizes="(max-width: 768px) 100vw, 28vw"
@@ -444,6 +447,18 @@ const credentials = [
 
   .speaking-gallery :global(img:first-child) {
     grid-row: 1 / 3;
+  }
+
+  .speaking-gallery :global(.speaking-photo--rustic-stage) {
+    object-position: 63% center;
+  }
+
+  .speaking-gallery :global(.speaking-photo--green-stage) {
+    object-position: 50% 22%;
+  }
+
+  .speaking-gallery :global(.speaking-photo--purple-stage) {
+    object-position: center;
   }
 
   .speaking-links {
