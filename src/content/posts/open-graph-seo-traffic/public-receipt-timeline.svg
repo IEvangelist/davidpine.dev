@@ -1,0 +1,242 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="1600"
+  height="900"
+  viewBox="0 0 1600 900"
+  role="img"
+  aria-labelledby="title desc"
+>
+  <title id="title">Aspire.dev Open Graph SEO public receipt timeline</title>
+  <desc id="desc">
+    A timeline from April through August 2026 distinguishes merged pull requests, an open
+    issue, a manually closed issue with no linked pull request, and a closed-unmerged
+    proposal.
+  </desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f" />
+      <stop offset="1" stop-color="#10222d" />
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8b5cf6" />
+      <stop offset="0.6" stop-color="#22d3ee" />
+      <stop offset="1" stop-color="#34d399" />
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" rx="32" fill="url(#bg)" />
+  <text
+    x="92"
+    y="94"
+    fill="#f8fafc"
+    font-family="Inter, Segoe UI, sans-serif"
+    font-size="46"
+    font-weight="800"
+  >
+    The public issue-to-PR trail
+  </text>
+  <text
+    x="92"
+    y="140"
+    fill="#94a3b8"
+    font-family="Inter, Segoe UI, sans-serif"
+    font-size="22"
+  >
+    Metadata work predates the canvas; later audits produced shipped, open, and unshipped
+    outcomes.
+  </text>
+
+  <line
+    x1="130"
+    y1="265"
+    x2="1470"
+    y2="265"
+    stroke="#334155"
+    stroke-width="12"
+    stroke-linecap="round"
+  />
+  <line
+    x1="130"
+    y1="265"
+    x2="1470"
+    y2="265"
+    stroke="url(#line)"
+    stroke-width="4"
+    stroke-linecap="round"
+  />
+
+  <g font-family="Inter, Segoe UI, sans-serif">
+    <g transform="translate(150 265)">
+      <circle r="16" fill="#0f172a" stroke="#8b5cf6" stroke-width="6" />
+      <text x="-40" y="-54" fill="#c4b5fd" font-size="18" font-weight="800">APR 21</text>
+      <text x="-40" y="57" fill="#f8fafc" font-size="20" font-weight="800">#726</text>
+      <text x="-40" y="85" fill="#94a3b8" font-size="17">JSON-LD</text>
+    </g>
+    <g transform="translate(355 265)">
+      <circle r="16" fill="#0f172a" stroke="#38bdf8" stroke-width="6" />
+      <text x="-42" y="-54" fill="#bae6fd" font-size="18" font-weight="800">MAY 14</text>
+      <text x="-42" y="57" fill="#f8fafc" font-size="20" font-weight="800">#956</text>
+      <text x="-42" y="85" fill="#94a3b8" font-size="17">Page metadata</text>
+    </g>
+    <g transform="translate(560 265)">
+      <circle r="16" fill="#0f172a" stroke="#38bdf8" stroke-width="6" />
+      <text x="-42" y="-54" fill="#bae6fd" font-size="18" font-weight="800">MAY 19</text>
+      <text x="-42" y="57" fill="#f8fafc" font-size="20" font-weight="800">#1007</text>
+      <text x="-42" y="85" fill="#94a3b8" font-size="17">Site scale + tests</text>
+    </g>
+    <g transform="translate(765 265)">
+      <circle r="16" fill="#0f172a" stroke="#22d3ee" stroke-width="6" />
+      <text x="-42" y="-54" fill="#a5f3fc" font-size="18" font-weight="800">JUN 3</text>
+      <text x="-42" y="57" fill="#f8fafc" font-size="20" font-weight="800">#1197</text>
+      <text x="-42" y="85" fill="#94a3b8" font-size="17">API fallback</text>
+    </g>
+    <g transform="translate(970 265)">
+      <circle r="16" fill="#0f172a" stroke="#22d3ee" stroke-width="6" />
+      <text x="-42" y="-54" fill="#a5f3fc" font-size="18" font-weight="800">JUN 29</text>
+      <text x="-42" y="57" fill="#f8fafc" font-size="20" font-weight="800">#1251</text>
+      <text x="-42" y="85" fill="#94a3b8" font-size="17">Stable images</text>
+    </g>
+    <g transform="translate(1175 265)">
+      <circle r="16" fill="#0f172a" stroke="#34d399" stroke-width="6" />
+      <text x="-42" y="-54" fill="#a7f3d0" font-size="18" font-weight="800">JUL 1</text>
+      <text x="-42" y="57" fill="#f8fafc" font-size="20" font-weight="800">#1312</text>
+      <text x="-42" y="85" fill="#94a3b8" font-size="17">OG Viewer canvas</text>
+    </g>
+    <g transform="translate(1380 265)">
+      <circle r="16" fill="#0f172a" stroke="#34d399" stroke-width="6" />
+      <text x="-42" y="-54" fill="#a7f3d0" font-size="18" font-weight="800">JUL 9</text>
+      <text x="-42" y="57" fill="#f8fafc" font-size="20" font-weight="800">#1337</text>
+      <text x="-42" y="85" fill="#94a3b8" font-size="17">Image MIME type</text>
+    </g>
+  </g>
+
+  <g transform="translate(92 430)" font-family="Inter, Segoe UI, sans-serif">
+    <rect
+      width="1416"
+      height="118"
+      rx="22"
+      fill="#0b1f22"
+      stroke="#34d399"
+      stroke-opacity="0.65"
+      stroke-width="2"
+    />
+    <rect x="28" y="28" width="122" height="34" rx="17" fill="#064e3b" />
+    <text
+      x="89"
+      y="51"
+      text-anchor="middle"
+      fill="#a7f3d0"
+      font-size="16"
+      font-weight="800"
+    >
+      MERGED
+    </text>
+    <text x="180" y="50" fill="#f8fafc" font-size="23" font-weight="800">
+      #1417 → #1571
+    </text>
+    <text x="180" y="82" fill="#94a3b8" font-size="18">
+      SoftwareApplication + SoftwareSourceCode JSON-LD merged August 26.
+    </text>
+    <text
+      x="1358"
+      y="68"
+      text-anchor="end"
+      fill="#6ee7b7"
+      font-size="19"
+      font-weight="800"
+    >
+      SHIPPED
+    </text>
+  </g>
+
+  <g transform="translate(92 574)" font-family="Inter, Segoe UI, sans-serif">
+    <rect
+      width="446"
+      height="190"
+      rx="22"
+      fill="#101b32"
+      stroke="#60a5fa"
+      stroke-opacity="0.65"
+      stroke-width="2"
+    />
+    <rect x="28" y="26" width="90" height="34" rx="17" fill="#172554" />
+    <text
+      x="73"
+      y="49"
+      text-anchor="middle"
+      fill="#bfdbfe"
+      font-size="16"
+      font-weight="800"
+    >
+      OPEN
+    </text>
+    <text x="28" y="100" fill="#f8fafc" font-size="25" font-weight="800">
+      Issue #1416
+    </text>
+    <text x="28" y="134" fill="#94a3b8" font-size="18">Homepage og:type remains</text>
+    <text x="28" y="160" fill="#94a3b8" font-size="18">follow-up work.</text>
+  </g>
+
+  <g transform="translate(576 574)" font-family="Inter, Segoe UI, sans-serif">
+    <rect
+      width="446"
+      height="190"
+      rx="22"
+      fill="#2a1c15"
+      stroke="#f59e0b"
+      stroke-opacity="0.65"
+      stroke-width="2"
+    />
+    <rect x="28" y="26" width="188" height="34" rx="17" fill="#451a03" />
+    <text
+      x="122"
+      y="49"
+      text-anchor="middle"
+      fill="#fde68a"
+      font-size="16"
+      font-weight="800"
+    >
+      MANUALLY CLOSED
+    </text>
+    <text x="28" y="100" fill="#f8fafc" font-size="25" font-weight="800">
+      Issue #1415
+    </text>
+    <text x="28" y="134" fill="#94a3b8" font-size="18">Homepage H1 finding;</text>
+    <text x="28" y="160" fill="#94a3b8" font-size="18">no linked PR.</text>
+  </g>
+
+  <g transform="translate(1060 574)" font-family="Inter, Segoe UI, sans-serif">
+    <rect
+      width="448"
+      height="190"
+      rx="22"
+      fill="#2c1721"
+      stroke="#fb7185"
+      stroke-opacity="0.65"
+      stroke-width="2"
+    />
+    <rect x="28" y="26" width="184" height="34" rx="17" fill="#4c0519" />
+    <text
+      x="120"
+      y="49"
+      text-anchor="middle"
+      fill="#fecdd3"
+      font-size="16"
+      font-weight="800"
+    >
+      CLOSED UNMERGED
+    </text>
+    <text x="28" y="100" fill="#f8fafc" font-size="25" font-weight="800">PR #1335</text>
+    <text x="28" y="134" fill="#94a3b8" font-size="18">AI crawler rules were</text>
+    <text x="28" y="160" fill="#94a3b8" font-size="18">evaluated, not shipped.</text>
+  </g>
+
+  <text
+    x="92"
+    y="834"
+    fill="#64748b"
+    font-family="ui-monospace, SFMono-Regular, Consolas, monospace"
+    font-size="17"
+  >
+    PUBLIC GITHUB RECEIPTS • STATUSES REVERIFIED 2026-08-26
+  </text>
+</svg>
