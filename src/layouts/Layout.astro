@@ -116,6 +116,25 @@ for (const [themeId, themeStyles] of Object.entries(resolvedThemes)) {
     if (color.hex().toLowerCase() === '#000000') return '#101114'
     return value
   }
+  const overlaySurface = Color(relevantStyles.background)
+    .mix(Color(relevantStyles.foreground), 0.06)
+    .hex()
+  const overlaySurfaceColor = Color(overlaySurface)
+  const overlayText =
+    overlaySurfaceColor.contrast(Color(relevantStyles.foreground)) >= 4.5
+      ? relevantStyles.foreground
+      : [relevantStyles.foreground, '#101114', '#f7f7f5']
+          .map(safeControlColor)
+          .reduce((best, candidate) =>
+            overlaySurfaceColor.contrast(Color(candidate)) >
+            overlaySurfaceColor.contrast(Color(best))
+              ? candidate
+              : best,
+          )
+  const overlayAccent =
+    [relevantStyles.heading2, relevantStyles.heading1, relevantStyles.accent].find(
+      (candidate) => overlaySurfaceColor.contrast(Color(candidate)) >= 4.5,
+    ) ?? overlayText
   const onAccent = [
     relevantStyles.foreground,
     relevantStyles.background,
@@ -132,6 +151,9 @@ for (const [themeId, themeStyles] of Object.entries(resolvedThemes)) {
     cssLines.push(`--theme-${key}: ${value};`)
   }
   cssLines.push(`--theme-on-accent: ${onAccent};`)
+  cssLines.push(`--theme-overlay-surface: ${overlaySurface};`)
+  cssLines.push(`--theme-overlay-text: ${overlayText};`)
+  cssLines.push(`--theme-overlay-accent: ${overlayAccent};`)
   cssLines.push(`color-scheme: ${colorScheme};`)
   cssLines.push(`}`)
 }

@@ -1,0 +1,347 @@
+---
+import { Image } from 'astro:assets'
+import { Icon } from 'astro-icon/components'
+import type { SpatialGalleryItem } from '~/types/showcase'
+import '~/styles/spatial-showcase.css'
+
+interface Props {
+  id: string
+  title: string
+  description?: string
+  items: SpatialGalleryItem[]
+  variant?: 'media' | 'speaking'
+  showHeader?: boolean
+}
+
+const {
+  id,
+  title,
+  description,
+  items,
+  variant = 'media',
+  showHeader = true,
+} = Astro.props
+const titleId = `${id}-title`
+const statusId = `${id}-status`
+const imageSizes =
+  variant === 'media' ? '(max-width: 767px) 88vw, 64vw' : '(max-width: 767px) 82vw, 58vw'
+const mediaMajorTickIndexes = new Set<number>()
+
+if (variant === 'media') {
+  let previousLabel: string | undefined
+  let lastMajorIndex = -3
+
+  items.forEach((item, index) => {
+    const tickLabel = item.tickLabel ?? item.meta
+    const startsNewRange = tickLabel !== previousLabel
+
+    if (index === 0 || (startsNewRange && index - lastMajorIndex >= 3)) {
+      mediaMajorTickIndexes.add(index)
+      lastMajorIndex = index
+    }
+
+    previousLabel = tickLabel
+  })
+}
+---
+
+<spatial-gallery
+  id={id}
+  class:list={['spatial-gallery', `spatial-gallery--${variant}`]}
+  data-spatial-gallery
+>
+  <section
+    aria-labelledby={showHeader ? titleId : undefined}
+    aria-label={!showHeader ? title : undefined}
+  >
+    {showHeader && (
+      <header class="spatial-gallery__header">
+        <h2 id={titleId}>{title}</h2>
+        {description && <p>{description}</p>}
+      </header>
+    )}
+
+    <div class="spatial-gallery__stage">
+      <button
+        class="spatial-gallery__nav spatial-gallery__nav--previous"
+        type="button"
+        data-gallery-previous
+        aria-label="Show the previous item"
+      >
+        <Icon name="ph:arrow-left" aria-hidden="true" />
+      </button>
+
+      <ol
+        class="spatial-gallery__track"
+        data-gallery-track
+        tabindex="0"
+        aria-describedby={statusId}
+      >
+        {
+          items.map((item, index) => {
+            const dataAttributes = Object.fromEntries(
+              Object.entries(item.data ?? {}).map(([key, value]) => [
+                `data-${key}`,
+                String(value),
+              ]),
+            )
+            const action = item.action ?? (item.href ? 'link' : undefined)
+            const actionLabel = item.actionLabel ?? `Open ${item.title}`
+            const showLabel = item.label !== actionLabel
+            const isLocalImage = item.image && typeof item.image !== 'string'
+            const mediaKind = item.data?.['media-kind']
+            const actionIcon =
+              mediaKind === 'video'
+                ? 'ph:play'
+                : mediaKind === 'podcast'
+                  ? 'ph:headphones'
+                  : 'ph:arrow-up-right'
+            const placeholderIcon =
+              mediaKind === 'video'
+                ? 'ph:play-circle'
+                : mediaKind === 'podcast'
+                  ? 'ph:waveform'
+                  : mediaKind === 'publication'
+                    ? 'ph:article'
+                    : 'ph:star-four'
+            const speakingMode = item.data?.['speaking-mode']
+            const speakingStatus = item.data?.['speaking-status']
+            const speakingIcon =
+              speakingMode === 'online'
+                ? 'ph:broadcast'
+                : 'ph:map-pin'
+            const fallbackImage = item.data?.['media-youtube-id']
+              ? `https://i.ytimg.com/vi/${item.data['media-youtube-id']}/hqdefault.jpg`
+              : undefined
+
+            return (
+              <li
+                class="spatial-gallery__item"
+                data-gallery-item
+                data-gallery-item-id={item.id}
+                data-gallery-index={index}
+                data-gallery-announcement={`${item.meta}. ${item.title}. ${item.label}.`}
+                data-active={index === 0 ? '' : undefined}
+                aria-current={index === 0 ? 'true' : undefined}
+                {...dataAttributes}
+              >
+                <div class="spatial-gallery__cover" data-gallery-cover>
+                  <div class="spatial-gallery__cover-inner">
+                    <article class="spatial-gallery__card">
+                      <div class="spatial-gallery__art">
+                        {isLocalImage && (
+                          <Image
+                            src={item.image as ImageMetadata}
+                            alt={item.imageAlt ?? ''}
+                            loading={index < 2 ? 'eager' : 'lazy'}
+                            widths={[480, 720, 1080, 1280]}
+                            sizes={imageSizes}
+                          />
+                        )}
+                        {typeof item.image === 'string' && (
+                          <img
+                            src={item.image}
+                            alt={item.imageAlt ?? ''}
+                            loading={index < 2 ? 'eager' : 'lazy'}
+                            width="1280"
+                            height="720"
+                            referrerpolicy="no-referrer"
+                            draggable="false"
+                            data-fallback-src={fallbackImage}
+                          />
+                        )}
+                        {!item.image && variant === 'media' && (
+                          <div
+                            class="spatial-gallery__art-placeholder"
+                            aria-hidden="true"
+                          >
+                            <Icon name={placeholderIcon} aria-hidden="true" />
+                            <span>{mediaKind ?? item.label}</span>
+                          </div>
+                        )}
+                        {!item.image && variant === 'speaking' && (
+                          <div class="spatial-gallery__art-placeholder spatial-gallery__speaking-poster">
+                            <div class="spatial-gallery__speaking-topline">
+                              <time datetime={item.data?.['speaking-date-time']}>
+                                {item.data?.['speaking-date']}
+                              </time>
+                              {speakingStatus === 'upcoming' && (
+                                <span class="spatial-gallery__speaking-status">
+                                  Upcoming
+                                </span>
+                              )}
+                              <span
+                                class="spatial-gallery__speaking-mode"
+                                aria-hidden="true"
+                              >
+                                <Icon name={speakingIcon} />
+                              </span>
+                            </div>
+
+                            <div class="spatial-gallery__speaking-copy">
+                              <span>{item.title}</span>
+                              <h3>{item.label}</h3>
+                            </div>
+
+                            <div class="spatial-gallery__speaking-location">
+                              <Icon
+                                name={
+                                  speakingMode === 'online'
+                                    ? 'ph:broadcast'
+                                    : 'ph:map-pin'
+                                }
+                                aria-hidden="true"
+                              />
+                              <span>{item.data?.['speaking-location']}</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {variant === 'media' && (
+                        <>
+                          <div class="spatial-gallery__shade" aria-hidden="true" />
+                          <div class="spatial-gallery__copy">
+                            <span>{item.meta}</span>
+                            <h3>{item.title}</h3>
+                            {showLabel && <p>{item.label}</p>}
+                          </div>
+                        </>
+                      )}
+
+                      {action === 'link' && item.href && (
+                        <a
+                          class="spatial-gallery__action"
+                          data-gallery-action="link"
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={actionLabel}
+                          tabindex={index === 0 ? 0 : -1}
+                          draggable="false"
+                        >
+                          {variant === 'media' && (
+                            <>
+                              <span>{actionLabel}</span>
+                              <Icon name={actionIcon} aria-hidden="true" />
+                            </>
+                          )}
+                        </a>
+                      )}
+                      {action === 'activate' && (
+                        <button
+                          class="spatial-gallery__action"
+                          data-gallery-action="activate"
+                          type="button"
+                          aria-label={actionLabel}
+                          tabindex={index === 0 ? 0 : -1}
+                        >
+                          {variant === 'media' && (
+                            <>
+                              <span>{actionLabel}</span>
+                              <Icon name={actionIcon} aria-hidden="true" />
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </article>
+
+                    {variant === 'media' && (
+                      <div class="spatial-gallery__reflection" aria-hidden="true">
+                        {isLocalImage && (
+                          <Image
+                            src={item.image as ImageMetadata}
+                            alt=""
+                            loading="lazy"
+                            widths={[480, 720]}
+                            sizes="(max-width: 767px) 82vw, 58vw"
+                          />
+                        )}
+                        {typeof item.image === 'string' && (
+                          <img
+                            src={item.image}
+                            alt=""
+                            loading="lazy"
+                            width="1280"
+                            height="720"
+                            referrerpolicy="no-referrer"
+                            data-fallback-src={fallbackImage}
+                          />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </li>
+            )
+          })
+        }
+      </ol>
+
+      <button
+        class="spatial-gallery__nav spatial-gallery__nav--next"
+        type="button"
+        data-gallery-next
+        aria-label="Show the next item"
+      >
+        <Icon name="ph:arrow-right" aria-hidden="true" />
+      </button>
+    </div>
+
+    <nav
+      class="spatial-gallery__rail"
+      aria-label={`${title} positions`}
+      style={`--gallery-count: ${items.length}`}
+    >
+      <div class="spatial-gallery__rail-line" aria-hidden="true"></div>
+      {
+        items.map((item, index) => {
+          const tickLabel = item.tickLabel ?? item.meta
+          const previousTickLabel =
+            index > 0 ? (items[index - 1].tickLabel ?? items[index - 1].meta) : undefined
+          const isMajorTick =
+            variant === 'media'
+              ? mediaMajorTickIndexes.has(index)
+              : index === 0 || tickLabel !== previousTickLabel
+
+          return (
+            <button
+              class="spatial-gallery__tick"
+              type="button"
+              data-gallery-tick
+              data-gallery-index={index}
+              data-major-tick={isMajorTick ? '' : undefined}
+              aria-label={`Show ${item.title}`}
+              aria-current={index === 0 ? 'true' : undefined}
+            >
+              <span class="spatial-gallery__tick-mark" aria-hidden="true" />
+              {isMajorTick && (
+                <span class="spatial-gallery__tick-label" aria-hidden="true">
+                  {tickLabel}
+                </span>
+              )}
+            </button>
+          )
+        })
+      }
+    </nav>
+
+    <p class="spatial-gallery__position" aria-hidden="true">
+      <span data-gallery-position-current>01</span>
+      <span>/</span>
+      <span>{String(items.length).padStart(2, '0')}</span>
+    </p>
+
+    <p id={statusId} class="sr-only" data-gallery-status aria-live="polite">
+      {
+        items[0]
+          ? `1 of ${items.length}. ${items[0].meta}. ${items[0].title}.`
+          : 'No items.'
+      }
+    </p>
+  </section>
+</spatial-gallery>
+
+<script>
+  import '~/scripts/spatial-gallery'
+</script>

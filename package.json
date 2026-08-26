@@ -34,6 +34,7 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@types/reveal.js": "^5.2.2",
+    "@types/three": "^0.185.4",
     "astro": "^5.16.3",
     "astro-expressive-code": "^0.41.3",
     "astro-icon": "^1.1.5",
@@ -68,14 +69,18 @@
     "satori-html": "^0.3.2",
     "sharp": "^0.34.5",
     "tailwindcss": "^4.1.17",
+    "three": "^0.185.1",
     "toml": "^3.0.0",
+    "topojson-client": "^3.1.0",
     "typescript": "^5.9.3",
     "unified": "^11.0.5",
-    "unist-util-visit": "^5.0.0"
+    "unist-util-visit": "^5.0.0",
+    "world-atlas": "^2.0.2"
   },
   "devDependencies": {
     "@types/markdown-it": "^14.1.2",
     "@types/sanitize-html": "^2.16.0",
+    "@types/topojson-client": "^3.1.5",
     "pagefind": "^1.4.0",
     "prettier": "3.7.3",
     "prettier-plugin-astro": "0.14.1",

@@ -1,582 +1,263 @@
 ---
-import { Image } from 'astro:assets'
 import { Icon } from 'astro-icon/components'
-import MarkdownIt from 'markdown-it'
-import sanitizeHtml from 'sanitize-html'
-import Layout from '~/layouts/Layout.astro'
+
 import PageHeader from '~/components/PageHeader.astro'
-import speakingPhoto from '~/assets/pics/60.jpg'
+import SpeakingArchive from '~/components/showcase/SpeakingArchive.astro'
+import SpeakingGlobe from '~/components/showcase/SpeakingGlobe.astro'
+import SpatialGallery from '~/components/showcase/SpatialGallery.astro'
+import { speakingEvents, speakingJourney, type SpeakingStoryStop } from '~/data/speaking'
+import Layout from '~/layouts/Layout.astro'
+import type { SpatialGalleryItem } from '~/types/showcase'
 
-interface SpeakingEvent {
-  date: string
-  event: string
-  talk: string
-}
+const pageTitle = 'Speaking'
+const pageDescription =
+  'A chronological journey through developer conferences, community events, and conversations around the world.'
+const galleryId = 'speaking-journey'
 
-const gistUrl = 'https://gist.github.com/IEvangelist/7e423ddad9d8915dc9077b805844905e'
-const gistRawUrl =
-  'https://gist.githubusercontent.com/IEvangelist/7e423ddad9d8915dc9077b805844905e/raw'
-const markdown = new MarkdownIt({ html: true, linkify: true })
-const sanitizeOptions: sanitizeHtml.IOptions = {
-  allowedTags: ['a', 'code', 'em', 'strong'],
-  allowedAttributes: {
-    a: ['href', 'target', 'rel'],
-  },
-  transformTags: {
-    a: sanitizeHtml.simpleTransform('a', {
-      target: '_blank',
-      rel: 'noopener noreferrer',
-    }),
-  },
-}
-
-const renderCell = (value: string) =>
-  sanitizeHtml(markdown.renderInline(value.trim()), sanitizeOptions)
-
-let upcoming: SpeakingEvent[] = []
-let past: SpeakingEvent[] = []
-let archiveError: string | undefined
-
-try {
-  const response = await fetch(gistRawUrl)
-  if (!response.ok) {
-    throw new Error(`GitHub returned ${response.status} ${response.statusText}`)
+const getLocationLabel = (stop: SpeakingStoryStop) => {
+  if (stop.location) {
+    return [stop.location.city, stop.location.region, stop.location.country]
+      .filter(Boolean)
+      .join(', ')
   }
 
-  const source = await response.text()
-  let section: 'upcoming' | 'past' | undefined
-
-  for (const rawLine of source.split(/\r?\n/)) {
-    const line = rawLine.trim()
-    if (/^##\s+Upcoming/i.test(line)) {
-      section = 'upcoming'
-      continue
-    }
-    if (/^##\s+Past/i.test(line)) {
-      section = 'past'
-      continue
-    }
-    if (!section || !line.startsWith('|') || /^\|[\s:|-]+\|$/.test(line)) continue
-
-    const cells = line
-      .slice(1, -1)
-      .split('|')
-      .map((cell) => cell.trim())
-    if (cells.length < 3 || /^date$/i.test(cells[0])) continue
-    if (cells.slice(0, 3).every((cell) => /^[\u2014-]$/.test(cell))) continue
-
-    const event = {
-      date: renderCell(cells[0]),
-      event: renderCell(cells[1]),
-      talk: renderCell(cells.slice(2).join('|')),
-    }
-    if (section === 'upcoming') upcoming.push(event)
-    else past.push(event)
-  }
-} catch (error) {
-  archiveError = error instanceof Error ? error.message : 'Unknown archive error'
-  console.error(`Unable to load the speaking archive: ${archiveError}`)
+  return 'Remote'
 }
 
-const featuredPast = past.slice(0, 8)
-const archivedPast = past.slice(8)
+const galleryItems: SpatialGalleryItem[] = speakingJourney.map((stop) => ({
+  id: stop.id,
+  title: stop.event,
+  label: stop.talk,
+  meta: `${stop.status === 'upcoming' ? 'Upcoming / ' : ''}${stop.displayDate} / ${getLocationLabel(stop)}`,
+  href: stop.talkUrl ?? stop.eventUrl,
+  actionLabel: stop.talkUrl ? 'Open talk' : 'Open event',
+  action: stop.talkUrl || stop.eventUrl ? 'link' : undefined,
+  tickLabel: stop.date.slice(0, 4),
+  data: {
+    'speaking-date': stop.displayDate,
+    'speaking-date-time': stop.date,
+    'speaking-status': stop.status,
+    'speaking-location': getLocationLabel(stop),
+    'speaking-mode':
+      stop.format === 'online'
+        ? 'online'
+        : stop.location
+          ? (stop.travelFromPrevious ?? 'origin')
+          : 'online',
+  },
+}))
 ---
 
-<Layout
-  title="Speaking"
-  description="A fairly complete listing of past and upcoming speaking engagements"
->
-  <PageHeader
-    title="Speaking"
-    description="Conference talks, community sessions, live shows, and professional skills development."
-  />
+<Layout title={pageTitle} description={pageDescription}>
+  <PageHeader title={pageTitle} description={pageDescription} />
 
-  <section class="speaking-intro">
-    <div class="speaking-copy" data-reveal>
-      <p>
-        I love being able to give back to the community and I enjoy how gratifying it can
-        be. Public speaking on technologies that I love or on professional skills
-        development is just one of the ways I give back. Anytime that I get to express
-        myself and share my passions - I'm thrilled. Here is where I have been and where
-        I'm going to be, I hope to see you there!
-      </p>
-      <a class="archive-source" href={gistUrl} target="_blank" rel="noopener noreferrer">
-        View the source archive
-        <Icon name="ph:arrow-up-right" aria-hidden="true" />
-      </a>
-    </div>
-    <div class="speaking-media" data-reveal style="--reveal-delay: 100ms">
-      <Image
-        priority
-        src={speakingPhoto}
-        alt="David Pine presenting on stage at a .NET event"
-        widths={[640, 960, 1280]}
-        sizes="(max-width: 768px) 100vw, 48vw"
-      />
+  <section class="speaking-journey" aria-label="Speaking timeline">
+    <div class="speaking-stage reveal-on-scroll">
+      <SpeakingGlobe galleryId={galleryId} stops={speakingJourney} />
+      <div class="speaking-stage__gallery">
+        <SpatialGallery
+          id={galleryId}
+          items={galleryItems}
+          variant="speaking"
+          title="Speaking through time"
+          showHeader={false}
+        />
+      </div>
     </div>
   </section>
 
-  <speaking-archive data-source={gistRawUrl}>
-    <section class="speaking-section upcoming-section">
-      <header data-reveal>
-        <h2 class="section-title">Upcoming</h2>
-        <p class="lead">Future appearances listed in the public speaking archive.</p>
-      </header>
+  <section
+    class="speaking-invite reveal-on-scroll"
+    aria-labelledby="speaking-invite-title"
+  >
+    <div class="speaking-invite__icon" aria-hidden="true">
+      <Icon name="ph:microphone-stage" />
+    </div>
+    <div>
+      <p class="speaking-invite__eyebrow">Bring the conversation to your audience</p>
+      <h2 id="speaking-invite-title">Let&apos;s make the next stop yours.</h2>
+      <p>
+        Planning a conference, user group, podcast, or internal event? Tell me about the
+        audience and the idea you want them to carry home.
+      </p>
+    </div>
+    <a class="speaking-invite__action" href="mailto:david.pine@microsoft.com">
+      Start a conversation
+      <Icon name="ph:arrow-up-right" aria-hidden="true" />
+    </a>
+  </section>
 
-      <div data-upcoming-content>
-        {
-          archiveError ? (
-            <div class="archive-state archive-error" role="alert">
-              <Icon name="ph:warning" aria-hidden="true" />
-              <div>
-                <strong>The speaking archive could not be loaded.</strong>
-                <p>{archiveError}</p>
-                <a href={gistUrl}>Open the source on GitHub</a>
-              </div>
-            </div>
-          ) : upcoming.length > 0 ? (
-            <ol class="event-list">
-              {upcoming.map((event) => (
-                <li>
-                  <time set:html={event.date} />
-                  <div>
-                    <h3 set:html={event.event} />
-                    <p set:html={event.talk} />
-                  </div>
-                </li>
-              ))}
-            </ol>
-          ) : (
-            <div class="archive-state">
-              <Icon name="ph:calendar-blank" aria-hidden="true" />
-              <p>No upcoming events are listed right now.</p>
-            </div>
-          )
-        }
-      </div>
-    </section>
-
-    <section
-      class="speaking-section history-section"
-      data-history-section
-      hidden={archiveError || past.length === 0}
-    >
-      <header data-reveal>
-        <h2 class="section-title">Past appearances</h2>
-        <p class="lead" data-history-count>
-          {past.length} talks and community events from the archive.
-        </p>
-      </header>
-
-      <div data-history-content>
-        <ol class="event-list">
-          {
-            featuredPast.map((event) => (
-              <li data-reveal>
-                <time set:html={event.date} />
-                <div>
-                  <h3 set:html={event.event} />
-                  <p set:html={event.talk} />
-                </div>
-              </li>
-            ))
-          }
-        </ol>
-
-        {
-          archivedPast.length > 0 && (
-            <details class="event-archive">
-              <summary>Show {archivedPast.length} earlier appearances</summary>
-              <ol class="event-list">
-                {archivedPast.map((event) => (
-                  <li>
-                    <time set:html={event.date} />
-                    <div>
-                      <h3 set:html={event.event} />
-                      <p set:html={event.talk} />
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </details>
-          )
-        }
-      </div>
-    </section>
-  </speaking-archive>
+  <SpeakingArchive events={speakingEvents} />
 </Layout>
 
-<script>
-  interface SpeakingEvent {
-    date: string
-    event: string
-    talk: string
-  }
-
-  class SpeakingArchive extends HTMLElement {
-    #controller = new AbortController()
-
-    connectedCallback() {
-      if (this.dataset.initialized === 'true') return
-      this.dataset.initialized = 'true'
-      void this.#refresh()
-    }
-
-    disconnectedCallback() {
-      this.#controller.abort()
-    }
-
-    async #refresh() {
-      const sourceUrl = this.dataset.source
-      if (!sourceUrl) return
-
-      try {
-        const response = await fetch(sourceUrl, {
-          cache: 'no-store',
-          signal: this.#controller.signal,
-        })
-        if (!response.ok) {
-          throw new Error(`GitHub returned ${response.status}`)
-        }
-
-        const parsed = this.#parse(await response.text())
-        this.#renderUpcoming(parsed.upcoming)
-        this.#renderHistory(parsed.past)
-      } catch (error) {
-        if (!(error instanceof DOMException && error.name === 'AbortError')) {
-          console.warn('Using the prebuilt speaking archive snapshot.', error)
-        }
-      }
-    }
-
-    #parse(source: string) {
-      const upcoming: SpeakingEvent[] = []
-      const past: SpeakingEvent[] = []
-      let section: 'upcoming' | 'past' | undefined
-
-      for (const rawLine of source.split(/\r?\n/)) {
-        const line = rawLine.trim()
-        if (/^##\s+Upcoming/i.test(line)) {
-          section = 'upcoming'
-          continue
-        }
-        if (/^##\s+Past/i.test(line)) {
-          section = 'past'
-          continue
-        }
-        if (!section || !line.startsWith('|') || /^\|[\s:|-]+\|$/.test(line)) continue
-
-        const cells = line
-          .slice(1, -1)
-          .split('|')
-          .map((cell) => cell.trim())
-        if (cells.length < 3 || /^date$/i.test(cells[0])) continue
-        if (cells.slice(0, 3).every((cell) => cell === '-' || cell === '\u2014')) continue
-
-        const event = {
-          date: cells[0],
-          event: cells[1],
-          talk: cells.slice(2).join('|'),
-        }
-        ;(section === 'upcoming' ? upcoming : past).push(event)
-      }
-
-      return { upcoming, past }
-    }
-
-    #appendInline(container: HTMLElement, source: string) {
-      const normalized = source
-        .replace(
-          /<a\s+[^>]*href=["'](https?:\/\/[^"']+)["'][^>]*>(.*?)<\/a>/gi,
-          (_match, url, label) => `[${label.replace(/<[^>]+>/g, '')}](${url})`,
-        )
-        .replace(/<[^>]+>/g, '')
-
-      const tokenPattern =
-        /(\[([^\]]+)\]\((https?:\/\/[^)]+)\)|`([^`]+)`|\*\*([^*]+)\*\*|\*([^*]+)\*)/g
-      let cursor = 0
-
-      for (const match of normalized.matchAll(tokenPattern)) {
-        const index = match.index ?? 0
-        container.append(document.createTextNode(normalized.slice(cursor, index)))
-
-        if (match[2] && match[3]) {
-          const link = document.createElement('a')
-          link.href = match[3]
-          link.target = '_blank'
-          link.rel = 'noopener noreferrer'
-          link.textContent = match[2]
-          container.append(link)
-        } else {
-          const element = document.createElement(
-            match[4] ? 'code' : match[5] ? 'strong' : 'em',
-          )
-          element.textContent = match[4] ?? match[5] ?? match[6]
-          container.append(element)
-        }
-        cursor = index + match[0].length
-      }
-
-      container.append(document.createTextNode(normalized.slice(cursor)))
-    }
-
-    #createList(events: SpeakingEvent[]) {
-      const list = document.createElement('ol')
-      list.className = 'event-list'
-
-      for (const event of events) {
-        const item = document.createElement('li')
-        const time = document.createElement('time')
-        const details = document.createElement('div')
-        const title = document.createElement('h3')
-        const talk = document.createElement('p')
-
-        this.#appendInline(time, event.date)
-        this.#appendInline(title, event.event)
-        this.#appendInline(talk, event.talk)
-        details.append(title, talk)
-        item.append(time, details)
-        list.append(item)
-      }
-
-      return list
-    }
-
-    #renderUpcoming(events: SpeakingEvent[]) {
-      const container = this.querySelector<HTMLElement>('[data-upcoming-content]')
-      if (!container) return
-      container.replaceChildren()
-
-      if (events.length > 0) {
-        container.append(this.#createList(events))
-        return
-      }
-
-      const empty = document.createElement('div')
-      empty.className = 'archive-state'
-      empty.textContent = 'No upcoming events are listed right now.'
-      container.append(empty)
-    }
-
-    #renderHistory(events: SpeakingEvent[]) {
-      const section = this.querySelector<HTMLElement>('[data-history-section]')
-      const container = this.querySelector<HTMLElement>('[data-history-content]')
-      const count = this.querySelector<HTMLElement>('[data-history-count]')
-      if (!section || !container || !count) return
-
-      section.hidden = events.length === 0
-      if (events.length === 0) return
-
-      count.textContent = `${events.length} talks and community events from the archive.`
-      container.replaceChildren(this.#createList(events.slice(0, 8)))
-
-      const archived = events.slice(8)
-      if (archived.length === 0) return
-
-      const disclosure = document.createElement('details')
-      disclosure.className = 'event-archive'
-      const summary = document.createElement('summary')
-      summary.textContent = `Show ${archived.length} earlier appearances`
-      disclosure.append(summary, this.#createList(archived))
-      container.append(disclosure)
-    }
-  }
-
-  if (!customElements.get('speaking-archive')) {
-    customElements.define('speaking-archive', SpeakingArchive)
-  }
-</script>
-
 <style>
-  speaking-archive {
-    display: block;
+  :global(main) {
+    gap: clamp(1.5rem, 4vw, 3rem);
   }
 
-  .speaking-intro {
-    display: grid;
-    grid-template-columns: minmax(18rem, 0.78fr) minmax(0, 1.22fr);
-    align-items: center;
-    gap: clamp(3rem, 8vw, 8rem);
-    padding-block: var(--section-space);
-  }
-
-  .speaking-copy {
-    max-width: 40rem;
-    font-size: var(--text-lead-fluid);
-    line-height: 1.55;
-  }
-
-  .speaking-copy p {
+  .speaking-invite__eyebrow {
     margin: 0;
+    color: var(--theme-accent);
+    font-size: var(--text-xs-fluid);
+    font-weight: 720;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 
-  .archive-source {
+  .speaking-invite h2 {
+    margin: 0;
+    color: var(--theme-heading2);
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.04;
+    text-wrap: balance;
+  }
+
+  .speaking-journey {
+    display: grid;
+    width: min(100%, var(--content-wide));
+    margin-inline: auto;
+  }
+
+  .speaking-stage {
+    position: relative;
+    display: grid;
+    width: 100vw;
+    min-height: clamp(46rem, 80vw, 58rem);
+    margin-inline: calc(50% - 50vw);
+    overflow: hidden;
+    border-bottom: 1px solid var(--theme-border);
+    background:
+      radial-gradient(
+        circle at 50% 36%,
+        color-mix(in oklab, var(--theme-accent) 16%, transparent),
+        transparent 42%
+      ),
+      var(--theme-surface-raised);
+    isolation: isolate;
+  }
+
+  .speaking-stage > :global(speaking-globe),
+  .speaking-stage__gallery {
+    grid-area: 1 / 1;
+  }
+
+  .speaking-stage > :global(speaking-globe) {
+    --globe-opacity: 0.92;
+
+    position: relative;
+    z-index: 0;
+    min-height: 100%;
+  }
+
+  .speaking-stage__gallery {
+    z-index: 1;
+    align-self: end;
+    min-width: 0;
+    padding: clamp(1.25rem, 3vw, 2.5rem) 0;
+  }
+
+  .speaking-invite {
+    display: grid;
+    width: min(100%, var(--content-medium));
+    margin-inline: auto;
+    align-items: center;
+    gap: 1.25rem;
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-panel);
+    background: var(--theme-surface);
+    box-shadow: 0 12px 36px var(--theme-shadow);
+    padding: clamp(1.4rem, 4vw, 2.75rem);
+  }
+
+  .speaking-invite__icon {
+    display: grid;
+    width: 3.25rem;
+    height: 3.25rem;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--theme-accent);
+    color: var(--theme-on-accent);
+  }
+
+  .speaking-invite__icon :global(svg) {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
+  .speaking-invite > div:not(.speaking-invite__icon) {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .speaking-invite h2 {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+  }
+
+  .speaking-invite p:not(.speaking-invite__eyebrow) {
+    max-width: 58ch;
+    margin: 0;
+    color: var(--theme-text-light);
+    line-height: 1.65;
+  }
+
+  .speaking-invite__action {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-top: 2rem;
-    color: var(--theme-foreground);
-    font-size: var(--text-body-fluid);
-    font-weight: 700;
-    text-decoration-color: var(--theme-accent);
-    text-underline-offset: 0.25rem;
+    justify-content: center;
+    gap: 0.55rem;
+    min-height: 2.8rem;
+    border-radius: var(--radius-control);
+    background: var(--theme-accent);
+    color: var(--theme-on-accent);
+    font-size: 0.86rem;
+    font-weight: 720;
+    padding: 0.78rem 1.05rem;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      transform 180ms var(--ease-out-expo),
+      box-shadow 180ms ease;
   }
 
-  .archive-source:hover {
-    color: var(--theme-accent);
+  .speaking-invite__action:hover {
+    box-shadow: 0 10px 30px color-mix(in oklab, var(--theme-accent) 24%, transparent);
+    transform: translateY(-2px);
   }
 
-  .archive-source svg {
+  .speaking-invite__action :global(svg) {
     width: 1rem;
     height: 1rem;
   }
 
-  .speaking-media {
-    min-height: clamp(30rem, 55vw, 46rem);
-    overflow: hidden;
-    border-radius: var(--radius-media);
+  @media (min-width: 800px) {
+    .speaking-invite {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
   }
 
-  .speaking-media :global(img) {
-    width: 100%;
-    height: 100%;
-    min-height: inherit;
-    object-fit: cover;
-  }
-
-  .speaking-section {
-    display: grid;
-    gap: clamp(3rem, 7vw, 5rem);
-    padding-block: var(--section-space);
-    border-top: 1px solid var(--theme-border);
-  }
-
-  .speaking-section header {
-    display: grid;
-    gap: 1.25rem;
-    max-width: 52rem;
-  }
-
-  .speaking-section .lead {
-    margin: 0;
-  }
-
-  :global(.archive-state) {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.9rem;
-    max-width: 44rem;
-    padding: 1.25rem;
-    border: 1px solid var(--theme-border);
-    border-radius: var(--radius-panel);
-    color: var(--theme-text-muted);
-    background: var(--theme-surface);
-  }
-
-  :global(.archive-state > svg) {
-    width: 1.4rem;
-    height: 1.4rem;
-    flex: none;
-    color: var(--theme-accent);
-  }
-
-  :global(.archive-state p) {
-    margin: 0;
-  }
-
-  :global(.archive-error strong) {
-    color: var(--theme-foreground);
-  }
-
-  :global(.archive-error p) {
-    margin-block: 0.35rem;
-  }
-
-  :global(.archive-error a) {
-    color: var(--theme-accent);
-  }
-
-  :global(.event-list) {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  :global(.event-list li) {
-    display: grid;
-    grid-template-columns: minmax(8rem, 0.25fr) minmax(0, 1fr);
-    gap: clamp(1.25rem, 4vw, 4rem);
-    margin: 0;
-    padding-block: 1.5rem;
-    border-top: 1px solid var(--theme-border);
-    list-style: none;
-  }
-
-  :global(.event-list time) {
-    color: var(--theme-text-muted);
-    font-family: var(--font-mono);
-    font-size: var(--text-sm-fluid);
-  }
-
-  :global(.event-list h3) {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: clamp(1.25rem, 2.4vw, 1.9rem);
-    font-weight: 600;
-    line-height: 1.1;
-    letter-spacing: -0.03em;
-  }
-
-  :global(.event-list p) {
-    margin: 0.55rem 0 0;
-    color: var(--theme-text-muted);
-  }
-
-  :global(.event-list a) {
-    color: inherit;
-    text-decoration-color: var(--theme-accent);
-    text-underline-offset: 0.22rem;
-  }
-
-  :global(.event-list a:hover) {
-    color: var(--theme-accent);
-  }
-
-  :global(.event-archive) {
-    border-top: 1px solid var(--theme-border);
-    padding-top: 1.5rem;
-  }
-
-  :global(.event-archive summary) {
-    width: max-content;
-    padding: 0.7rem 1rem;
-    border: 1px solid var(--theme-border-strong);
-    border-radius: var(--radius-control);
-    cursor: pointer;
-    font-weight: 700;
-    list-style: none;
-  }
-
-  :global(.event-archive summary::-webkit-details-marker) {
-    display: none;
-  }
-
-  :global(.event-archive .event-list) {
-    margin-top: 2rem;
-  }
-
-  @media (max-width: 47.99rem) {
-    .speaking-intro,
-    :global(.event-list li) {
-      grid-template-columns: 1fr;
+  @media (max-width: 799px) {
+    .speaking-stage {
+      min-height: 43rem;
     }
 
-    .speaking-copy {
-      font-size: var(--text-body-fluid);
+    .speaking-stage > :global(speaking-globe) {
+      --globe-opacity: 0.76;
     }
 
-    .speaking-media {
-      min-height: 25rem;
+    .speaking-invite__action {
+      justify-self: start;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .speaking-invite__action {
+      transition: none;
+    }
+
+    .speaking-invite__action:hover {
+      transform: none;
     }
   }
 </style>

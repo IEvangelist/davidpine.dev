@@ -1,0 +1,375 @@
+---
+import type { SpeakingEvent } from '~/data/speaking'
+
+interface Props {
+  events: SpeakingEvent[]
+}
+
+const { events } = Astro.props
+const upcoming = events
+  .filter(({ status }) => status === 'upcoming')
+  .sort((a, b) => a.date.localeCompare(b.date))
+const past = events
+  .filter(({ status }) => status === 'past')
+  .sort((a, b) => b.date.localeCompare(a.date))
+
+const years = Object.entries(
+  past.reduce<Record<string, SpeakingEvent[]>>((groups, event) => {
+    const year = event.date.slice(0, 4)
+    groups[year] ??= []
+    groups[year].push(event)
+    return groups
+  }, {}),
+).sort(([left], [right]) => Number(right) - Number(left))
+---
+
+<speaking-archive class="speaking-archive" id="speaking-archive">
+  <header>
+    <h2>Every recorded engagement</h2>
+    <p>
+      {events.length} talks and appearances, preserved locally and organized for quick scanning.
+    </p>
+  </header>
+
+  <div class="speaking-archive__filters" aria-label="Filter speaking engagements">
+    <button type="button" data-archive-filter="all" aria-pressed="true"> All </button>
+    <button
+      type="button"
+      data-archive-filter="upcoming"
+      aria-pressed="false"
+      disabled={upcoming.length === 0}
+    >
+      Upcoming
+    </button>
+    <button type="button" data-archive-filter="past" aria-pressed="false"> Past </button>
+    <span data-archive-count aria-live="polite">{events.length} engagements</span>
+  </div>
+
+  <section
+    class="speaking-archive__upcoming"
+    data-archive-group="upcoming"
+    aria-labelledby="upcoming-title"
+  >
+    <div>
+      <h3 id="upcoming-title">Upcoming</h3>
+      <p>Where the story goes next.</p>
+    </div>
+    {
+      upcoming.length > 0 ? (
+        <ol>
+          {upcoming.map((event) => (
+            <li>
+              <time datetime={event.date}>{event.displayDate}</time>
+              <div>
+                <strong>{event.event}</strong>
+                <span>{event.talk}</span>
+              </div>
+              <div class="speaking-archive__links">
+                {event.eventUrl && (
+                  <a href={event.eventUrl} target="_blank" rel="noopener noreferrer">
+                    Event
+                  </a>
+                )}
+                {event.talkUrl && (
+                  <a href={event.talkUrl} target="_blank" rel="noopener noreferrer">
+                    Talk
+                  </a>
+                )}
+              </div>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p class="speaking-archive__empty">No upcoming engagements are listed yet.</p>
+      )
+    }
+  </section>
+
+  <div class="speaking-archive__years" data-archive-group="past">
+    {
+      years.map(([year, yearEvents], index) => (
+        <details open={index === 0}>
+          <summary>
+            <span>{year}</span>
+            <span>{yearEvents.length} engagements</span>
+          </summary>
+          <ol>
+            {yearEvents.map((event) => (
+              <li>
+                <time datetime={event.date}>{event.displayDate}</time>
+                <div>
+                  <strong>{event.event}</strong>
+                  <span>{event.talk}</span>
+                </div>
+                <div class="speaking-archive__links">
+                  {event.eventUrl && (
+                    <a href={event.eventUrl} target="_blank" rel="noopener noreferrer">
+                      Event
+                    </a>
+                  )}
+                  {event.talkUrl && (
+                    <a href={event.talkUrl} target="_blank" rel="noopener noreferrer">
+                      Talk
+                    </a>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </details>
+      ))
+    }
+  </div>
+</speaking-archive>
+
+<script>
+  import '~/scripts/speaking-archive'
+</script>
+
+<style>
+  .speaking-archive {
+    display: grid;
+    width: min(100%, 72rem);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    margin-inline: auto;
+    padding-block: clamp(3.5rem, 9vw, 8rem);
+  }
+
+  .speaking-archive > header {
+    display: grid;
+    max-width: 62rem;
+    gap: 0.8rem;
+  }
+
+  .speaking-archive h2,
+  .speaking-archive h3,
+  .speaking-archive p {
+    margin: 0;
+  }
+
+  .speaking-archive h2 {
+    max-width: 13ch;
+    color: var(--theme-heading1);
+    font-family: var(--font-display);
+    font-size: clamp(2.35rem, 6vw, 5rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+
+  .speaking-archive > header p {
+    max-width: 62ch;
+    color: var(--theme-text-light);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .speaking-archive__filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  .speaking-archive__filters button {
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-control);
+    background: var(--theme-surface);
+    box-shadow: 0 12px 36px var(--theme-shadow);
+    color: var(--theme-foreground);
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.65rem 0.85rem;
+    transition:
+      transform 180ms var(--ease-out-expo),
+      box-shadow 120ms ease;
+  }
+
+  .speaking-archive__filters button[aria-pressed='true'] {
+    background: var(--theme-accent);
+    color: var(--theme-on-accent);
+  }
+
+  .speaking-archive__filters button:hover:not(:disabled) {
+    box-shadow: 0 8px 24px color-mix(in oklab, var(--theme-accent) 18%, transparent);
+    transform: translateY(-2px);
+  }
+
+  .speaking-archive__filters button:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  .speaking-archive__filters button:disabled {
+    cursor: not-allowed;
+    opacity: 0.42;
+  }
+
+  .speaking-archive__filters span {
+    margin-left: auto;
+    color: var(--theme-text-light);
+    font-size: 0.78rem;
+    font-weight: 650;
+  }
+
+  .speaking-archive__upcoming {
+    display: grid;
+    grid-template-columns: minmax(10rem, 0.4fr) minmax(0, 1.6fr);
+    gap: clamp(1.25rem, 4vw, 3rem);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-panel);
+    background: var(--theme-surface);
+    box-shadow: 0 24px 70px var(--theme-shadow);
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .speaking-archive__upcoming > div:first-child {
+    display: grid;
+    align-content: start;
+    gap: 0.35rem;
+  }
+
+  .speaking-archive__upcoming h3 {
+    color: var(--theme-heading2);
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    font-weight: 600;
+  }
+
+  .speaking-archive__upcoming > div:first-child p {
+    color: var(--theme-text-light);
+  }
+
+  .speaking-archive__upcoming ol,
+  .speaking-archive__years ol {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1rem, 2.5vw, 1.6rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .speaking-archive__upcoming li,
+  .speaking-archive__years li {
+    display: grid;
+    align-content: start;
+    gap: 0.8rem;
+    background: color-mix(in oklab, var(--theme-accent) 6%, transparent);
+    border-radius: var(--radius-media);
+    padding: 0.9rem;
+  }
+
+  .speaking-archive li time {
+    color: var(--theme-accent);
+    font-size: 0.78rem;
+    font-weight: 680;
+    text-transform: uppercase;
+  }
+
+  .speaking-archive li > div:not(.speaking-archive__links) {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .speaking-archive li strong {
+    color: var(--theme-heading2);
+    line-height: 1.25;
+  }
+
+  .speaking-archive li span {
+    color: var(--theme-text-light);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+
+  .speaking-archive__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .speaking-archive__links a {
+    color: var(--theme-link);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-underline-offset: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .speaking-archive__empty {
+    color: var(--theme-text-light);
+  }
+
+  .speaking-archive__years {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .speaking-archive__years details {
+    overflow: hidden;
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-panel);
+    background: var(--theme-surface);
+    box-shadow: 0 12px 36px var(--theme-shadow);
+  }
+
+  .speaking-archive__years summary {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    cursor: pointer;
+    padding: 1rem 1.1rem;
+    color: var(--theme-foreground);
+    list-style: none;
+  }
+
+  .speaking-archive__years summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .speaking-archive__years summary span:first-child {
+    color: var(--theme-heading1);
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 600;
+  }
+
+  .speaking-archive__years summary span:last-child {
+    color: var(--theme-text-light);
+    font-size: 0.75rem;
+    font-weight: 650;
+  }
+
+  .speaking-archive__years details > ol {
+    border-top: 1px solid var(--theme-border);
+    padding: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  [data-archive-group][hidden] {
+    display: none;
+  }
+
+  @media (max-width: 720px) {
+    .speaking-archive__filters span {
+      width: 100%;
+      margin-left: 0;
+    }
+
+    .speaking-archive__upcoming {
+      grid-template-columns: 1fr;
+    }
+
+    .speaking-archive__upcoming ol,
+    .speaking-archive__years ol {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .speaking-archive__filters button {
+      transition: none;
+    }
+  }
+</style>

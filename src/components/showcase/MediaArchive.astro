@@ -1,0 +1,218 @@
+---
+import type { MediaEntry, MediaKind } from '~/data/media'
+
+interface Props {
+  entries: MediaEntry[]
+}
+
+const { entries } = Astro.props
+const sections: { kind: MediaKind; label: string; description: string }[] = [
+  {
+    kind: 'video',
+    label: 'Videos',
+    description: 'Conference talks, streams, interviews, and technical demos.',
+  },
+  {
+    kind: 'podcast',
+    label: 'Podcasts',
+    description: 'Long-form conversations about software, community, and career.',
+  },
+  {
+    kind: 'publication',
+    label: 'Publications',
+    description: 'Articles and author archives published across the developer community.',
+  },
+  {
+    kind: 'feature',
+    label: 'Features',
+    description: 'Roundups and external publications that highlighted this work.',
+  },
+]
+
+const formatDate = (date?: string) =>
+  date
+    ? new Intl.DateTimeFormat('en-US', {
+        dateStyle: 'medium',
+        timeZone: 'UTC',
+      }).format(new Date(`${date}T00:00:00Z`))
+    : undefined
+---
+
+<section class="media-archive" id="media-archive" aria-labelledby="media-archive-title">
+  <header>
+    <h2 id="media-archive-title">Complete media archive</h2>
+    <p>
+      {entries.length} videos, conversations, articles, and features, grouped by format.
+    </p>
+  </header>
+
+  <div class="media-archive__groups">
+    {
+      sections.map((section, sectionIndex) => {
+        const sectionEntries = entries.filter(({ kind }) => kind === section.kind)
+
+        return (
+          <details open={sectionIndex === 0}>
+            <summary>
+              <span>{section.label}</span>
+              <span>{sectionEntries.length}</span>
+            </summary>
+            <div class="media-archive__group">
+              <p>{section.description}</p>
+              {sectionEntries.length > 0 ? (
+                <ol>
+                  {sectionEntries.map((entry) => (
+                    <li>
+                      <a href={entry.url} target="_blank" rel="noopener noreferrer">
+                        <span>{entry.title}</span>
+                        <small>
+                          {formatDate(entry.date) ?? section.label.slice(0, -1)}
+                        </small>
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <p>No entries in this category yet.</p>
+              )}
+            </div>
+          </details>
+        )
+      })
+    }
+  </div>
+</section>
+
+<style>
+  .media-archive {
+    display: grid;
+    width: min(100%, 72rem);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    margin-inline: auto;
+    padding-block: clamp(3rem, 8vw, 7rem);
+  }
+
+  .media-archive > header {
+    display: grid;
+    max-width: 58rem;
+    gap: 0.75rem;
+  }
+
+  .media-archive h2,
+  .media-archive p {
+    margin: 0;
+  }
+
+  .media-archive h2 {
+    max-width: 14ch;
+    color: var(--theme-heading1);
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 5.5vw, 4.5rem);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+
+  .media-archive > header p {
+    max-width: 62ch;
+    color: var(--theme-text-light);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .media-archive__groups {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .media-archive details {
+    overflow: hidden;
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-panel);
+    background: var(--theme-surface);
+    box-shadow: 0 12px 36px var(--theme-shadow);
+  }
+
+  .media-archive summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    cursor: pointer;
+    padding: 1rem 1.1rem;
+    color: var(--theme-foreground);
+    font-size: 1rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    list-style: none;
+  }
+
+  .media-archive summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .media-archive summary span:last-child {
+    display: grid;
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--theme-accent);
+    color: var(--theme-on-accent);
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+  }
+
+  .media-archive__group {
+    display: grid;
+    gap: 1.25rem;
+    border-top: 1px solid var(--theme-border);
+    padding: clamp(1rem, 2.5vw, 1.5rem);
+  }
+
+  .media-archive__group > p {
+    max-width: 62ch;
+    color: var(--theme-text-light);
+  }
+
+  .media-archive ol {
+    columns: 2 22rem;
+    column-gap: clamp(1.5rem, 4vw, 3rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .media-archive li {
+    break-inside: avoid;
+    margin: 0 0 1.1rem;
+  }
+
+  .media-archive li a {
+    display: grid;
+    gap: 0.35rem;
+    color: var(--theme-foreground);
+    line-height: 1.35;
+    text-decoration-color: var(--theme-accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+  }
+
+  .media-archive li a:hover {
+    color: var(--theme-accent);
+  }
+
+  .media-archive li small {
+    color: var(--theme-text-light);
+    font-size: 0.78rem;
+    font-weight: 650;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 640px) {
+    .media-archive ol {
+      columns: 1;
+    }
+  }
+</style>

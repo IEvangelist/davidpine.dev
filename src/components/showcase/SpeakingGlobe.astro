@@ -1,0 +1,301 @@
+---
+import type { SpeakingStoryStop } from '~/data/speaking'
+
+interface Props {
+  galleryId: string
+  stops: SpeakingStoryStop[]
+}
+
+const { galleryId, stops } = Astro.props
+const remoteStopIds = stops
+  .filter(({ format, location }) => format === 'online' && !location)
+  .map(({ id }) => id)
+const remoteOrigin = {
+  city: 'Pewaukee',
+  latitude: 43.0806,
+  longitude: -88.2612,
+}
+const globeStops = stops.flatMap(({ id, location }) =>
+  location
+    ? [
+        {
+          id,
+          city: location.city,
+          latitude: location.latitude,
+          longitude: location.longitude,
+          location: [location.city, location.region, location.country]
+            .filter(Boolean)
+            .join(', '),
+        },
+      ]
+    : [],
+)
+---
+
+<speaking-globe
+  class="speaking-globe"
+  data-gallery-id={galleryId}
+  data-stops={JSON.stringify(globeStops)}
+  data-remote-stop-ids={JSON.stringify(remoteStopIds)}
+  data-remote-origin={JSON.stringify(remoteOrigin)}
+>
+  <div class="speaking-globe__viewport">
+    <canvas data-globe-canvas aria-hidden="true"></canvas>
+
+    <div class="speaking-globe__fallback" data-globe-fallback aria-hidden="true">
+      <span></span>
+    </div>
+
+    <div class="speaking-globe__beacon" data-globe-beacon aria-hidden="true" hidden>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+
+    <div
+      class="speaking-globe__place speaking-globe__place--origin"
+      data-globe-origin
+      aria-hidden="true"
+      hidden
+    >
+      <span data-globe-origin-label></span>
+    </div>
+
+    <div
+      class="speaking-globe__place speaking-globe__place--destination"
+      data-globe-destination
+      aria-hidden="true"
+      hidden
+    >
+      <span data-globe-destination-label></span>
+    </div>
+  </div>
+</speaking-globe>
+
+<script>
+  import '~/scripts/speaking-globe'
+</script>
+
+<style>
+  .speaking-globe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 24rem;
+  }
+
+  .speaking-globe__viewport {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    overflow: hidden;
+  }
+
+  .speaking-globe canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 500ms ease;
+  }
+
+  .speaking-globe[data-ready='true'] canvas {
+    opacity: var(--globe-opacity, 1);
+  }
+
+  .speaking-globe__fallback {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(70vw, 34rem);
+    aspect-ratio: 1;
+    border: 2px solid color-mix(in oklab, var(--theme-accent) 58%, transparent);
+    border-radius: 50%;
+    background:
+      repeating-radial-gradient(
+        ellipse at center,
+        transparent 0 11%,
+        color-mix(in oklab, var(--theme-accent) 22%, transparent) 11.3% 11.8%,
+        transparent 12% 22%
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent 0 15%,
+        color-mix(in oklab, var(--theme-accent) 20%, transparent) 15.2% 15.6%,
+        transparent 16% 30%
+      ),
+      color-mix(in oklab, var(--theme-surface-raised) 48%, transparent);
+    box-shadow:
+      inset -2rem -1rem 4rem color-mix(in oklab, var(--theme-background) 72%, transparent),
+      0 2rem 6rem color-mix(in oklab, var(--theme-foreground) 16%, transparent);
+    opacity: 0.72;
+    transform: translate(-50%, -50%);
+    transition: opacity 300ms ease;
+  }
+
+  .speaking-globe__fallback::before,
+  .speaking-globe__fallback::after,
+  .speaking-globe__fallback span {
+    position: absolute;
+    border: 1px solid color-mix(in oklab, var(--theme-accent) 30%, transparent);
+    border-radius: 50%;
+    content: '';
+  }
+
+  .speaking-globe__fallback::before {
+    inset: 0 31%;
+  }
+
+  .speaking-globe__fallback::after {
+    inset: 31% 0;
+  }
+
+  .speaking-globe__fallback span {
+    inset: 12% 24%;
+  }
+
+  .speaking-globe[data-ready='true'] .speaking-globe__fallback {
+    opacity: 0;
+  }
+
+  .speaking-globe[data-unavailable='true'] .speaking-globe__fallback {
+    opacity: 0.9;
+  }
+
+  .speaking-globe__beacon {
+    position: absolute;
+    z-index: 1;
+    width: 0.7rem;
+    height: 0.7rem;
+    border: 2px solid var(--theme-surface);
+    border-radius: 50%;
+    background: var(--theme-accent);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+  }
+
+  .speaking-globe__beacon[hidden] {
+    display: none;
+  }
+
+  .speaking-globe__beacon span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: clamp(4.5rem, 7vw, 6.5rem);
+    height: clamp(4.5rem, 7vw, 6.5rem);
+    border: 1px solid color-mix(in oklab, var(--theme-accent) 72%, transparent);
+    border-radius: 50%;
+    opacity: 0.22;
+    transform: translate(-50%, -50%) scale(0.45);
+  }
+
+  .speaking-globe__place {
+    position: absolute;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    max-width: min(15rem, 46vw);
+    border: 1px solid color-mix(in oklab, var(--theme-overlay-text) 20%, transparent);
+    border-radius: var(--radius-control);
+    background: var(--theme-overlay-surface);
+    box-shadow: 0 10px 30px color-mix(in oklab, var(--theme-shadow) 78%, transparent);
+    color: var(--theme-overlay-text);
+    font-size: clamp(0.64rem, 1.2vw, 0.76rem);
+    font-weight: 720;
+    line-height: 1;
+    padding: 0.44rem 0.58rem;
+    pointer-events: none;
+    white-space: nowrap;
+    backdrop-filter: blur(12px);
+  }
+
+  .speaking-globe__place::before {
+    width: 0.46rem;
+    height: 0.46rem;
+    flex: 0 0 auto;
+    border: 1.5px solid currentColor;
+    border-radius: 50%;
+    content: '';
+  }
+
+  .speaking-globe__place[hidden] {
+    display: none;
+  }
+
+  .speaking-globe__place--origin {
+    transform: translate(calc(-100% - 0.7rem), 20%);
+  }
+
+  .speaking-globe__place--destination {
+    border-color: color-mix(in oklab, var(--theme-accent) 70%, var(--theme-border));
+    transform: translate(0.7rem, -120%);
+  }
+
+  .speaking-globe__place--destination::before {
+    border-color: var(--theme-accent);
+    background: var(--theme-accent);
+    box-shadow: 0 0 0 0.2rem color-mix(in oklab, var(--theme-accent) 18%, transparent);
+  }
+
+  .speaking-globe__place[data-broadcast]::before {
+    border-color: var(--theme-accent);
+    background: var(--theme-accent);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .speaking-globe__beacon span {
+      animation: speaking-globe-beacon 2.4s ease-out infinite;
+    }
+
+    .speaking-globe__beacon span:nth-child(2) {
+      animation-delay: 0.8s;
+    }
+
+    .speaking-globe__beacon span:nth-child(3) {
+      animation-delay: 1.6s;
+    }
+  }
+
+  @keyframes speaking-globe-beacon {
+    0% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.12);
+    }
+
+    14% {
+      opacity: 0.72;
+    }
+
+    100% {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .speaking-globe canvas,
+    .speaking-globe__fallback {
+      transition: none;
+    }
+  }
+
+  @media (max-width: 639px) {
+    .speaking-globe__place {
+      max-width: 10rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .speaking-globe__place {
+      background: var(--theme-surface);
+      backdrop-filter: none;
+    }
+  }
+</style>

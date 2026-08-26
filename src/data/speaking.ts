@@ -1,0 +1,1521 @@
+export type SpeakingEventStatus = 'upcoming' | 'past'
+export type SpeakingEventFormat = 'in-person' | 'online' | 'hybrid'
+export type TravelMode = 'flight' | 'train' | 'drive'
+
+export interface SpeakingLocation {
+  city: string
+  region?: string
+  country: string
+  latitude: number
+  longitude: number
+}
+
+export interface SpeakingEvent {
+  id: string
+  date: string
+  endDate?: string
+  displayDate: string
+  event: string
+  eventUrl?: string
+  talk: string
+  talkUrl?: string
+  status: SpeakingEventStatus
+  format?: SpeakingEventFormat
+  location?: SpeakingLocation
+  featured?: boolean
+  travelFromPrevious?: TravelMode
+}
+
+const speakingEventRecords: SpeakingEvent[] = [
+  {
+    id: '2026-11-17-wi-net-user-group-2026-aspire-talk-with-david-pine',
+    date: '2026-11-17',
+    displayDate: 'Nov 17, 2026',
+    event: 'WI .NET User Group - 2026',
+    eventUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/',
+    talk: 'Aspire Talk with David Pine',
+    talkUrl: 'https://www.meetup.com/wisconsin-net-users-group/events/316176923',
+    status: 'upcoming',
+  },
+  {
+    id: '2026-06-16-net-day-on-agentic-modernization-stop-rewriting-start-aspireifying',
+    date: '2026-06-16',
+    displayDate: 'Jun 16, 2026',
+    event: '.NET Day on Agentic Modernization',
+    eventUrl: 'https://developer.microsoft.com/en-us/reactor/events/27243/',
+    talk: 'Stop Rewriting. Start Aspireifying.',
+    status: 'past',
+  },
+  {
+    id: '2026-03-23-aspire-conf-from-localhost-to-liftoff-aspire-for-newbies',
+    date: '2026-03-23',
+    displayDate: 'Mar 23, 2026',
+    event: 'Aspire Conf',
+    eventUrl: 'https://conf.aspire.dev/',
+    talk: 'From Localhost to Liftoff: Aspire for Newbies',
+    talkUrl: 'https://www.youtube.com/watch?v=vWsgwd9QN6w',
+    status: 'past',
+  },
+  {
+    id: '2025-05-20-microsoft-build-2025-conversations-let-s-talk-net-aspire',
+    date: '2025-05-20',
+    displayDate: 'May 20 2025',
+    event: 'Microsoft //Build 2025',
+    eventUrl: 'https://build.microsoft.com/home',
+    talk: "Conversations: Let's Talk .NET Aspire",
+    talkUrl: 'https://build.microsoft.com/en-US/sessions/COMM411?source=sessions',
+    status: 'past',
+  },
+  {
+    id: '2024-11-12-net-conf-2024-build-your-own-net-aspire-integrations',
+    date: '2024-11-12',
+    displayDate: 'Nov 12 2024',
+    event: '.NET Conf 2024',
+    eventUrl: 'https://www.dotnetconf.net',
+    talk: 'Build your own .NET Aspire integrations',
+    talkUrl: 'https://www.dotnetconf.net/agenda#751882',
+    status: 'past',
+  },
+  {
+    id: '2024-10-23-cleveland-c-user-group-net-aspire-extensibility-profanity-filters-oh-',
+    date: '2024-10-23',
+    displayDate: 'Oct 23 2024',
+    event: 'Cleveland C# User Group',
+    eventUrl: 'https://www.meetup.com/Cleveland-CSUG',
+    talk: '.NET Aspire - Extensibility & Profanity Filters, Oh My!',
+    status: 'past',
+  },
+  {
+    id: '2024-08-23-devcon-midwest-elevate-your-skills-with-net-aspire-a-comprehensive-in',
+    date: '2024-08-23',
+    displayDate: 'Aug 23 2024',
+    event: 'DevCon Midwest',
+    eventUrl: 'https://events.nvisia.com/conference/be3edb0f-815e-48dd-9826-9b62f6fbc93a',
+    talk: 'Elevate Your Skills with .NET Aspire: A Comprehensive Introduction',
+    status: 'past',
+  },
+  {
+    id: '2023-07-27-that-conference-wisconsin-2023-revolutionizing-net-javascript-interop',
+    date: '2023-07-27',
+    displayDate: 'Jul 27 2023',
+    event: 'THAT Conference Wisconsin, 2023',
+    eventUrl: 'https://that.us/events/wi/2023/',
+    talk: 'Revolutionizing .NET-JavaScript interoperability: Exploiting C# source-generators',
+    talkUrl: 'https://that.us/activities/szX2JI6I66AwnUDj5WQf',
+    status: 'past',
+  },
+  {
+    id: '2023-06-13-wi-net-user-group-2023-microsoft-build-behind-the-net-demo-app',
+    date: '2023-06-13',
+    displayDate: 'Jun 13 2023',
+    event: 'WI .NET User Group - 2023',
+    eventUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/',
+    talk: 'Microsoft //Build - Behind the .NET demo app',
+    talkUrl: 'https://www.meetup.com/wisconsin-net-users-group/events/287246698',
+    status: 'past',
+  },
+  {
+    id: '2023-05-25-microsoft-build-2023-build-intelligent-apps-with-net-and-azure',
+    date: '2023-05-25',
+    displayDate: 'May 25 2023',
+    event: 'Microsoft //Build - 2023',
+    talk: 'Build Intelligent Apps with .NET and Azure',
+    talkUrl: 'https://build.microsoft.com/sessions/f8f953f3-2e58-4535-92ae-5cb30ef2b9b0',
+    status: 'past',
+  },
+  {
+    id: '2023-05-03-inside-net-with-elahn-danee-and-david-pine-exploring-the-azure-ai-ope',
+    date: '2023-05-03',
+    displayDate: 'May 3 2023',
+    event: 'Inside .NET with Elahn Danee and David Pine',
+    eventUrl: 'https://www.youtube.com/@insidedotnet2892/streams',
+    talk: 'Exploring the Azure.AI.OpenAI .NET SDK, NuGet package',
+    talkUrl: 'https://www.youtube.com/watch?v=Bh1lUglDOq4',
+    status: 'past',
+  },
+  {
+    id: '2023-04-27-cleveland-c-user-group-c-source-generators-for-blazor',
+    date: '2023-04-27',
+    displayDate: 'Apr 27 2023',
+    event: 'Cleveland C# User Group',
+    eventUrl: 'https://www.meetup.com/cleveland-c-vb-net-user-group/events',
+    talk: 'C# Source Generators for Blazor',
+    talkUrl: 'https://www.meetup.com/cleveland-c-vb-net-user-group/events/292653423',
+    status: 'past',
+  },
+  {
+    id: '2022-09-13-devreach-boston-2022-blazorators-c-source-generators-for-blazor',
+    date: '2022-09-13',
+    displayDate: 'Sept 13 2022',
+    event: 'DevReach Boston - 2022',
+    eventUrl: 'https://www.telerik.com/devreach-2022/agenda?agendaPath=speakers/1673482',
+    talk: 'Blazorators: C# Source Generators for Blazor',
+    talkUrl: 'https://www.youtube.com/watch?v=RGPS0y2pl2k',
+    status: 'past',
+  },
+  {
+    id: '2021-06-01-angular-global-summit-2021-building-an-angular-video-chat-app',
+    date: '2021-06-01',
+    displayDate: 'June 1 2021',
+    event: 'Angular Global Summit - 2021',
+    eventUrl: 'https://angular.geekle.us/',
+    talk: 'Building an Angular Video Chat App',
+    talkUrl: 'https://angular.geekle.us/#speakers',
+    status: 'past',
+  },
+  {
+    id: '2021-05-13-net-vegas-user-group-2021-signalr-above-beyond-chat',
+    date: '2021-05-13',
+    displayDate: 'May 13 2021',
+    event: '.NET Vegas User Group - 2021',
+    eventUrl: 'https://www.meetup.com/dotnetVegas',
+    talk: 'SignalR: Above & Beyond Chat',
+    talkUrl: 'https://www.meetup.com/dotnetVegas/events/276029625',
+    status: 'past',
+  },
+  {
+    id: '2021-04-22-progress-telerik-net-dev-show-codeitlive-github-actions-with-net',
+    date: '2021-04-22',
+    displayDate: 'Apr 22 2021',
+    event: 'Progress Telerik: .NET Dev Show CodeItLive',
+    eventUrl: 'https://www.youtube.com/playlist?list=PLvmaC-XMqeBaqRbDn0cY9dVZEIt-Yu7HB',
+    talk: 'GitHub Actions with .NET',
+    talkUrl: 'https://www.youtube.com/watch?v=WoIIMRYYlKc',
+    status: 'past',
+  },
+  {
+    id: '2021-04-20-azure-cosmos-db-conf-2021-a-deep-dive-into-the-cosmos-db-repository-p',
+    date: '2021-04-20',
+    displayDate: 'Apr 20 2021',
+    event: 'Azure Cosmos DB Conf - 2021',
+    eventUrl: 'https://www.gotcosmos.com/conf',
+    talk: 'A deep-dive into the Cosmos DB repository-pattern .NET SDK',
+    talkUrl: 'https://www.youtube.com/watch?v=izdnmBrTweA',
+    status: 'past',
+  },
+  {
+    id: '2021-01-22-progress-telerik-crazy8-s-codeitlive-c-9-live-refactoring',
+    date: '2021-01-22',
+    displayDate: 'Jan 22 2021',
+    event: "Progress Telerik: Crazy8's CodeItLive",
+    eventUrl: 'https://www.youtube.com/playlist?list=PLvmaC-XMqeBah3iVABaCw-tUfiMbaY3cf',
+    talk: 'C# 9 Live Refactoring',
+    talkUrl: 'https://www.youtube.com/watch?v=ko5RoLU4WV0&t=60s',
+    status: 'past',
+  },
+  {
+    id: '2021-01-21-chicago-net-user-group-2021-building-the-net-docs-show-blazor-app',
+    date: '2021-01-21',
+    displayDate: 'Jan 21 2021',
+    event: 'Chicago .NET User Group - 2021',
+    eventUrl: 'https://www.meetup.com/The-Chicago-NET-Users-Group',
+    talk: 'Building The .NET Docs Show - Blazor App',
+    talkUrl: 'https://www.meetup.com/The-Chicago-NET-Users-Group/events/275524233',
+    status: 'past',
+  },
+  {
+    id: '2021-01-13-progress-telerik-crazy8-s-codeitlive-signalr-let-me-introduce-you',
+    date: '2021-01-13',
+    displayDate: 'Jan 13 2021',
+    event: "Progress Telerik: Crazy8's CodeItLive",
+    eventUrl: 'https://www.youtube.com/playlist?list=PLvmaC-XMqeBah3iVABaCw-tUfiMbaY3cf',
+    talk: 'SignalR: Let me introduce you',
+    talkUrl: 'https://www.youtube.com/watch?v=5Fb4PrD5fDk',
+    status: 'past',
+  },
+  {
+    id: '2020-10-27-net-south-east-uk-building-the-net-docs-show-blazor-app',
+    date: '2020-10-27',
+    displayDate: 'Oct 27 2020',
+    event: '.NET South East (UK)',
+    eventUrl: 'https://www.meetup.com/dotnetsoutheast/',
+    talk: 'Building The .NET Docs Show - Blazor App',
+    talkUrl: 'https://www.meetup.com/dotnetsoutheast/events/273639240',
+    status: 'past',
+  },
+  {
+    id: '2020-10-14-net-foundation-youtube-cosmos-db-repository-pattern-net-sdk',
+    date: '2020-10-14',
+    displayDate: 'Oct 14 2020',
+    event: '.NET Foundation YouTube',
+    eventUrl: 'https://www.youtube.com/channel/UCiaZbznpWV1o-KLxj8zqR6A',
+    talk: 'Cosmos DB: Repository Pattern .NET SDK',
+    talkUrl:
+      'https://www.youtube.com/watch?v=KenrBgNg8jk&list=PL1rZQsJPBU2St9-Mz1Kaa7rofciyrwWVx&index=0',
+    status: 'past',
+  },
+  {
+    id: '2020-10-13-wi-net-user-group-2020-building-the-net-docs-show-blazor-app',
+    date: '2020-10-13',
+    displayDate: 'Oct 13 2020',
+    event: 'WI .NET User Group - 2020',
+    eventUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/',
+    talk: 'Building The .NET Docs Show - Blazor App',
+    talkUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/events/263682671#',
+    status: 'past',
+  },
+  {
+    id: '2020-09-02-maddotnet-building-the-net-docs-show-blazor-app',
+    date: '2020-09-02',
+    displayDate: 'Sep 2 2020',
+    event: 'MADdotNET',
+    eventUrl: 'https://www.meetup.com/MADdotNET/',
+    talk: 'Building The .NET Docs Show - Blazor App',
+    talkUrl: 'https://www.meetup.com/MADdotNET/events/268354822/',
+    status: 'past',
+  },
+  {
+    id: '2020-08-03-that-online-open-source-ethics',
+    date: '2020-08-03',
+    displayDate: 'Aug 3, 2020',
+    event: 'THAT Online',
+    eventUrl: 'https://that.us/',
+    talk: 'Open Source: Ethics',
+    talkUrl: 'https://that.us/sessions/5kcOHXxSKF3PoldD8KwG',
+    status: 'past',
+  },
+  {
+    id: '2020-04-14-asp-net-community-standup-signalr-with-brady-gaster-and-david-pine',
+    date: '2020-04-14',
+    displayDate: 'Apr 14, 2020',
+    event: 'ASP.NET Community Standup',
+    eventUrl: 'https://dotnet.microsoft.com/platform/community/standup',
+    talk: 'SignalR with Brady Gaster and David Pine',
+    talkUrl:
+      'https://www.youtube.com/watch?v=OUCN1i-ziLo&list=PL1rZQsJPBU2St9-Mz1Kaa7rofciyrwWVx&index=10',
+    status: 'past',
+  },
+  {
+    id: '2020-02-06-microsoft-devrel-camp-2020-express-intent-with-hand-drawn-slides',
+    date: '2020-02-06',
+    displayDate: 'Feb 6, 2020',
+    event: 'Microsoft DevRel Camp - 2020',
+    talk: 'Express intent with hand drawn slides',
+    status: 'past',
+  },
+  {
+    id: '2020-01-08-microsoft-ignite-toronto-2020-using-pre-built-ai-to-solve-business-ch',
+    date: '2020-01-08',
+    displayDate: 'Jan 8, 2020',
+    event: 'Microsoft Ignite (Toronto) - 2020',
+    eventUrl: 'https://toronto.myignitetour.techcommunity.microsoft.com/',
+    talk: 'Using pre-built AI to solve business challenges',
+    talkUrl: 'https://toronto.myignitetour.techcommunity.microsoft.com/sessions/86331',
+    status: 'past',
+  },
+  {
+    id: '2020-01-08-microsoft-ignite-toronto-2020-developers-guide-to-ai-a-data-story',
+    date: '2020-01-08',
+    displayDate: 'Jan 8, 2020',
+    event: 'Microsoft Ignite (Toronto) - 2020',
+    eventUrl: 'https://toronto.myignitetour.techcommunity.microsoft.com/',
+    talk: 'Developers guide to AI: A data story',
+    talkUrl:
+      'https://toronto.myignitetour.techcommunity.microsoft.com/learning-paths/84645?source=sessions',
+    status: 'past',
+  },
+  {
+    id: '2019-11-16-milwaukee-code-camp-2019-wtf-github-don-t-take-me-so-seriously',
+    date: '2019-11-16',
+    displayDate: 'Nov 16, 2019',
+    event: 'Milwaukee Code Camp - 2019',
+    eventUrl: 'https://www.milwaukeecodecamp.com',
+    talk: "WTF GitHub: don't take me so seriously",
+    talkUrl: 'https://www.milwaukeecodecamp.com/session/details/1206',
+    status: 'past',
+  },
+  {
+    id: '2019-10-22-telerik-devreach-bulgaria-2019-signalr-above-beyond-chat',
+    date: '2019-10-22',
+    displayDate: 'Oct 22, 2019',
+    event: 'Telerik DevReach (Bulgaria) - 2019',
+    eventUrl: 'https://www.telerik.com/devreach',
+    talk: 'SignalR: Above & Beyond Chat',
+    talkUrl: 'https://www.telerik.com/devreach/sessions/signalr-above-beyond-chat',
+    status: 'past',
+  },
+  {
+    id: '2019-10-04-cream-city-code-2019-wtf-github-don-t-take-me-so-seriously',
+    date: '2019-10-04',
+    displayDate: 'Oct 4, 2019',
+    event: 'Cream City Code - 2019',
+    eventUrl: 'https://fallexperiment.com/creamcitycode',
+    talk: "WTF GitHub: Don't take me so seriously",
+    talkUrl: 'https://fallexperiment.com/events/wtf-github-dont-take-me-so-seriously',
+    status: 'past',
+  },
+  {
+    id: '2019-09-10-wi-net-user-group-2019-wtf-github-don-t-take-me-so-seriously',
+    date: '2019-09-10',
+    displayDate: 'Sep 10, 2019',
+    event: 'WI .NET User Group - 2019',
+    eventUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/',
+    talk: "WTF GitHub: Don't take me so seriously",
+    talkUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/events/255329257',
+    status: 'past',
+  },
+  {
+    id: '2019-08-15-brady-decompiled-conference-2019-keynote-artificial-intelligence-for-',
+    date: '2019-08-15',
+    displayDate: 'Aug 15, 2019',
+    event: 'Brady Decompiled Conference - 2019',
+    talk: 'Keynote - Artificial Intelligence for All',
+    talkUrl: 'https://gitpitch.com/IEvangelist/ai-for-all/',
+    status: 'past',
+  },
+  {
+    id: '2019-07-30-milwaukeejs-2019-building-an-angular-video-chat-app',
+    date: '2019-07-30',
+    displayDate: 'Jul 30, 2019',
+    event: 'MilwaukeeJS - 2019',
+    eventUrl: 'https://www.meetup.com/milwaukeejs/',
+    talk: 'Building an Angular Video Chat App',
+    talkUrl: 'https://www.meetup.com/milwaukeejs/events/258763351',
+    status: 'past',
+  },
+  {
+    id: '2019-05-09-ndc-minnesota-2019-signalr-above-beyond-chat',
+    date: '2019-05-09',
+    displayDate: 'May 9, 2019',
+    event: 'NDC Minnesota - 2019',
+    eventUrl: 'https://ndcminnesota.com/',
+    talk: 'SignalR: Above & Beyond Chat',
+    talkUrl: 'https://ndcminnesota.com/talk/signalr-to-chat-and-beyond/',
+    status: 'past',
+  },
+  {
+    id: '2019-05-08-ndc-minnesota-2019-exploring-c-8-the-deep-dive',
+    date: '2019-05-08',
+    displayDate: 'May 8, 2019',
+    event: 'NDC Minnesota - 2019',
+    eventUrl: 'https://ndcminnesota.com/',
+    talk: 'Exploring C# 8: The Deep Dive',
+    talkUrl: 'https://ndcminnesota.com/talk/exploring-c-8-the-deep-dive/',
+    status: 'past',
+  },
+  {
+    id: '2019-04-24-devcodecamp-2019-signalr-above-beyond-chat',
+    date: '2019-04-24',
+    displayDate: 'Apr 24, 2019',
+    event: 'devCodeCamp - 2019',
+    eventUrl: 'https://devcodecamp.com/',
+    talk: 'SignalR: Above & Beyond Chat',
+    talkUrl: 'https://gist.github.com/IEvangelist/0bbd5a31863ac4a86d8ae19d0e1cdd9e',
+    status: 'past',
+  },
+  {
+    id: '2019-04-18-visual-studio-2019-launch-event-what-s-new-in-c-a-deep-dive-into-c-8',
+    date: '2019-04-18',
+    displayDate: 'Apr 18, 2019',
+    event: 'Visual Studio 2019 Launch Event',
+    eventUrl:
+      'https://www.eventbrite.com/e/visual-studio-2019-best-of-launch-downers-grove-tickets-59330280466',
+    talk: "What's new in C#: A Deep Dive into C# 8",
+    status: 'past',
+  },
+  {
+    id: '2019-04-18-visual-studio-2019-launch-event-signalr-above-beyond-chat',
+    date: '2019-04-18',
+    displayDate: 'Apr 18, 2019',
+    event: 'Visual Studio 2019 Launch Event',
+    eventUrl:
+      'https://www.eventbrite.com/e/visual-studio-2019-best-of-launch-downers-grove-tickets-59330280466',
+    talk: 'SignalR: Above & Beyond Chat',
+    talkUrl: 'https://gist.github.com/IEvangelist/0bbd5a31863ac4a86d8ae19d0e1cdd9e',
+    status: 'past',
+  },
+  {
+    id: '2019-04-13-twin-cities-code-camp-2019-webassembly-the-new-endgame',
+    date: '2019-04-13',
+    displayDate: 'Apr 13, 2019',
+    event: 'Twin Cities Code Camp - 2019',
+    eventUrl: 'https://twincitiescodecamp.com/#/home',
+    talk: 'WebAssembly: The New Endgame?',
+    talkUrl: 'https://gitpitch.com/IEvangelist/WebAssemblyTheNewEndgame',
+    status: 'past',
+  },
+  {
+    id: '2019-04-09-central-penn-net-ug-2019-webassembly-the-new-endgame',
+    date: '2019-04-09',
+    displayDate: 'Apr 9, 2019',
+    event: 'Central Penn .NET UG - 2019',
+    eventUrl: 'https://www.meetup.com/Central-Penn-Dot-Net-User-Group/',
+    talk: 'WebAssembly: The New Endgame?',
+    talkUrl: 'https://www.meetup.com/Central-Penn-Dot-Net-User-Group/events/260059673',
+    status: 'past',
+  },
+  {
+    id: '2019-04-03-visual-studio-2019-launch-event-what-s-new-in-c-a-deep-dive-into-c-8',
+    date: '2019-04-03',
+    displayDate: 'Apr 3, 2019',
+    event: 'Visual Studio 2019 Launch Event',
+    eventUrl: 'https://visualstudio2019launch.eventbrite.com',
+    talk: "What's new in C#: A Deep Dive into C# 8",
+    status: 'past',
+  },
+  {
+    id: '2019-03-12-wi-net-user-group-2019-signalr-above-beyond-chat',
+    date: '2019-03-12',
+    displayDate: 'Mar 12, 2019',
+    event: 'WI .NET User Group - 2019',
+    eventUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/',
+    talk: 'SignalR: Above & Beyond Chat',
+    talkUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/events/255328502/',
+    status: 'past',
+  },
+  {
+    id: '2019-02-07-centare-forward-thinking-2019-up-running-with-hugo',
+    date: '2019-02-07',
+    displayDate: 'Feb 7, 2019',
+    event: 'Centare (Forward Thinking) - 2019',
+    eventUrl: 'http://www.centare.com/',
+    talk: 'Up & Running with Hugo',
+    talkUrl: 'https://youtu.be/l0Yc9kDz7lU',
+    status: 'past',
+  },
+  {
+    id: '2019-01-17-wisconsin-technology-association-low-code-no-code-more-code-code',
+    date: '2019-01-17',
+    displayDate: 'Jan 17, 2019',
+    event: 'Wisconsin Technology Association',
+    eventUrl: 'https://wtawi.org/',
+    talk: 'Low-Code / No-Code, More Code ... Code!',
+    talkUrl: 'https://wtawi.org/events/disruptive-development/',
+    status: 'past',
+  },
+  {
+    id: '2018-12-12-newdug-2018-typescript-making-javascript-tolerable',
+    date: '2018-12-12',
+    displayDate: 'Dec 12, 2018',
+    event: 'NEWDUG - 2018',
+    eventUrl: 'https://newdug.org/',
+    talk: 'TypeScript: Making JavaScript Tolerable',
+    talkUrl: 'https://newdug.org/typescript-making-javascript-tolerable-david-pine/',
+    status: 'past',
+  },
+  {
+    id: '2018-11-13-wi-net-user-group-2018-webassembly-the-new-endgame',
+    date: '2018-11-13',
+    displayDate: 'Nov 13, 2018',
+    event: 'WI .NET User Group - 2018',
+    eventUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/',
+    talk: 'WebAssembly: The New Endgame?',
+    talkUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/events/240954522/',
+    status: 'past',
+  },
+  {
+    id: '2018-11-10-milwaukee-code-camp-2018-typescript-making-javascript-tolerable',
+    date: '2018-11-10',
+    displayDate: 'Nov 10, 2018',
+    event: 'Milwaukee Code Camp - 2018',
+    eventUrl: 'https://www.milwaukeecodecamp.com/',
+    talk: 'TypeScript: Making JavaScript Tolerable',
+    talkUrl: 'https://www.milwaukeecodecamp.com/Session/Details/1168',
+    status: 'past',
+  },
+  {
+    id: '2018-10-23-meet-the-meetups-ii-2018-upgrade-yourself-a-guide-to-developer-commun',
+    date: '2018-10-23',
+    displayDate: 'Oct 23, 2018',
+    event: 'Meet the Meetups II - 2018',
+    talk: 'Upgrade Yourself: A Guide To Developer Community Success',
+    talkUrl: 'https://gitpitch.com/IEvangelist/IEvangelist.UpgradeYourself.Lightning',
+    status: 'past',
+  },
+  {
+    id: '2018-10-13-cream-city-code-2018-what-s-new-in-c',
+    date: '2018-10-13',
+    displayDate: 'Oct 13, 2018',
+    event: 'Cream City Code - 2018',
+    eventUrl: 'https://www.creamcitycode.com/',
+    talk: "What's new in C#",
+    talkUrl: 'https://www.creamcitycode.com/sessions/whats-new-in-c',
+    status: 'past',
+  },
+  {
+    id: '2018-10-08-dev-up-2018-what-s-new-in-c',
+    date: '2018-10-08',
+    endDate: '2018-10-10',
+    displayDate: 'Oct 8-10, 2018',
+    event: 'Dev Up - 2018',
+    eventUrl: 'https://devupconf.org/',
+    talk: "What's new in C#",
+    status: 'past',
+  },
+  {
+    id: '2018-10-08-dev-up-2018-typescript-making-javascript-tolerable',
+    date: '2018-10-08',
+    endDate: '2018-10-10',
+    displayDate: 'Oct 8-10, 2018',
+    event: 'Dev Up - 2018',
+    eventUrl: 'https://devupconf.org/',
+    talk: 'TypeScript: Making JavaScript Tolerable',
+    status: 'past',
+  },
+  {
+    id: '2018-09-20-ql-tech-con-2018-webassembly-the-new-endgame',
+    date: '2018-09-20',
+    displayDate: 'Sept 20, 2018',
+    event: 'QL Tech Con - 2018',
+    eventUrl: 'http://qltechcon.com/schedule.html#59128',
+    talk: 'WebAssembly: The New Endgame?',
+    status: 'past',
+  },
+  {
+    id: '2018-08-07-that-conference-2018-webassembly-the-new-endgame',
+    date: '2018-08-07',
+    displayDate: 'Aug 7, 2018',
+    event: 'THAT Conference - 2018',
+    eventUrl: 'https://www.thatconference.com/',
+    talk: 'WebAssembly: The New Endgame?',
+    talkUrl: 'https://www.thatconference.com/Sessions/Session/12570',
+    status: 'past',
+  },
+  {
+    id: '2018-07-19-chicago-net-user-group-2018-what-s-new-in-c',
+    date: '2018-07-19',
+    displayDate: 'Jul 19, 2018',
+    event: 'Chicago .NET User Group - 2018',
+    eventUrl: 'https://www.meetup.com/The-Chicago-NET-Users-Group/',
+    talk: "What's new in C#",
+    talkUrl: 'https://www.meetup.com/The-Chicago-NET-Users-Group/events/250865896',
+    status: 'past',
+  },
+  {
+    id: '2018-06-26-milwaukeejs-2018-typescript-making-javascript-tolerable',
+    date: '2018-06-26',
+    displayDate: 'Jun 26, 2018',
+    event: 'MilwaukeeJS - 2018',
+    eventUrl: 'https://www.meetup.com/milwaukeejs/',
+    talk: 'TypeScript: Making JavaScript Tolerable',
+    talkUrl: 'https://www.meetup.com/milwaukeejs/events/247249996/',
+    status: 'past',
+  },
+  {
+    id: '2018-06-07-syntaxcon-2018-typescript-making-javascript-tolerable',
+    date: '2018-06-07',
+    displayDate: 'Jun 7, 2018',
+    event: 'SyntaxCon - 2018',
+    eventUrl: 'https://2018.syntaxcon.com/',
+    talk: 'TypeScript: Making JavaScript Tolerable',
+    talkUrl: 'https://2018.syntaxcon.com/session/typescript-making-javascript-tolerable/',
+    status: 'past',
+  },
+  {
+    id: '2018-05-23-international-tech-challenge-2018-upgrade-yourself-becoming-a-microso',
+    date: '2018-05-23',
+    displayDate: 'May 23, 2018',
+    event: 'International Tech Challenge - 2018',
+    eventUrl: 'http://www.johnsoncontrols.com/',
+    talk: 'Upgrade Yourself: Becoming a Microsoft MVP',
+    talkUrl: 'https://gist.github.com/IEvangelist/067e02d922df297f14eb0c7b034a400f',
+    status: 'past',
+  },
+  {
+    id: '2018-04-20-itkonekt-novi-sad-serbia-2018-what-s-new-in-c',
+    date: '2018-04-20',
+    displayDate: 'Apr 20, 2018',
+    event: 'ITKonekt, Novi Sad (Serbia) - 2018',
+    eventUrl: 'https://itkonekt.com/it-konferencija-novi-sad/',
+    talk: "What's new in C#",
+    talkUrl: 'https://itkonekt.com/2018/02/09/david-pine/',
+    status: 'past',
+  },
+  {
+    id: '2018-04-17-itkonekt-nis-serbia-2018-what-s-new-in-c',
+    date: '2018-04-17',
+    displayDate: 'Apr 17, 2018',
+    event: 'ITKonekt, Niš (Serbia) - 2018',
+    eventUrl: 'https://itkonekt.com/it-konferencija-nis/',
+    talk: "What's new in C#",
+    talkUrl: 'https://itkonekt.com/2018/02/09/david-pine/',
+    status: 'past',
+  },
+  {
+    id: '2018-04-15-itkonekt-belgrade-serbia-2018-what-s-new-in-c',
+    date: '2018-04-15',
+    displayDate: 'Apr 15, 2018',
+    event: 'ITKonekt, Belgrade (Serbia) - 2018',
+    eventUrl: 'https://itkonekt.com/it-konferencija-beograd/',
+    talk: "What's new in C#",
+    talkUrl: 'https://itkonekt.com/2018/02/09/david-pine/',
+    status: 'past',
+  },
+  {
+    id: '2018-02-27-milwaukeejs-2018-frontend-framework-panel-angular',
+    date: '2018-02-27',
+    displayDate: 'Feb 27, 2018',
+    event: 'MilwaukeeJS - 2018',
+    eventUrl: 'https://www.meetup.com/milwaukeejs/',
+    talk: 'Frontend Framework Panel (Angular)',
+    talkUrl: 'https://www.meetup.com/milwaukeejs/events/246445980/',
+    status: 'past',
+  },
+  {
+    id: '2018-02-10-south-florida-code-camp-2018-typescript-making-javascript-tolerable',
+    date: '2018-02-10',
+    displayDate: 'Feb 10, 2018',
+    event: 'South Florida Code Camp - 2018',
+    eventUrl: 'http://www.fladotnet.com/codecamp/Home.aspx',
+    talk: 'TypeScript: Making JavaScript Tolerable',
+    talkUrl: 'http://www.fladotnet.com/codecamp/SpeakerBio.aspx?SpeakerID=874',
+    status: 'past',
+  },
+  {
+    id: '2018-02-10-south-florida-code-camp-2018-upgrade-yourself-most-valued-developer',
+    date: '2018-02-10',
+    displayDate: 'Feb 10, 2018',
+    event: 'South Florida Code Camp - 2018',
+    eventUrl: 'http://www.fladotnet.com/codecamp/Home.aspx',
+    talk: 'Upgrade Yourself: Most Valued Developer',
+    talkUrl: 'http://www.fladotnet.com/codecamp/SpeakerBio.aspx?SpeakerID=874',
+    status: 'past',
+  },
+  {
+    id: '2017-11-14-wi-net-user-group-2017-typescript-making-javascript-tolerable',
+    date: '2017-11-14',
+    displayDate: 'Nov 14, 2017',
+    event: 'WI .NET User Group - 2017',
+    eventUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/',
+    talk: 'TypeScript: Making JavaScript Tolerable',
+    talkUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/events/237113732/',
+    status: 'past',
+  },
+  {
+    id: '2017-11-11-milwaukee-code-camp-2017-what-s-new-in-c',
+    date: '2017-11-11',
+    displayDate: 'Nov 11, 2017',
+    event: 'Milwaukee Code Camp - 2017',
+    eventUrl: 'https://www.milwaukeecodecamp.com/',
+    talk: "What's new in C#",
+    talkUrl: 'https://www.milwaukeecodecamp.com/session/details/1118',
+    status: 'past',
+  },
+  {
+    id: '2017-10-16-dev-up-2017-typescript-javascript-reimagined',
+    date: '2017-10-16',
+    endDate: '2017-10-17',
+    displayDate: 'Oct 16-17, 2017',
+    event: 'Dev Up - 2017',
+    eventUrl: 'http://devupconf.org/',
+    talk: 'TypeScript - JavaScript Reimagined',
+    talkUrl: 'http://devupconf.org/Sessions/575',
+    status: 'past',
+  },
+  {
+    id: '2017-10-16-dev-up-2017-from-c-6-to-c-7-then-and-now',
+    date: '2017-10-16',
+    endDate: '2017-10-17',
+    displayDate: 'Oct 16-17, 2017',
+    event: 'Dev Up - 2017',
+    eventUrl: 'http://devupconf.org/',
+    talk: 'From C# 6 to C# 7, then and now!',
+    talkUrl: 'http://devupconf.org/Sessions/576',
+    status: 'past',
+  },
+  {
+    id: '2017-09-29-prairie-code-2017-typescript-javascript-reimagined',
+    date: '2017-09-29',
+    displayDate: 'Sep 29, 2017',
+    event: 'Prairie.Code() - 2017',
+    eventUrl: 'https://prairiecode.amegala.com/',
+    talk: 'TypeScript - JavaScript Reimagined',
+    talkUrl: 'https://prairiecode.amegala.com/sessions/480',
+    status: 'past',
+  },
+  {
+    id: '2017-09-28-prairie-code-2017-angular2-with-an-asp-net-core-backend-happiness-ens',
+    date: '2017-09-28',
+    displayDate: 'Sep 28, 2017',
+    event: 'Prairie.Code() - 2017',
+    eventUrl: 'https://prairiecode.amegala.com/',
+    talk: 'Angular2 with an ASP.NET Core backend, happiness ensues...',
+    talkUrl: 'https://prairiecode.amegala.com/sessions/394',
+    status: 'past',
+  },
+  {
+    id: '2017-09-25-milwaukeespin-2017-current-trends-in-technology',
+    date: '2017-09-25',
+    displayDate: 'Sep 25, 2017',
+    event: 'MilwaukeeSPIN - 2017',
+    eventUrl: 'http://www.milwaukeespin.com',
+    talk: 'Current Trends in Technology',
+    talkUrl: 'http://www.milwaukeespin.com/Events',
+    status: 'past',
+  },
+  {
+    id: '2017-09-21-net-conf-local-2017-what-s-new-in-c-7-1-and-8-0',
+    date: '2017-09-21',
+    displayDate: 'Sep 21, 2017',
+    event: '.NET Conf (local) - 2017',
+    eventUrl: 'www.dotnetconf.net',
+    talk: "What's new in C# (7.1 and 8.0)",
+    talkUrl: 'https://www.eventbrite.com/e/net-conf-2017-tickets-37046195167',
+    status: 'past',
+  },
+  {
+    id: '2017-07-12-detroit-code-2017-building-a-magic-mirror-w-net',
+    date: '2017-07-12',
+    displayDate: 'Jul 12, 2017',
+    event: 'Detroit.Code() - 2017',
+    eventUrl: 'https://detroitcode.amegala.com/',
+    talk: 'Building a Magic Mirror w/ .NET',
+    talkUrl: 'https://detroitcode.amegala.com/Sessions/315',
+    status: 'past',
+  },
+  {
+    id: '2017-07-11-detroit-code-2017-angular2-with-an-asp-net-core-backend-happiness-ens',
+    date: '2017-07-11',
+    displayDate: 'Jul 11, 2017',
+    event: 'Detroit.Code() - 2017',
+    eventUrl: 'https://detroitcode.amegala.com/',
+    talk: 'Angular2 with an ASP.NET Core backend, happiness ensues...',
+    talkUrl: 'https://detroitcode.amegala.com/Sessions/317',
+    status: 'past',
+  },
+  {
+    id: '2017-06-26-chicago-js-meetup-2017-typescript-javascript-reimagined',
+    date: '2017-06-26',
+    displayDate: 'Jun 26, 2017',
+    event: 'Chicago JS Meetup - 2017',
+    eventUrl: 'https://www.meetup.com/js-chi/events/238222639/',
+    talk: 'TypeScript - JavaScript Reimagined',
+    talkUrl: 'https://www.meetup.com/js-chi/events/238222639/',
+    status: 'past',
+  },
+  {
+    id: '2017-06-26-chicago-coders-conference-2017-building-a-magic-mirror-w-net',
+    date: '2017-06-26',
+    displayDate: 'Jun 26, 2017',
+    event: 'Chicago Coders Conference - 2017',
+    eventUrl: 'http://www.chicagocoderconference.com/',
+    talk: 'Building a Magic Mirror w/ .NET',
+    talkUrl:
+      'http://www.chicagocoderconference.com/sessions/building-a-magic-mirror-with-net/',
+    status: 'past',
+  },
+  {
+    id: '2017-05-09-wi-net-user-group-2017-from-c-6-to-c-7-then-and-now',
+    date: '2017-05-09',
+    displayDate: 'May 9, 2017',
+    event: 'WI .NET User Group - 2017',
+    eventUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/',
+    talk: 'From C# 6 to C# 7, then and now!',
+    talkUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/events/237113620/',
+    status: 'past',
+  },
+  {
+    id: '2017-04-29-chicago-code-camp-2017-typescript-javascript-reimagined',
+    date: '2017-04-29',
+    displayDate: 'Apr 29, 2017',
+    event: 'Chicago Code Camp - 2017',
+    eventUrl: 'https://www.chicagocodecamp.com/',
+    talk: 'TypeScript - JavaScript Reimagined',
+    talkUrl: 'https://www.chicagocodecamp.com/sessions/detail/1172',
+    status: 'past',
+  },
+  {
+    id: '2017-04-18-mpn-demo-skyward-2017-from-c-6-to-c-7-then-and-now',
+    date: '2017-04-18',
+    displayDate: 'Apr 18, 2017',
+    event: 'MPN Demo (Skyward) - 2017',
+    eventUrl: 'https://partner.microsoft.com/en-US/',
+    talk: 'From C# 6 to C# 7, then and now!',
+    talkUrl: 'https://gist.github.com/IEvangelist/688502ca6ec59d071b2ae656babda4a4',
+    status: 'past',
+  },
+  {
+    id: '2017-04-11-wi-net-user-group-2017-azure-documentdb-the-nano-orm',
+    date: '2017-04-11',
+    displayDate: 'Apr 11, 2017',
+    event: 'WI .NET User Group - 2017',
+    eventUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/',
+    talk: 'Azure DocumentDb - the nano-ORM',
+    talkUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/events/237113600/',
+    status: 'past',
+  },
+  {
+    id: '2017-04-07-centare-forward-thinking-2017-azure-documentdb-the-nano-orm',
+    date: '2017-04-07',
+    displayDate: 'Apr 7, 2017',
+    event: 'Centare (Forward Thinking) - 2017',
+    eventUrl: 'http://www.centare.com/',
+    talk: 'Azure DocumentDb - the nano-ORM',
+    talkUrl: 'https://gist.github.com/IEvangelist/2bd8a3938f2269151d995262c8265d0e',
+    status: 'past',
+  },
+  {
+    id: '2017-03-31-indy-code-2017-angular2-with-an-asp-net-core-backend-happiness-ensues',
+    date: '2017-03-31',
+    displayDate: 'Mar 31, 2017',
+    event: 'Indy.Code() - 2017',
+    eventUrl: 'https://indycode.amegala.com/',
+    talk: 'Angular2 with an ASP.NET Core backend, happiness ensues...',
+    talkUrl: 'https://indycode.amegala.com/Sessions/51',
+    status: 'past',
+  },
+  {
+    id: '2017-03-31-indy-code-2017-from-c-6-to-c-7-then-and-now',
+    date: '2017-03-31',
+    displayDate: 'Mar 31, 2017',
+    event: 'Indy.Code() - 2017',
+    eventUrl: 'https://indycode.amegala.com/',
+    talk: 'From C# 6 to C# 7, then and now!',
+    talkUrl: 'https://indycode.amegala.com/Sessions/45',
+    status: 'past',
+  },
+  {
+    id: '2017-03-24-centare-forward-thinking-2017-angular2-with-an-asp-net-core-backend-h',
+    date: '2017-03-24',
+    displayDate: 'Mar 24, 2017',
+    event: 'Centare (Forward Thinking) - 2017',
+    eventUrl: 'http://www.centare.com/',
+    talk: 'Angular2 with an ASP.NET Core backend, happiness ensues...',
+    talkUrl: 'https://gist.github.com/IEvangelist/287742b6fe343b89da0be88427405bd1',
+    status: 'past',
+  },
+  {
+    id: '2017-03-17-visual-studio-2017-launch-event-from-c-6-to-c-7-then-and-now',
+    date: '2017-03-17',
+    displayDate: 'Mar 17, 2017',
+    event: 'Visual Studio 2017 Launch Event',
+    eventUrl: 'https://launch.visualstudio.com/local-events/',
+    talk: 'From C# 6 to C# 7, then and now!',
+    talkUrl: 'https://youtu.be/kFpXRooGo0c',
+    status: 'past',
+  },
+  {
+    id: '2017-01-12-microsoft-s-channel-9-2017-magic-mirror-on-the-wall-who-is-the-faires',
+    date: '2017-01-12',
+    displayDate: 'Jan 12, 2017',
+    event: "Microsoft's Channel 9 - 2017",
+    eventUrl: 'https://channel9.msdn.com/',
+    talk: 'Magic mirror on the wall, who is the fairest one of all?',
+    talkUrl:
+      'https://channel9.msdn.com/Shows/On-NET/David-Pine-Magic-mirror-on-the-wall-who-is-the-fairest-one-of-all',
+    status: 'past',
+  },
+  {
+    id: '2016-10-29-mke-dot-net-2016-building-a-magic-mirror',
+    date: '2016-10-29',
+    displayDate: 'Oct 29, 2016',
+    event: 'MKE DOT NET - 2016',
+    eventUrl: 'http://www.mkedotnet.com/2016',
+    talk: 'Building a "Magic Mirror"',
+    talkUrl: 'http://www.mkedotnet.com/2016/sessions/magic-mirror/',
+    status: 'past',
+  },
+  {
+    id: '2016-10-15-milwaukee-code-camp-2016-typescript-javascript-reimagined',
+    date: '2016-10-15',
+    displayDate: 'Oct 15, 2016',
+    event: 'Milwaukee Code Camp - 2016',
+    eventUrl: 'http://milwaukeecodecamp.com/',
+    talk: 'TypeScript - JavaScript Reimagined',
+    talkUrl: 'http://milwaukeecodecamp.com/session/details/1065',
+    status: 'past',
+  },
+  {
+    id: '2016-06-24-build-recap-2016-2016-build-recap',
+    date: '2016-06-24',
+    displayDate: 'Jun 24, 2016',
+    event: '//Build/ Recap - 2016',
+    eventUrl: 'https://channel9.msdn.com/Events/Build/2016',
+    talk: '2016 //build/ recap',
+    talkUrl: 'https://speakerdeck.com/ievangelist/recap',
+    status: 'past',
+  },
+]
+
+type SpeakingEventMetadata = Pick<SpeakingEvent, 'format' | 'location'>
+
+const speakingLocations = {
+  appleton: {
+    city: 'Appleton',
+    region: 'Wisconsin',
+    country: 'United States',
+    latitude: 44.2619,
+    longitude: -88.4154,
+  },
+  bloomington: {
+    city: 'Bloomington',
+    region: 'Minnesota',
+    country: 'United States',
+    latitude: 44.8408,
+    longitude: -93.2983,
+  },
+  brookfield: {
+    city: 'Brookfield',
+    region: 'Wisconsin',
+    country: 'United States',
+    latitude: 43.0606,
+    longitude: -88.1065,
+  },
+  chicago: {
+    city: 'Chicago',
+    region: 'Illinois',
+    country: 'United States',
+    latitude: 41.8781,
+    longitude: -87.6298,
+  },
+  davie: {
+    city: 'Davie',
+    region: 'Florida',
+    country: 'United States',
+    latitude: 26.0765,
+    longitude: -80.2521,
+  },
+  desMoines: {
+    city: 'Des Moines',
+    region: 'Iowa',
+    country: 'United States',
+    latitude: 41.5868,
+    longitude: -93.625,
+  },
+  denver: {
+    city: 'Denver',
+    region: 'Colorado',
+    country: 'United States',
+    latitude: 39.7392,
+    longitude: -104.9903,
+  },
+  detroit: {
+    city: 'Detroit',
+    region: 'Michigan',
+    country: 'United States',
+    latitude: 42.3314,
+    longitude: -83.0458,
+  },
+  downersGrove: {
+    city: 'Downers Grove',
+    region: 'Illinois',
+    country: 'United States',
+    latitude: 41.8089,
+    longitude: -88.0112,
+  },
+  harrisburg: {
+    city: 'Harrisburg',
+    region: 'Pennsylvania',
+    country: 'United States',
+    latitude: 40.2732,
+    longitude: -76.8867,
+  },
+  indianapolis: {
+    city: 'Indianapolis',
+    region: 'Indiana',
+    country: 'United States',
+    latitude: 39.7684,
+    longitude: -86.1581,
+  },
+  milwaukee: {
+    city: 'Milwaukee',
+    region: 'Wisconsin',
+    country: 'United States',
+    latitude: 43.0389,
+    longitude: -87.9065,
+  },
+  redmond: {
+    city: 'Redmond',
+    region: 'Washington',
+    country: 'United States',
+    latitude: 47.674,
+    longitude: -122.1215,
+  },
+  saintLouis: {
+    city: 'Saint Louis',
+    region: 'Missouri',
+    country: 'United States',
+    latitude: 38.627,
+    longitude: -90.1994,
+  },
+  toronto: {
+    city: 'Toronto',
+    region: 'Ontario',
+    country: 'Canada',
+    latitude: 43.6532,
+    longitude: -79.3832,
+  },
+  wauwatosa: {
+    city: 'Wauwatosa',
+    region: 'Wisconsin',
+    country: 'United States',
+    latitude: 43.0495,
+    longitude: -88.0076,
+  },
+  wisconsinDells: {
+    city: 'Wisconsin Dells',
+    region: 'Wisconsin',
+    country: 'United States',
+    latitude: 43.6275,
+    longitude: -89.7709,
+  },
+} satisfies Record<string, SpeakingLocation>
+
+const inPerson = (location: SpeakingLocation): SpeakingEventMetadata => ({
+  format: 'in-person',
+  location,
+})
+
+const online: SpeakingEventMetadata = { format: 'online' }
+
+const speakingEventMetadataById = new Map<string, SpeakingEventMetadata>([
+  [
+    '2016-10-15-milwaukee-code-camp-2016-typescript-javascript-reimagined',
+    inPerson(speakingLocations.milwaukee),
+  ],
+  [
+    '2017-03-17-visual-studio-2017-launch-event-from-c-6-to-c-7-then-and-now',
+    inPerson(speakingLocations.denver),
+  ],
+  [
+    '2017-03-24-centare-forward-thinking-2017-angular2-with-an-asp-net-core-backend-h',
+    inPerson(speakingLocations.brookfield),
+  ],
+  [
+    '2017-03-31-indy-code-2017-angular2-with-an-asp-net-core-backend-happiness-ensues',
+    inPerson(speakingLocations.indianapolis),
+  ],
+  [
+    '2017-03-31-indy-code-2017-from-c-6-to-c-7-then-and-now',
+    inPerson(speakingLocations.indianapolis),
+  ],
+  [
+    '2017-04-07-centare-forward-thinking-2017-azure-documentdb-the-nano-orm',
+    inPerson(speakingLocations.brookfield),
+  ],
+  [
+    '2017-04-11-wi-net-user-group-2017-azure-documentdb-the-nano-orm',
+    inPerson(speakingLocations.brookfield),
+  ],
+  [
+    '2017-05-09-wi-net-user-group-2017-from-c-6-to-c-7-then-and-now',
+    inPerson(speakingLocations.brookfield),
+  ],
+  [
+    '2017-06-26-chicago-coders-conference-2017-building-a-magic-mirror-w-net',
+    inPerson(speakingLocations.chicago),
+  ],
+  [
+    '2017-06-26-chicago-js-meetup-2017-typescript-javascript-reimagined',
+    inPerson(speakingLocations.chicago),
+  ],
+  [
+    '2017-07-11-detroit-code-2017-angular2-with-an-asp-net-core-backend-happiness-ens',
+    inPerson(speakingLocations.detroit),
+  ],
+  [
+    '2017-07-12-detroit-code-2017-building-a-magic-mirror-w-net',
+    inPerson(speakingLocations.detroit),
+  ],
+  [
+    '2017-09-25-milwaukeespin-2017-current-trends-in-technology',
+    inPerson(speakingLocations.milwaukee),
+  ],
+  [
+    '2017-09-28-prairie-code-2017-angular2-with-an-asp-net-core-backend-happiness-ens',
+    inPerson(speakingLocations.desMoines),
+  ],
+  [
+    '2017-09-29-prairie-code-2017-typescript-javascript-reimagined',
+    inPerson(speakingLocations.desMoines),
+  ],
+  [
+    '2017-10-16-dev-up-2017-from-c-6-to-c-7-then-and-now',
+    inPerson(speakingLocations.saintLouis),
+  ],
+  [
+    '2017-10-16-dev-up-2017-typescript-javascript-reimagined',
+    inPerson(speakingLocations.saintLouis),
+  ],
+  [
+    '2017-11-11-milwaukee-code-camp-2017-what-s-new-in-c',
+    inPerson(speakingLocations.milwaukee),
+  ],
+  [
+    '2017-11-14-wi-net-user-group-2017-typescript-making-javascript-tolerable',
+    inPerson(speakingLocations.brookfield),
+  ],
+  [
+    '2018-02-10-south-florida-code-camp-2018-upgrade-yourself-most-valued-developer',
+    inPerson(speakingLocations.davie),
+  ],
+  [
+    '2018-02-27-milwaukeejs-2018-frontend-framework-panel-angular',
+    inPerson(speakingLocations.milwaukee),
+  ],
+  [
+    '2018-05-23-international-tech-challenge-2018-upgrade-yourself-becoming-a-microso',
+    inPerson(speakingLocations.milwaukee),
+  ],
+  [
+    '2018-06-26-milwaukeejs-2018-typescript-making-javascript-tolerable',
+    inPerson(speakingLocations.milwaukee),
+  ],
+  [
+    '2018-07-19-chicago-net-user-group-2018-what-s-new-in-c',
+    inPerson(speakingLocations.chicago),
+  ],
+  [
+    '2018-08-07-that-conference-2018-webassembly-the-new-endgame',
+    inPerson(speakingLocations.wisconsinDells),
+  ],
+  [
+    '2018-09-20-ql-tech-con-2018-webassembly-the-new-endgame',
+    inPerson(speakingLocations.detroit),
+  ],
+  [
+    '2018-10-08-dev-up-2018-typescript-making-javascript-tolerable',
+    inPerson(speakingLocations.saintLouis),
+  ],
+  ['2018-10-08-dev-up-2018-what-s-new-in-c', inPerson(speakingLocations.saintLouis)],
+  [
+    '2018-10-13-cream-city-code-2018-what-s-new-in-c',
+    inPerson(speakingLocations.milwaukee),
+  ],
+  [
+    '2018-10-23-meet-the-meetups-ii-2018-upgrade-yourself-a-guide-to-developer-commun',
+    inPerson(speakingLocations.milwaukee),
+  ],
+  [
+    '2018-11-10-milwaukee-code-camp-2018-typescript-making-javascript-tolerable',
+    inPerson(speakingLocations.milwaukee),
+  ],
+  [
+    '2018-11-13-wi-net-user-group-2018-webassembly-the-new-endgame',
+    inPerson(speakingLocations.brookfield),
+  ],
+  [
+    '2018-12-12-newdug-2018-typescript-making-javascript-tolerable',
+    inPerson(speakingLocations.appleton),
+  ],
+  [
+    '2019-01-17-wisconsin-technology-association-low-code-no-code-more-code-code',
+    inPerson(speakingLocations.wauwatosa),
+  ],
+  [
+    '2019-02-07-centare-forward-thinking-2019-up-running-with-hugo',
+    inPerson(speakingLocations.brookfield),
+  ],
+  [
+    '2019-03-12-wi-net-user-group-2019-signalr-above-beyond-chat',
+    inPerson(speakingLocations.brookfield),
+  ],
+  [
+    '2019-04-03-visual-studio-2019-launch-event-what-s-new-in-c-a-deep-dive-into-c-8',
+    inPerson(speakingLocations.brookfield),
+  ],
+  [
+    '2019-04-09-central-penn-net-ug-2019-webassembly-the-new-endgame',
+    inPerson(speakingLocations.harrisburg),
+  ],
+  [
+    '2019-04-13-twin-cities-code-camp-2019-webassembly-the-new-endgame',
+    inPerson(speakingLocations.bloomington),
+  ],
+  [
+    '2019-04-18-visual-studio-2019-launch-event-signalr-above-beyond-chat',
+    inPerson(speakingLocations.downersGrove),
+  ],
+  [
+    '2019-04-18-visual-studio-2019-launch-event-what-s-new-in-c-a-deep-dive-into-c-8',
+    inPerson(speakingLocations.downersGrove),
+  ],
+  [
+    '2019-04-24-devcodecamp-2019-signalr-above-beyond-chat',
+    inPerson(speakingLocations.milwaukee),
+  ],
+  [
+    '2019-05-08-ndc-minnesota-2019-exploring-c-8-the-deep-dive',
+    inPerson({
+      city: 'Saint Paul',
+      region: 'Minnesota',
+      country: 'United States',
+      latitude: 44.9537,
+      longitude: -93.09,
+    }),
+  ],
+  [
+    '2019-07-30-milwaukeejs-2019-building-an-angular-video-chat-app',
+    inPerson(speakingLocations.milwaukee),
+  ],
+  [
+    '2019-08-15-brady-decompiled-conference-2019-keynote-artificial-intelligence-for-',
+    inPerson(speakingLocations.milwaukee),
+  ],
+  [
+    '2019-09-10-wi-net-user-group-2019-wtf-github-don-t-take-me-so-seriously',
+    inPerson(speakingLocations.brookfield),
+  ],
+  [
+    '2019-10-04-cream-city-code-2019-wtf-github-don-t-take-me-so-seriously',
+    inPerson(speakingLocations.milwaukee),
+  ],
+  [
+    '2019-11-16-milwaukee-code-camp-2019-wtf-github-don-t-take-me-so-seriously',
+    inPerson(speakingLocations.milwaukee),
+  ],
+  [
+    '2020-01-08-microsoft-ignite-toronto-2020-developers-guide-to-ai-a-data-story',
+    inPerson(speakingLocations.toronto),
+  ],
+  [
+    '2020-02-06-microsoft-devrel-camp-2020-express-intent-with-hand-drawn-slides',
+    inPerson(speakingLocations.redmond),
+  ],
+  [
+    '2023-06-13-wi-net-user-group-2023-microsoft-build-behind-the-net-demo-app',
+    inPerson(speakingLocations.brookfield),
+  ],
+  [
+    '2023-07-27-that-conference-wisconsin-2023-revolutionizing-net-javascript-interop',
+    inPerson(speakingLocations.wisconsinDells),
+  ],
+  [
+    '2024-08-23-devcon-midwest-elevate-your-skills-with-net-aspire-a-comprehensive-in',
+    inPerson(speakingLocations.brookfield),
+  ],
+  [
+    '2026-11-17-wi-net-user-group-2026-aspire-talk-with-david-pine',
+    inPerson(speakingLocations.brookfield),
+  ],
+  [
+    '2017-01-12-microsoft-s-channel-9-2017-magic-mirror-on-the-wall-who-is-the-faires',
+    online,
+  ],
+  [
+    '2020-04-14-asp-net-community-standup-signalr-with-brady-gaster-and-david-pine',
+    online,
+  ],
+  ['2020-08-03-that-online-open-source-ethics', online],
+  ['2020-09-02-maddotnet-building-the-net-docs-show-blazor-app', online],
+  ['2020-10-13-wi-net-user-group-2020-building-the-net-docs-show-blazor-app', online],
+  ['2020-10-14-net-foundation-youtube-cosmos-db-repository-pattern-net-sdk', online],
+  ['2020-10-27-net-south-east-uk-building-the-net-docs-show-blazor-app', online],
+  [
+    '2021-01-13-progress-telerik-crazy8-s-codeitlive-signalr-let-me-introduce-you',
+    online,
+  ],
+  [
+    '2021-01-21-chicago-net-user-group-2021-building-the-net-docs-show-blazor-app',
+    online,
+  ],
+  ['2021-01-22-progress-telerik-crazy8-s-codeitlive-c-9-live-refactoring', online],
+  [
+    '2021-04-20-azure-cosmos-db-conf-2021-a-deep-dive-into-the-cosmos-db-repository-p',
+    online,
+  ],
+  ['2021-04-22-progress-telerik-net-dev-show-codeitlive-github-actions-with-net', online],
+  ['2021-05-13-net-vegas-user-group-2021-signalr-above-beyond-chat', online],
+  ['2021-06-01-angular-global-summit-2021-building-an-angular-video-chat-app', online],
+  ['2023-04-27-cleveland-c-user-group-c-source-generators-for-blazor', online],
+  [
+    '2023-05-03-inside-net-with-elahn-danee-and-david-pine-exploring-the-azure-ai-ope',
+    online,
+  ],
+  ['2023-05-25-microsoft-build-2023-build-intelligent-apps-with-net-and-azure', online],
+  [
+    '2024-10-23-cleveland-c-user-group-net-aspire-extensibility-profanity-filters-oh-',
+    online,
+  ],
+  ['2024-11-12-net-conf-2024-build-your-own-net-aspire-integrations', online],
+  ['2026-03-23-aspire-conf-from-localhost-to-liftoff-aspire-for-newbies', online],
+  [
+    '2026-06-16-net-day-on-agentic-modernization-stop-rewriting-start-aspireifying',
+    online,
+  ],
+])
+
+export const speakingEvents: SpeakingEvent[] = speakingEventRecords.map((event) => {
+  const metadata = speakingEventMetadataById.get(event.id)
+  return metadata ? { ...event, ...metadata } : event
+})
+
+export interface FeaturedSpeakingStop extends SpeakingEvent {
+  location: SpeakingLocation
+  featured: true
+}
+
+export interface SpeakingStoryStop extends SpeakingEvent {
+  location?: SpeakingLocation
+}
+
+interface FeaturedSpeakingStopMetadata {
+  id: string
+  location: SpeakingLocation
+  travelFromPrevious?: TravelMode
+}
+
+const featuredSpeakingStopMetadata: FeaturedSpeakingStopMetadata[] = [
+  {
+    id: '2016-10-29-mke-dot-net-2016-building-a-magic-mirror',
+    location: {
+      city: 'Milwaukee',
+      region: 'Wisconsin',
+      country: 'United States',
+      latitude: 43.0389,
+      longitude: -87.9065,
+    },
+  },
+  {
+    id: '2017-04-29-chicago-code-camp-2017-typescript-javascript-reimagined',
+    travelFromPrevious: 'drive',
+    location: {
+      city: 'Chicago',
+      region: 'Illinois',
+      country: 'United States',
+      latitude: 41.8781,
+      longitude: -87.6298,
+    },
+  },
+  {
+    id: '2018-02-10-south-florida-code-camp-2018-typescript-making-javascript-tolerable',
+    travelFromPrevious: 'flight',
+    location: {
+      city: 'Davie',
+      region: 'Florida',
+      country: 'United States',
+      latitude: 26.0765,
+      longitude: -80.2521,
+    },
+  },
+  {
+    id: '2018-04-15-itkonekt-belgrade-serbia-2018-what-s-new-in-c',
+    travelFromPrevious: 'flight',
+    location: {
+      city: 'Belgrade',
+      country: 'Serbia',
+      latitude: 44.7866,
+      longitude: 20.4489,
+    },
+  },
+  {
+    id: '2018-04-17-itkonekt-nis-serbia-2018-what-s-new-in-c',
+    travelFromPrevious: 'drive',
+    location: {
+      city: 'Nis',
+      country: 'Serbia',
+      latitude: 43.3209,
+      longitude: 21.8958,
+    },
+  },
+  {
+    id: '2018-04-20-itkonekt-novi-sad-serbia-2018-what-s-new-in-c',
+    travelFromPrevious: 'drive',
+    location: {
+      city: 'Novi Sad',
+      country: 'Serbia',
+      latitude: 45.2671,
+      longitude: 19.8335,
+    },
+  },
+  {
+    id: '2018-06-07-syntaxcon-2018-typescript-making-javascript-tolerable',
+    travelFromPrevious: 'flight',
+    location: {
+      city: 'Charleston',
+      region: 'South Carolina',
+      country: 'United States',
+      latitude: 32.7765,
+      longitude: -79.9311,
+    },
+  },
+  {
+    id: '2019-05-09-ndc-minnesota-2019-signalr-above-beyond-chat',
+    travelFromPrevious: 'flight',
+    location: {
+      city: 'Saint Paul',
+      region: 'Minnesota',
+      country: 'United States',
+      latitude: 44.9537,
+      longitude: -93.09,
+    },
+  },
+  {
+    id: '2019-10-22-telerik-devreach-bulgaria-2019-signalr-above-beyond-chat',
+    travelFromPrevious: 'flight',
+    location: {
+      city: 'Sofia',
+      country: 'Bulgaria',
+      latitude: 42.6977,
+      longitude: 23.3219,
+    },
+  },
+  {
+    id: '2020-01-08-microsoft-ignite-toronto-2020-using-pre-built-ai-to-solve-business-ch',
+    travelFromPrevious: 'flight',
+    location: {
+      city: 'Toronto',
+      region: 'Ontario',
+      country: 'Canada',
+      latitude: 43.6532,
+      longitude: -79.3832,
+    },
+  },
+  {
+    id: '2022-09-13-devreach-boston-2022-blazorators-c-source-generators-for-blazor',
+    travelFromPrevious: 'flight',
+    location: {
+      city: 'Boston',
+      region: 'Massachusetts',
+      country: 'United States',
+      latitude: 42.3601,
+      longitude: -71.0589,
+    },
+  },
+  {
+    id: '2025-05-20-microsoft-build-2025-conversations-let-s-talk-net-aspire',
+    travelFromPrevious: 'flight',
+    location: {
+      city: 'Seattle',
+      region: 'Washington',
+      country: 'United States',
+      latitude: 47.6062,
+      longitude: -122.3321,
+    },
+  },
+]
+
+export const featuredSpeakingJourney: FeaturedSpeakingStop[] =
+  featuredSpeakingStopMetadata.map((metadata) => {
+    const event = speakingEvents.find(({ id }) => id === metadata.id)
+    if (!event) {
+      throw new Error(`Featured speaking event not found: ${metadata.id}`)
+    }
+
+    return {
+      ...event,
+      ...metadata,
+      featured: true,
+    }
+  })
+
+const featuredStopById = new Map(featuredSpeakingJourney.map((stop) => [stop.id, stop]))
+
+const chronologicalSpeakingJourney: SpeakingStoryStop[] = [...speakingEvents]
+  .sort((left, right) => left.date.localeCompare(right.date))
+  .map((event) => featuredStopById.get(event.id) ?? event)
+
+const reversedSpeakingJourney = [...chronologicalSpeakingJourney].reverse()
+const reversedMappedStops = reversedSpeakingJourney.filter((stop) => stop.location)
+const reverseTravelModeById = new Map<string, TravelMode | undefined>()
+
+reversedMappedStops.forEach((stop, index) => {
+  const newerStop = reversedMappedStops[index - 1]
+  const sameLocation =
+    stop.location &&
+    newerStop?.location &&
+    stop.location.latitude === newerStop.location.latitude &&
+    stop.location.longitude === newerStop.location.longitude
+
+  reverseTravelModeById.set(
+    stop.id,
+    index === 0 || sameLocation ? undefined : newerStop?.travelFromPrevious,
+  )
+})
+
+export const speakingJourney: SpeakingStoryStop[] = reversedSpeakingJourney.map(
+  (stop) => ({
+    ...stop,
+    travelFromPrevious: stop.location ? reverseTravelModeById.get(stop.id) : undefined,
+  }),
+)

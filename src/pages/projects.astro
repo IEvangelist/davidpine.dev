@@ -4,601 +4,795 @@ import PageHeader from '~/components/PageHeader.astro'
 import { Icon } from 'astro-icon/components'
 import GitHubMark from '~/icons/github.svg'
 
-const projects = [
+const projectGroups = [
   {
-    name: '6174',
-    tagline: 'Kaprekar Explorer',
-    description:
-      "An animated React + Vite app that walks 4-digit seeds into Kaprekar's constant 6174, one subtraction card at a time.",
-    repoUrl: 'https://github.com/IEvangelist/6174',
-    pagesUrl: 'https://ievangelist.github.io/6174/',
-    lightThumbnail: '/images/projects/6174-light.png',
-    darkThumbnail: '/images/projects/6174-dark.png',
-    tone: '#a78bfa',
-    repoPath: 'IEvangelist/6174',
+    id: 'built-for-dotnet',
+    title: 'Built for .NET',
+    description: 'Libraries, SDKs, and source generators for production applications.',
+    projects: [
+      {
+        name: 'Azure Cosmos DB Repository .NET SDK',
+        description:
+          'A dependency-injection-friendly wrapper around Microsoft.Azure.Cosmos, with 1.2M+ NuGet downloads.',
+        repoUrl: 'https://github.com/IEvangelist/azure-cosmos-dotnet-repository',
+        pagesUrl: 'https://ievangelist.github.io/azure-cosmos-dotnet-repository/',
+        lightThumbnail: '/images/projects/azure-cosmos-repository-light.webp',
+        darkThumbnail: '/images/projects/azure-cosmos-repository-dark.webp',
+        repoPath: 'IEvangelist/azure-cosmos-dotnet-repository',
+      },
+      {
+        name: 'Profanity Filter',
+        description:
+          'Customizable, source-generated, and AOT-ready moderation for modern .NET applications.',
+        repoUrl: 'https://github.com/IEvangelist/profanity-filter',
+        pagesUrl: 'https://ievangelist.github.io/profanity-filter/',
+        lightThumbnail: '/images/projects/profanity-filter-light.webp',
+        darkThumbnail: '/images/projects/profanity-filter-dark.webp',
+        repoPath: 'IEvangelist/profanity-filter',
+      },
+      {
+        name: 'Blazorators',
+        description:
+          'Roslyn generators that author strongly typed C# wrappers for browser APIs without hand-written IJSRuntime glue.',
+        repoUrl: 'https://github.com/IEvangelist/blazorators',
+        pagesUrl: 'https://ievangelist.github.io/blazorators/',
+        lightThumbnail: '/images/projects/blazorators-light.webp',
+        darkThumbnail: '/images/projects/blazorators-dark.webp',
+        repoPath: 'IEvangelist/blazorators',
+      },
+      {
+        name: 'Pwned Client',
+        description:
+          'An AOT-compatible .NET client for Have I Been Pwned, with privacy-first password checks.',
+        repoUrl: 'https://github.com/IEvangelist/pwned-client',
+        pagesUrl: 'https://ievangelist.github.io/pwned-client/',
+        lightThumbnail: '/images/projects/pwned-client-dark.webp',
+        darkThumbnail: '/images/projects/pwned-client-dark.webp',
+        repoPath: 'IEvangelist/pwned-client',
+      },
+    ],
   },
   {
-    name: 'Azure Cosmos DB Repository .NET SDK',
-    tagline: 'IRepository<T> for Cosmos DB',
+    id: 'developer-workflows',
+    title: 'Automation and developer tools',
     description:
-      'A dependency-injection-friendly wrapper around the official Microsoft.Azure.Cosmos SDK. Configure once, inject everywhere. 1.2M+ NuGet downloads.',
-    repoUrl: 'https://github.com/IEvangelist/azure-cosmos-dotnet-repository',
-    pagesUrl: 'https://ievangelist.github.io/azure-cosmos-dotnet-repository/',
-    lightThumbnail: '/images/projects/azure-cosmos-repository-light.png',
-    darkThumbnail: '/images/projects/azure-cosmos-repository-dark.png',
-    tone: '#38bdf8',
-    repoPath: 'IEvangelist/azure-cosmos-dotnet-repository',
+      'GitHub Actions, editor extensions, localization, and deployment workflows.',
+    projects: [
+      {
+        name: 'GitHub Actions Toolkit for C#',
+        description:
+          'A family of native-AOT-ready NuGet packages for authoring GitHub Actions in C#.',
+        repoUrl: 'https://github.com/IEvangelist/actions-toolkit-csharp',
+        pagesUrl: 'https://www.nuget.org/packages/ActionsToolkit.Core',
+        lightThumbnail: '/images/projects/actions-toolkit-csharp-light.webp',
+        darkThumbnail: '/images/projects/actions-toolkit-csharp-dark.webp',
+        repoPath: 'IEvangelist/actions-toolkit-csharp',
+      },
+      {
+        name: 'Resource Translator',
+        description:
+          'A GitHub Action that translates .resx and localization resources inside .NET build workflows.',
+        repoUrl: 'https://github.com/IEvangelist/resource-translator',
+        pagesUrl: 'https://ievangelist.github.io/resource-translator/',
+        lightThumbnail: '/images/projects/resource-translator-dark.webp',
+        darkThumbnail: '/images/projects/resource-translator-dark.webp',
+        repoPath: 'IEvangelist/resource-translator',
+      },
+      {
+        name: 'GitHub Artifacts Explorer & Asciinema Player',
+        description:
+          'A VS Code extension for browsing workflow artifacts and playing asciinema recordings from pull-request or run URLs.',
+        repoUrl: 'https://github.com/IEvangelist/asciinema.ext',
+        pagesUrl:
+          'https://marketplace.visualstudio.com/items?itemName=davidpine-dev.asciinema',
+        lightThumbnail: '/images/projects/asciinema-ext-light.webp',
+        darkThumbnail: '/images/projects/asciinema-ext-dark.webp',
+        repoPath: 'IEvangelist/asciinema.ext',
+      },
+      {
+        name: 'Netlify Aspire Integration',
+        description:
+          'A hosting integration for deploying Aspire-powered static experiences to Netlify from an AppHost.',
+        repoUrl: 'https://github.com/IEvangelist/netlify-aspire-integration',
+        pagesUrl: 'https://ievangelist.github.io/netlify-aspire-integration/',
+        lightThumbnail: '/images/projects/netlify-aspire-integration-light.webp',
+        darkThumbnail: '/images/projects/netlify-aspire-integration-dark.webp',
+        repoPath: 'IEvangelist/netlify-aspire-integration',
+      },
+    ],
   },
   {
-    name: 'Nextflix',
-    tagline: 'Streaming-style Next.js demo',
+    id: 'web-experiments',
+    title: 'Web experiments',
     description:
-      'A Netflix-style streaming clone built with Next.js 15, TypeScript, Tailwind, and the TMDB API, with hero trailers, hover cards, and infinite browsing.',
-    repoUrl: 'https://github.com/IEvangelist/nextflix',
-    pagesUrl: 'https://nextflix-ai.netlify.app/',
-    lightThumbnail: '/images/projects/nextflix-light.png',
-    darkThumbnail: '/images/projects/nextflix-dark.png',
-    tone: '#ef4444',
-    repoPath: 'IEvangelist/nextflix',
-  },
-  {
-    name: 'Resource Translator',
-    tagline: 'Localize .resx with GitHub Actions',
-    description:
-      'A GitHub Action that translates .resx and localization resources for .NET apps. Drop it in your workflow and ship multilingual builds.',
-    repoUrl: 'https://github.com/IEvangelist/resource-translator',
-    pagesUrl: 'https://ievangelist.github.io/resource-translator/',
-    lightThumbnail: '/images/projects/resource-translator-light.png',
-    darkThumbnail: '/images/projects/resource-translator-dark.png',
-    tone: '#22d3ee',
-    repoPath: 'IEvangelist/resource-translator',
-  },
-  {
-    name: 'Profanity Filter',
-    tagline: 'Modern .NET moderation',
-    description:
-      'A modern .NET profanity filtering solution with first-class source generators, customizable rules, and AOT-ready performance.',
-    repoUrl: 'https://github.com/IEvangelist/profanity-filter',
-    pagesUrl: 'https://ievangelist.github.io/profanity-filter/',
-    lightThumbnail: '/images/projects/profanity-filter-light.png',
-    darkThumbnail: '/images/projects/profanity-filter-dark.png',
-    tone: '#f472b6',
-    repoPath: 'IEvangelist/profanity-filter',
-  },
-  {
-    name: 'Netlify Aspire Integration',
-    tagline: 'Aspire-powered Netlify hosting',
-    description:
-      'A hosting integration that helps deploy Aspire-powered static experiences using Netlify. Bring your AppHost and ship to the edge.',
-    repoUrl: 'https://github.com/IEvangelist/netlify-aspire-integration',
-    pagesUrl: 'https://ievangelist.github.io/netlify-aspire-integration/',
-    lightThumbnail: '/images/projects/netlify-aspire-integration-light.png',
-    darkThumbnail: '/images/projects/netlify-aspire-integration-dark.png',
-    tone: '#2dd4bf',
-    repoPath: 'IEvangelist/netlify-aspire-integration',
-  },
-  {
-    name: 'Blazorators',
-    tagline: 'Source-generated JS interop for Blazor',
-    description:
-      'Roslyn source generators that author idiomatic, strongly-typed C# wrappers around the browser’s web APIs without hand-written IJSRuntime glue.',
-    repoUrl: 'https://github.com/IEvangelist/blazorators',
-    pagesUrl: 'https://ievangelist.github.io/blazorators/',
-    lightThumbnail: '/images/projects/blazorators-light.png',
-    darkThumbnail: '/images/projects/blazorators-dark.png',
-    tone: '#a855f7',
-    repoPath: 'IEvangelist/blazorators',
-  },
-  {
-    name: 'Bueler',
-    tagline: 'Rust web framework, totally vibed',
-    description:
-      'Build reactive web apps entirely in Rust with fine-grained signals, zero JavaScript, direct DOM manipulation, and WebAssembly compilation. Ships with 48 components.',
-    repoUrl: 'https://github.com/IEvangelist/Bueler',
-    pagesUrl: 'https://ievangelist.github.io/Bueler/',
-    lightThumbnail: '/images/projects/bueler-light.png',
-    darkThumbnail: '/images/projects/bueler-dark.png',
-    tone: '#f97316',
-    repoPath: 'IEvangelist/Bueler',
-  },
-  {
-    name: 'GitHub Actions Toolkit for C#',
-    tagline: 'The unofficial @actions/toolkit, in .NET',
-    description:
-      'The .NET equivalent of the official GitHub actions/toolkit. A family of ActionsToolkit.* NuGet packages for authoring GitHub Actions in C# with native AOT support.',
-    repoUrl: 'https://github.com/IEvangelist/actions-toolkit-csharp',
-    pagesUrl: 'https://www.nuget.org/packages/ActionsToolkit.Core',
-    lightThumbnail: '/images/projects/actions-toolkit-csharp-light.png',
-    darkThumbnail: '/images/projects/actions-toolkit-csharp-dark.png',
-    tone: '#8b5cf6',
-    repoPath: 'IEvangelist/actions-toolkit-csharp',
-  },
-  {
-    name: 'GitHub Artifacts Explorer & Asciinema Player',
-    tagline: 'CI artifacts and .cast recordings, inside VS Code',
-    description:
-      'A VS Code extension that opens GitHub Actions artifacts and plays asciinema .cast recordings inline. Paste a PR or workflow-run URL and choose the right viewer.',
-    repoUrl: 'https://github.com/IEvangelist/asciinema.ext',
-    pagesUrl:
-      'https://marketplace.visualstudio.com/items?itemName=davidpine-dev.asciinema',
-    lightThumbnail: '/images/projects/asciinema-ext-light.png',
-    darkThumbnail: '/images/projects/asciinema-ext-dark.png',
-    tone: '#d40000',
-  },
-  {
-    name: 'Pwned Client',
-    tagline: 'Have I Been Pwned, in .NET',
-    description:
-      'A .NET HTTP client library for the “Have I Been Pwned” (HIBP) API, with a live demo to check emails and passwords against known data breaches.',
-    repoUrl: 'https://github.com/IEvangelist/pwned-client',
-    pagesUrl: 'https://api.mangomoss-e60b5bb3.centralus.azurecontainerapps.io/',
-    lightThumbnail: '/images/projects/pwned-client-light.png',
-    darkThumbnail: '/images/projects/pwned-client-dark.png',
-    tone: '#f59e0b',
-    repoPath: 'IEvangelist/pwned-client',
+      'Interactive demos and framework explorations across React, Next.js, and Rust.',
+    projects: [
+      {
+        name: 'Nextflix',
+        description:
+          'A streaming-style Next.js 15 demo with TMDB data, hero trailers, hover cards, and continuous browsing.',
+        repoUrl: 'https://github.com/IEvangelist/nextflix',
+        pagesUrl: 'https://nextflix-ai.netlify.app/',
+        lightThumbnail: '/images/projects/nextflix-light.webp',
+        darkThumbnail: '/images/projects/nextflix-dark.webp',
+        repoPath: 'IEvangelist/nextflix',
+      },
+      {
+        name: 'Bueler',
+        description:
+          'A reactive Rust web framework with fine-grained signals, direct DOM updates, WebAssembly, and 48 components.',
+        repoUrl: 'https://github.com/IEvangelist/Bueler',
+        pagesUrl: 'https://ievangelist.github.io/Bueler/',
+        lightThumbnail: '/images/projects/bueler-light.webp',
+        darkThumbnail: '/images/projects/bueler-dark.webp',
+        repoPath: 'IEvangelist/Bueler',
+      },
+      {
+        name: '6174',
+        description:
+          "An animated React explorer that walks four-digit seeds into Kaprekar's constant, one subtraction at a time.",
+        repoUrl: 'https://github.com/IEvangelist/6174',
+        pagesUrl: 'https://ievangelist.github.io/6174/',
+        lightThumbnail: '/images/projects/6174-light.webp',
+        darkThumbnail: '/images/projects/6174-dark.webp',
+        repoPath: 'IEvangelist/6174',
+      },
+    ],
   },
 ]
 
-const hexToRgb = (hex) => {
-  const clean = hex.replace('#', '')
-  const expanded =
-    clean.length === 3
-      ? clean
-          .split('')
-          .map((c) => c + c)
-          .join('')
-      : clean
-  return [
-    parseInt(expanded.slice(0, 2), 16),
-    parseInt(expanded.slice(2, 4), 16),
-    parseInt(expanded.slice(4, 6), 16),
-  ]
-}
-
-// Pick a high-contrast text color for a solid tone background using WCAG 2.x luminance.
-const ctaTextOn = (toneHex) => {
-  const [r, g, b] = hexToRgb(toneHex).map((channel) => {
-    const v = channel / 255
-    return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4
-  })
-  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b
-  // Use an off-white foreground for dark tones, otherwise use near-black.
-  return lum < 0.18 ? '#f7f7f5' : '#0b0d10'
-}
+const imagePlaceholder = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='
 ---
 
-<Layout title="Projects" description="Featured projects by David Pine">
-  <PageHeader title="Projects" />
+<Layout
+  title="Projects"
+  description="Open-source projects by David Pine across .NET, GitHub Actions, developer tooling, and the web."
+>
+  <PageHeader
+    title="Projects"
+    description="Libraries, tools, and experiments built in the open."
+  />
 
-  <article class="max-w-full py-7.5 space-y-8">
-    <section class="project-intro rounded-2xl border border-accent/20 p-5 md:p-7">
-      <p class="m-0 text-lg md:text-xl">
-        Built in public and shipped in production. Quick access to each project’s live
-        docs and source.
-      </p>
-      <div class="mt-4 flex flex-wrap gap-2">
-        <span class="meta-chip">{projects.length} Featured Repositories</span>
-        <span class="meta-chip">Live + source quick actions</span>
-      </div>
-    </section>
-
-    <div class="project-list flex flex-col gap-10 md:gap-14">
-      {
-        projects.map((project, idx) => (
-          <article
-            class:list={['project-row', idx % 2 === 1 && 'project-row--reversed']}
-            style={`--card-tone: ${project.tone}; --cta-text: ${ctaTextOn(project.tone)};`}
-          >
-            <a
-              class="image-card group/img"
-              href={project.pagesUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Open ${project.name} live site`}
-            >
-              <img
-                src={project.lightThumbnail}
-                alt={`${project.name} live site screenshot in light mode`}
-                class="thumb-image thumb-image-light"
-                loading={idx < 2 ? 'eager' : 'lazy'}
-                width="1280"
-                height="720"
-              />
-              <img
-                src={project.darkThumbnail}
-                alt={`${project.name} live site screenshot in dark mode`}
-                class="thumb-image thumb-image-dark"
-                loading={idx < 2 ? 'eager' : 'lazy'}
-                width="1280"
-                height="720"
-              />
-            </a>
-
-            <div class="info-panel">
-              <div class="info-top">
-                {project.repoPath && (
-                  <span class="repo-path">
-                    <Icon class="repo-icon" name="ph:git-fork" aria-hidden="true" />
-                    {project.repoPath}
-                  </span>
-                )}
-                <span class="live-status">
-                  <span class="live-dot" aria-hidden="true" />
-                  Live
-                </span>
-              </div>
-
-              <p class="info-tagline m-0">{project.tagline}</p>
-              <h2 class="info-title m-0">{project.name}</h2>
-              <p class="info-description m-0">{project.description}</p>
-
-              <div class="info-actions">
-                <a
-                  href={project.pagesUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="cta cta-primary"
-                >
-                  <span>Open live site</span>
-                  <Icon class="cta-icon" name="ph:arrow-up-right" aria-hidden="true" />
-                </a>
-                <a
-                  href={project.repoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="cta cta-secondary"
-                >
-                  <GitHubMark class="cta-icon" aria-hidden="true" />
-                  <span>Source</span>
-                </a>
-              </div>
+  <div class="projects-page">
+    {
+      projectGroups.map((group, groupIndex) => (
+        <section class="project-chapter" aria-labelledby={group.id}>
+          <header class="chapter-header" data-reveal>
+            <div class="chapter-heading">
+              <h2 id={group.id}>{group.title}</h2>
+              <span>{group.projects.length} projects</span>
             </div>
-          </article>
-        ))
-      }
-    </div>
-  </article>
+            <p>{group.description}</p>
+          </header>
+
+          <ul class="project-grid" data-count={group.projects.length} role="list">
+            {group.projects.map((project, projectIndex) => {
+              const isLead = projectIndex === 0
+              const isPriority = groupIndex === 0 && isLead
+
+              return (
+                <li
+                  class:list={['project-cell', { 'project-cell--lead': isLead }]}
+                  data-reveal
+                >
+                  <article class="project-card">
+                    <div class="project-visual">
+                      <span class="project-visual-fallback" aria-hidden="true">
+                        Preview unavailable
+                      </span>
+                      <img
+                        src={imagePlaceholder}
+                        alt={`${project.name} project screenshot`}
+                        class="project-image"
+                        loading={isPriority ? 'eager' : 'lazy'}
+                        fetchpriority={isPriority ? 'high' : 'auto'}
+                        decoding="async"
+                        width="1280"
+                        height="720"
+                        data-project-image
+                        data-light-src={project.lightThumbnail}
+                        data-dark-src={project.darkThumbnail}
+                        data-priority={isPriority ? '' : undefined}
+                      />
+                      <noscript>
+                        <img
+                          src={project.lightThumbnail}
+                          alt={`${project.name} project screenshot`}
+                          class="project-image project-image--noscript"
+                          loading={isPriority ? 'eager' : 'lazy'}
+                          width="1280"
+                          height="720"
+                        />
+                      </noscript>
+                    </div>
+
+                    <div class="project-copy">
+                      <span class="repo-path">
+                        <Icon name="ph:git-fork" aria-hidden="true" />
+                        {project.repoPath}
+                      </span>
+
+                      <h3>{project.name}</h3>
+                      <p class="project-description">{project.description}</p>
+
+                      <div class="project-actions">
+                        <a
+                          href={project.pagesUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="project-link project-link--primary"
+                          aria-label={`View ${project.name} project`}
+                        >
+                          <span>View project</span>
+                          <Icon name="ph:arrow-up-right" aria-hidden="true" />
+                        </a>
+                        <a
+                          href={project.repoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="project-link project-link--secondary"
+                          aria-label={`View ${project.name} source on GitHub`}
+                        >
+                          <GitHubMark aria-hidden="true" />
+                          <span>Source</span>
+                        </a>
+                      </div>
+                    </div>
+                  </article>
+                </li>
+              )
+            })}
+          </ul>
+        </section>
+      ))
+    }
+
+    <footer class="project-coda" data-reveal>
+      <div>
+        <h2>More built in public.</h2>
+        <p>Browse the complete repository list on GitHub.</p>
+      </div>
+      <a
+        href="https://github.com/IEvangelist?tab=repositories"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="project-coda-link"
+      >
+        <GitHubMark aria-hidden="true" />
+        <span>Explore GitHub</span>
+        <Icon name="ph:arrow-up-right" aria-hidden="true" />
+      </a>
+    </footer>
+  </div>
 </Layout>
 
+<script>
+  const projectImageSelector = '[data-project-image]'
+  let projectImageObserver: IntersectionObserver | undefined
+
+  const getProjectImageTone = () =>
+    document.documentElement.dataset.uiTone === 'dark' ? 'dark' : 'light'
+
+  const setProjectImageSource = (image: HTMLImageElement, preload = false) => {
+    const tone = getProjectImageTone()
+    const source = tone === 'dark' ? image.dataset.darkSrc : image.dataset.lightSrc
+
+    if (!source) {
+      image.closest('.project-visual')?.classList.add('is-missing')
+      console.error(`Missing ${tone} project preview source.`)
+      return
+    }
+
+    if (image.dataset.activeTone === tone) {
+      return
+    }
+
+    const applySource = () => {
+      image.dataset.activeTone = tone
+      image.dataset.hasSource = 'true'
+      image.src = source
+    }
+
+    if (preload && image.dataset.hasSource === 'true') {
+      const preloader = new Image()
+      preloader.addEventListener(
+        'load',
+        () => {
+          void preloader
+            .decode()
+            .then(applySource, () =>
+              console.error(`Unable to decode project preview: ${source}`),
+            )
+        },
+        { once: true },
+      )
+      preloader.addEventListener(
+        'error',
+        () => console.error(`Unable to load project preview: ${source}`),
+        { once: true },
+      )
+      preloader.src = source
+      return
+    }
+
+    applySource()
+  }
+
+  const initializeProjectImage = (image: HTMLImageElement) => {
+    if (image.dataset.imageInitialized !== 'true') {
+      image.addEventListener('load', () => {
+        if (image.dataset.hasSource !== 'true') {
+          return
+        }
+
+        image.dataset.imageReady = 'true'
+        image.closest('.project-visual')?.classList.remove('is-missing')
+      })
+      image.addEventListener('error', () => {
+        image.dataset.imageReady = 'false'
+        image.closest('.project-visual')?.classList.add('is-missing')
+      })
+      image.dataset.imageInitialized = 'true'
+    }
+
+    if (image.dataset.hasSource === 'true') {
+      return
+    }
+
+    if (image.hasAttribute('data-priority') || !projectImageObserver) {
+      setProjectImageSource(image)
+      return
+    }
+
+    projectImageObserver.observe(image)
+  }
+
+  const initializeProjectImages = () => {
+    if (!projectImageObserver && 'IntersectionObserver' in window) {
+      projectImageObserver = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) {
+              continue
+            }
+
+            const image = entry.target as HTMLImageElement
+            setProjectImageSource(image)
+            projectImageObserver?.unobserve(image)
+          }
+        },
+        { rootMargin: '480px 0px' },
+      )
+    }
+
+    document
+      .querySelectorAll<HTMLImageElement>(projectImageSelector)
+      .forEach(initializeProjectImage)
+  }
+
+  initializeProjectImages()
+  document.addEventListener('astro:page-load', initializeProjectImages)
+
+  new MutationObserver((changes) => {
+    if (!changes.some((change) => change.attributeName === 'data-ui-tone')) {
+      return
+    }
+
+    document
+      .querySelectorAll<HTMLImageElement>(
+        `${projectImageSelector}[data-has-source='true']`,
+      )
+      .forEach((image) => setProjectImageSource(image, true))
+  }).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-ui-tone'],
+  })
+</script>
+
 <style>
-  .project-intro {
-    background: linear-gradient(
-      160deg,
-      color-mix(in srgb, var(--theme-accent), transparent 95%),
-      color-mix(in srgb, var(--theme-background), var(--theme-accent) 4%)
+  :global(.page-header) {
+    border-image: none;
+    border-bottom-color: color-mix(
+      in oklab,
+      var(--theme-overlay-accent) 48%,
+      transparent
     );
+    padding-block: clamp(4.5rem, 8vw, 6rem);
   }
 
-  .meta-chip {
-    display: inline-flex;
-    align-items: center;
-    font-size: 0.8rem;
-    padding: 0.3rem 0.55rem;
-    border-radius: 0.55rem;
-    border: 1px solid color-mix(in srgb, var(--theme-foreground), transparent 80%);
-    background: color-mix(in srgb, var(--theme-accent), transparent 92%);
+  :global(.page-header h1),
+  :global(.page-header p) {
+    color: var(--theme-overlay-text);
   }
 
-  /* === Project row: image + info panel === */
-  .project-row {
-    --tone: var(--card-tone, var(--theme-accent));
+  .projects-page {
+    display: grid;
+    gap: clamp(5rem, 9vw, 8rem);
+    padding-block: clamp(3rem, 6vw, 5rem) clamp(5rem, 10vw, 8rem);
+  }
+
+  .project-chapter {
+    display: grid;
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  .chapter-header {
+    display: grid;
+    gap: 0.8rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid
+      color-mix(in oklab, var(--theme-overlay-text) 28%, transparent);
+  }
+
+  .chapter-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .chapter-heading h2 {
+    margin: 0;
+    color: var(--theme-overlay-text);
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.55rem + 1.8vw, 3.35rem);
+    font-weight: 600;
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+
+  .chapter-heading span {
+    flex: 0 0 auto;
+    color: var(--theme-overlay-accent);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs-fluid);
+    font-weight: 650;
+  }
+
+  .chapter-header > p {
+    max-width: 58ch;
+    margin: 0;
+    color: var(--theme-overlay-text);
+    font-size: var(--text-sm-fluid);
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+
+  .project-grid {
+    --project-gap: clamp(1.1rem, 2vw, 1.75rem);
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--project-gap);
+    margin: 0;
+    padding: 0;
+  }
+
+  .project-cell {
+    min-width: 0;
+    list-style: none;
+  }
+
+  .project-card {
+    position: relative;
+    display: flex;
+    height: 100%;
+    min-width: 0;
+    overflow: hidden;
+    flex-direction: column;
+    border: 1px solid color-mix(in oklab, var(--theme-overlay-text) 24%, transparent);
+    border-radius: var(--radius-media);
+    background: var(--theme-overlay-surface);
+    box-shadow:
+      inset 0 1px 0 color-mix(in oklab, var(--theme-foreground) 8%, transparent),
+      0 1rem 2.75rem color-mix(in oklab, var(--theme-shadow) 82%, transparent);
+    transition:
+      transform var(--duration-medium) var(--ease-out-expo),
+      border-color var(--duration-medium) var(--ease-out-expo),
+      box-shadow var(--duration-medium) var(--ease-out-expo);
+  }
+
+  .project-visual {
     position: relative;
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 0;
-    align-items: stretch;
-    overflow: hidden;
-    border: 2px solid var(--retro-border);
-    background: var(--retro-panel);
-    box-shadow: var(--retro-shadow);
-    transition:
-      translate 140ms ease,
-      box-shadow 140ms ease;
-  }
-
-  .project-row::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto;
-    z-index: 2;
-    height: 0.55rem;
-    background: var(--tone);
-  }
-
-  .project-row:hover {
-    translate: -3px -3px;
-    box-shadow: 9px 9px 0 0 var(--retro-shadow-color);
-  }
-
-  @media (min-width: 768px) {
-    .project-row {
-      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-    }
-
-    .project-row--reversed {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-    }
-
-    .project-row--reversed .image-card {
-      grid-column: 2;
-      grid-row: 1;
-    }
-
-    .project-row--reversed .info-panel {
-      grid-column: 1;
-      grid-row: 1;
-      text-align: right;
-    }
-
-    .project-row--reversed .info-top {
-      flex-direction: row-reverse;
-    }
-
-    .project-row--reversed .info-actions {
-      justify-content: flex-end;
-    }
-  }
-
-  /* === Image card === */
-  .image-card {
-    position: relative;
-    display: block;
-    overflow: hidden;
     aspect-ratio: 16 / 9;
-    border: 0 !important;
-    border-bottom: 2px solid var(--retro-border) !important;
-    border-radius: 0 !important;
-    background: color-mix(in srgb, var(--theme-background), var(--tone) 8%) !important;
-    box-shadow: none !important;
-    text-decoration: none;
-    color: inherit;
-    isolation: isolate;
-    transition:
-      transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
-      box-shadow 0.35s ease,
-      border-color 0.35s ease;
+    overflow: hidden;
+    place-items: center;
+    border-bottom: 1px solid
+      color-mix(in oklab, var(--theme-overlay-text) 18%, transparent);
+    background: var(--theme-surface-strong);
   }
 
-  .image-card:hover {
-    transform: scale(1.015);
-    box-shadow: none !important;
-    translate: none !important;
+  .project-visual-fallback {
+    color: var(--theme-overlay-text);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs-fluid);
+    opacity: 0;
   }
 
-  .image-card:focus {
-    outline: none;
+  .project-visual.is-missing .project-visual-fallback {
+    opacity: 0.72;
   }
 
-  .image-card:focus-visible {
-    outline: 2px solid var(--tone);
-    outline-offset: 3px;
-  }
-
-  .thumb-image {
+  .project-image {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0.45rem 0.8rem;
     display: block;
-    object-fit: cover;
+    width: calc(100% - 1.6rem);
+    height: calc(100% - 0.9rem);
+    object-fit: contain;
     object-position: left top;
-    transition: opacity 0.28s ease;
     opacity: 0;
+    border-radius: calc(var(--radius-media) - 0.45rem);
+    transition: opacity 280ms ease;
   }
 
-  .thumb-image-light {
+  .project-image[data-image-ready='true'],
+  .project-image--noscript {
     opacity: 1;
   }
 
-  .thumb-image-dark {
-    opacity: 0;
+  .project-visual.is-missing .project-image {
+    display: none;
   }
 
-  @media (min-width: 768px) {
-    .image-card {
-      height: 100%;
-      min-height: 22rem;
-      aspect-ratio: auto;
-      border-right: 2px solid var(--retro-border) !important;
-      border-bottom: 0 !important;
-    }
-
-    .project-row--reversed .image-card {
-      border-right: 0 !important;
-      border-left: 2px solid var(--retro-border) !important;
-    }
-  }
-
-  :root[data-ui-tone='dark'] .thumb-image-light {
-    opacity: 0;
-  }
-
-  :root[data-ui-tone='dark'] .thumb-image-dark {
-    opacity: 1;
-  }
-
-  /* === Info panel: minimal content beside the image === */
-  .info-panel {
+  .project-copy {
     display: flex;
+    flex: 1;
     flex-direction: column;
-    gap: 0.65rem;
-    border: 0 !important;
-    border-radius: 0 !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    padding: clamp(1.2rem, 2.4vw, 1.8rem);
-  }
-
-  .info-panel:hover {
-    translate: none !important;
-    box-shadow: none !important;
-  }
-
-  .info-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.6rem;
-    flex-wrap: wrap;
-    margin-bottom: 0.15rem;
+    gap: 0.9rem;
+    padding: clamp(1.1rem, 2vw, 1.5rem);
   }
 
   .repo-path {
     display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
-    font-size: 0.72rem;
-    color: color-mix(in srgb, var(--theme-foreground) 88%, transparent);
-    letter-spacing: 0.01em;
-    word-break: break-all;
     min-width: 0;
-  }
-
-  .repo-icon {
-    flex-shrink: 0;
-  }
-
-  .live-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    font-weight: 600;
-    padding: 0.15rem 0.5rem;
-    border-radius: 999px;
-    border: 1px solid color-mix(in srgb, var(--tone), transparent 55%);
-    background: color-mix(in srgb, var(--tone), transparent 95%);
-    color: var(--theme-foreground);
-    flex-shrink: 0;
-  }
-
-  .live-dot {
-    width: 0.4rem;
-    height: 0.4rem;
-    border-radius: 999px;
-    background: var(--tone);
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--tone), transparent 50%);
-    animation: pulse 1.8s ease-in-out infinite;
-  }
-
-  .info-tagline {
-    font-size: 0.7rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    font-weight: 700;
-    color: color-mix(in srgb, var(--tone) 7%, var(--theme-foreground));
-  }
-
-  .info-title {
-    font-size: 1.5rem;
-    line-height: 1.15;
-    font-weight: 700;
-    color: var(--theme-foreground);
-  }
-
-  @media (min-width: 768px) {
-    .info-title {
-      font-size: 1.75rem;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .info-title {
-      font-size: 2rem;
-    }
-  }
-
-  .info-description {
-    font-size: 0.92rem;
-    line-height: 1.55;
-    color: color-mix(in srgb, var(--theme-foreground) 94%, transparent);
-    margin-top: 0.1rem;
-  }
-
-  /* === CTAs === */
-  .info-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 0.6rem;
-  }
-
-  .cta {
-    display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    font-size: 1.17rem;
-    line-height: 1.1;
-    font-weight: 700;
-    text-decoration: none;
-    padding: 0.6rem 1.05rem;
-    border-radius: 0.6rem;
+    color: var(--theme-overlay-text);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs-fluid);
+    overflow-wrap: anywhere;
+  }
+
+  .repo-path :global(svg) {
+    width: 0.9rem;
+    height: 0.9rem;
+    flex: 0 0 auto;
+  }
+
+  .project-copy h3 {
+    margin: 0;
+    color: var(--theme-overlay-text);
+    font-family: var(--font-display);
+    font-size: clamp(1.55rem, 1.3rem + 0.75vw, 2.2rem);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+
+  .project-description {
+    max-width: 58ch;
+    margin: 0;
+    color: var(--theme-overlay-text);
+    font-size: var(--text-sm-fluid);
+    line-height: 1.58;
+    text-wrap: pretty;
+  }
+
+  .project-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-top: auto;
+    padding-top: 0.4rem;
+  }
+
+  .project-link,
+  .project-coda-link {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
     border: 1px solid transparent;
-    color: inherit;
+    border-radius: var(--radius-control);
+    font-size: 0.9rem;
+    font-weight: 720;
+    line-height: 1;
+    padding: 0.72rem 1rem;
+    text-decoration: none;
+    white-space: nowrap;
     transition:
-      transform 0.2s ease,
-      border-color 0.2s ease,
-      background-color 0.2s ease,
-      box-shadow 0.2s ease,
-      color 0.2s ease,
-      filter 0.2s ease;
+      transform var(--duration-fast) var(--ease-out-expo),
+      background-color var(--duration-fast) ease,
+      border-color var(--duration-fast) ease;
   }
 
-  .cta:focus-visible {
-    outline: 2px solid var(--tone);
-    outline-offset: 2px;
+  .project-link :global(svg),
+  .project-coda-link :global(svg) {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
   }
 
-  .cta-primary {
-    background: var(--tone);
-    border-color: var(--tone);
-    color: var(--cta-text, #0b0d10);
+  .project-link--primary,
+  .project-coda-link {
+    border-color: var(--theme-overlay-accent);
+    background: var(--theme-overlay-accent);
+    color: var(--theme-overlay-surface);
   }
 
-  .cta-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 20px color-mix(in srgb, var(--tone), transparent 65%);
-    filter: brightness(1.08);
-  }
-
-  .cta-secondary {
+  .project-link--secondary {
+    border-color: color-mix(in oklab, var(--theme-overlay-text) 36%, transparent);
     background: transparent;
-    border-color: color-mix(in srgb, var(--theme-foreground), transparent 55%);
+    color: var(--theme-overlay-text);
   }
 
-  .cta-secondary:hover {
-    transform: translateY(-1px);
-    background: color-mix(in srgb, var(--tone), transparent 92%);
-    border-color: color-mix(in srgb, var(--tone), transparent 45%);
-    color: color-mix(in srgb, var(--tone), var(--theme-foreground) 50%);
+  .project-link:focus-visible,
+  .project-coda-link:focus-visible {
+    outline: 3px solid var(--theme-overlay-accent);
+    outline-offset: 3px;
   }
 
-  .cta-icon {
-    flex-shrink: 0;
+  .project-link:active,
+  .project-coda-link:active {
+    transform: translateY(1px) scale(0.98);
   }
 
-  @keyframes pulse {
-    0%,
-    100% {
-      box-shadow: 0 0 0 0 color-mix(in srgb, var(--tone), transparent 50%);
+  .project-coda {
+    display: grid;
+    gap: 1.5rem;
+    align-items: end;
+    padding-top: clamp(2rem, 4vw, 3.5rem);
+    border-top: 1px solid color-mix(in oklab, var(--theme-overlay-text) 28%, transparent);
+  }
+
+  .project-coda h2 {
+    margin: 0;
+    color: var(--theme-overlay-text);
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 1.8rem + 2vw, 3.75rem);
+    font-weight: 600;
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+
+  .project-coda p {
+    margin: 0.6rem 0 0;
+    color: var(--theme-overlay-text);
+    font-size: var(--text-sm-fluid);
+    line-height: 1.55;
+  }
+
+  .project-coda-link {
+    justify-self: start;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .project-card:hover {
+      border-color: color-mix(
+        in oklab,
+        var(--theme-overlay-accent) 52%,
+        var(--theme-overlay-text)
+      );
+      box-shadow:
+        inset 0 1px 0 color-mix(in oklab, var(--theme-foreground) 10%, transparent),
+        0 1.4rem 3.5rem var(--theme-shadow);
+      transform: translateY(-0.3rem);
     }
-    50% {
-      box-shadow: 0 0 0 4px color-mix(in srgb, var(--tone), transparent 100%);
+
+    .project-link:hover,
+    .project-coda-link:hover {
+      transform: translateY(-1px);
+    }
+
+    .project-link--secondary:hover {
+      border-color: color-mix(
+        in oklab,
+        var(--theme-overlay-accent) 58%,
+        var(--theme-overlay-text)
+      );
+      background: color-mix(in oklab, var(--theme-overlay-accent) 10%, transparent);
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .chapter-header {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      align-items: end;
+      gap: 2rem;
+    }
+
+    .chapter-header > p {
+      justify-self: end;
+    }
+
+    .project-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .project-cell--lead {
+      grid-column: 1 / -1;
+    }
+
+    .project-grid[data-count='4'] .project-cell:last-child {
+      width: calc((100% - var(--project-gap)) / 2);
+      grid-column: 1 / -1;
+      justify-self: center;
+    }
+
+    .project-coda {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .project-coda-link {
+      justify-self: end;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .project-grid {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    .project-cell--lead {
+      grid-column: 1 / -1;
+    }
+
+    .project-grid[data-count='4'] .project-cell:not(.project-cell--lead) {
+      width: 100%;
+      grid-column: span 4;
+    }
+
+    .project-grid[data-count='3'] .project-cell:not(.project-cell--lead) {
+      grid-column: span 6;
+    }
+  }
+
+  @media (min-width: 86rem) {
+    .project-cell--lead .project-card {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(23rem, 2fr);
+    }
+
+    .project-cell--lead .project-visual {
+      aspect-ratio: 16 / 9;
+      border-right: 1px solid
+        color-mix(in oklab, var(--theme-overlay-text) 18%, transparent);
+      border-bottom: 0;
+    }
+
+    .project-cell--lead .project-copy {
+      gap: 0.75rem;
+      padding: 1.5rem;
+    }
+
+    .project-cell--lead .project-copy h3 {
+      font-size: clamp(2.25rem, 1.75rem + 1.5vw, 3.25rem);
+    }
+
+    .project-cell--lead .project-description {
+      font-size: clamp(1rem, 0.95rem + 0.25vw, 1.15rem);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .image-card,
-    .cta,
-    .live-dot {
+    .project-card,
+    .project-image,
+    .project-link,
+    .project-coda-link {
       transition: none;
-      animation: none;
     }
 
-    .image-card:hover {
+    .project-card:hover,
+    .project-link:hover,
+    .project-link:active,
+    .project-coda-link:hover,
+    .project-coda-link:active {
       transform: none;
     }
   }
