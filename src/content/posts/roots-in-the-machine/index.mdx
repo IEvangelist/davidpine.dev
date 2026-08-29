@@ -1,15 +1,20 @@
 ---
 title: Roots in the Machine
 published: '2026-08-29'
-draft: true
+draft: false
 description: 'AI adoption is branching through our industry, connecting developers to hives built from the reverberations of human knowledge.'
 author: David Pine
+coverImage:
+  src: ./roots-in-the-machine.svg
+  alt: 'A human silhouette tending a luminous tree whose roots connect human ideas to an AI network.'
 tags:
   - AI
   - Software Engineering
   - Open Source
   - Human Behavior
 ---
+
+import Mermaid from '../../../components/Mermaid.astro'
 
 I know, I know—another post about AI. But I've been thinking less about what AI can do and more about what our response to it says about **us**.
 
@@ -30,6 +35,26 @@ At first, there is a single root: autocomplete in an editor, perhaps, or a chat 
 The roots stretch farther, fork again, and find new sources of context. Each connection makes the system more useful, and each bit of usefulness encourages another connection. Before long, AI is not sitting beside the work. It is entangled with it.
 
 These roots do not grow evenly. In some organizations they remain shallow, touching only low-risk or repetitive work. In others they run beneath everything. They cross team boundaries, absorb institutional knowledge, and become part of how decisions are made.
+
+<Mermaid
+  alt="AI adoption grows from an individual developer tool into a deeply rooted organizational system connecting teams, knowledge, delivery, and operations."
+  chart={`
+flowchart TB
+    Seed["Developer + AI"] --> Editor["Editor assistance"]
+    Seed --> Chat["Questions and exploration"]
+    Editor --> Team["Team workflows"]
+    Chat --> Team
+    Team --> Review["Code review"]
+    Team --> Docs["Documentation"]
+    Team --> Tests["Testing"]
+    Review --> Org["Organizational roots"]
+    Docs --> Org
+    Tests --> Org
+    Org --> Delivery["Delivery"]
+    Org --> Knowledge["Institutional knowledge"]
+    Org --> Operations["Production operations"]
+`}
+/>
 
 That uneven growth explains some of the tension in our industry. We talk about "using AI" as though it were a binary choice, but the phrase describes wildly different realities. Asking a model to rename a variable is not the same as letting an agent modify a production system. Generating a unit test is not the same as reorganizing an engineering department around fleets of autonomous workers.
 
@@ -108,6 +133,21 @@ But we can choose how we cultivate it.
 For all the talk about autonomous agents, humans are still very much in the driver's seat. AI can accelerate an idea, but it doesn't decide which ideas deserve to exist. It can imitate ingenuity, but the spark of innovation still comes from people—the ones who imagine something better, understand the problem deeply, and spend the time guiding these systems toward it.
 
 That guidance is the real work. It means supplying context, challenging confident answers, catching subtle failures, and taking responsibility for the outcome. It isn't glamorous, and it isn't magic. It is patient, deliberate engineering.
+
+<Mermaid
+  alt="A human-led feedback loop where intent guides AI, AI produces output, human judgment reviews it, and learning improves the next round of guidance."
+  chart={`
+flowchart LR
+    Human["Human intent"] --> Guide["Context + guidance"]
+    Guide --> AI["AI system"]
+    AI --> Output["Generated output"]
+    Output --> Judgment{"Human judgment"}
+    Judgment -->|"Revise"| Guide
+    Judgment -->|"Accept responsibly"| Impact["Meaningful impact"]
+    Impact --> Learning["Human learning"]
+    Learning --> Human
+`}
+/>
 
 We can connect our intellect to the hive without surrendering our judgment. We can accept acceleration without worshiping the accelerator. Used responsibly, AI can amplify what is best in us: our curiosity, creativity, empathy, and relentless desire to build something better.
 
