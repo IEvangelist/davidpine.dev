@@ -105,6 +105,12 @@ The roots will continue to branch. AI will reach deeper into our tools, our comp
 
 But we can choose how we cultivate it.
 
-We can connect our intellect to the hive without surrendering our judgment. We can accept acceleration without worshiping the accelerator. We can build with an imitator while remembering that meaning, responsibility, and purpose still belong to us.
+For all the talk about autonomous agents, humans are still very much in the driver's seat. AI can accelerate an idea, but it doesn't decide which ideas deserve to exist. It can imitate ingenuity, but the spark of innovation still comes from people—the ones who imagine something better, understand the problem deeply, and spend the time guiding these systems toward it.
 
-AI is everywhere. What happens next is still on us. 🤓
+That guidance is the real work. It means supplying context, challenging confident answers, catching subtle failures, and taking responsibility for the outcome. It isn't glamorous, and it isn't magic. It is patient, deliberate engineering.
+
+We can connect our intellect to the hive without surrendering our judgment. We can accept acceleration without worshiping the accelerator. Used responsibly, AI can amplify what is best in us: our curiosity, creativity, empathy, and relentless desire to build something better.
+
+The future won't be invented by AI alone. It will be invented by people who care enough to guide it—honestly, responsibly, and with purpose.
+
+AI is everywhere, but **we are still the ones driving**. What happens next is on us. 🤓
