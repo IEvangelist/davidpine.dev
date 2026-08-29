@@ -87,7 +87,7 @@ I also understand the organizations growing roots through every layer of their s
 
 Neither extreme gets to avoid hard questions.
 
-Those who refuse the technology must consider what capabilities they are giving up and whether purity can become its own kind of complacency. Those who embrace it must consider what skills they are allowing to atrophy, whose work trained the systems, where accountability lives, and what happens when the roots reach infrastructure nobody remembers how to operate without them.
+Those who refuse the technology must consider what capabilities they are giving up and whether purity can become its own kind of complacency. Those who embrace it must consider what skills they are allowing to atrophy, whose work trained the systems, where accountability lives, and what happens when the roots reach infrastructure that nobody remembers how to operate independently.
 
 Look, the useful position isn't blind resistance or blind adoption. It is conscious participation.
 
