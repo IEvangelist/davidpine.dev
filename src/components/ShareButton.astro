@@ -1,0 +1,682 @@
+---
+import { Icon } from 'astro-icon/components'
+
+interface Props {
+  title: string
+  description?: string
+  url: string
+  imageUrl: string
+}
+
+interface ShareTarget {
+  label: string
+  icon: `ph:${string}`
+  href: string
+  openInNewTab?: boolean
+}
+
+const { title, description = '', url, imageUrl } = Astro.props
+const shareText = description || title
+const encodedUrl = encodeURIComponent(url)
+const encodedTitle = encodeURIComponent(title)
+const encodedText = encodeURIComponent(shareText)
+const encodedTextWithUrl = encodeURIComponent(`${shareText} ${url}`)
+const encodedImage = encodeURIComponent(imageUrl)
+
+const targets: ShareTarget[] = [
+  {
+    label: 'X',
+    icon: 'ph:x-logo',
+    href: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`,
+    openInNewTab: true,
+  },
+  {
+    label: 'Facebook',
+    icon: 'ph:facebook-logo',
+    href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+    openInNewTab: true,
+  },
+  {
+    label: 'LinkedIn',
+    icon: 'ph:linkedin-logo',
+    href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+    openInNewTab: true,
+  },
+  {
+    label: 'Reddit',
+    icon: 'ph:reddit-logo',
+    href: `https://www.reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`,
+    openInNewTab: true,
+  },
+  {
+    label: 'Bluesky',
+    icon: 'ph:butterfly',
+    href: `https://bsky.app/intent/compose?text=${encodedTextWithUrl}`,
+    openInNewTab: true,
+  },
+  {
+    label: 'WhatsApp',
+    icon: 'ph:whatsapp-logo',
+    href: `https://api.whatsapp.com/send?text=${encodedTextWithUrl}`,
+    openInNewTab: true,
+  },
+  {
+    label: 'Telegram',
+    icon: 'ph:telegram-logo',
+    href: `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`,
+    openInNewTab: true,
+  },
+  {
+    label: 'Pinterest',
+    icon: 'ph:pinterest-logo',
+    href: `https://www.pinterest.com/pin/create/button/?url=${encodedUrl}&media=${encodedImage}&description=${encodedTitle}`,
+    openInNewTab: true,
+  },
+  {
+    label: 'Email',
+    icon: 'ph:envelope-simple',
+    href: `mailto:?subject=${encodedTitle}&body=${encodedTextWithUrl}`,
+  },
+]
+---
+
+<post-share data-share-title={title} data-share-text={shareText} data-share-url={url}>
+  <button
+    type="button"
+    class="share-trigger"
+    aria-label={`Share ${title}`}
+    title="Share this post"
+    popovertarget="post-share-popover"
+    data-magnetic
+  >
+    <Icon name="ph:share-network" aria-hidden="true" />
+  </button>
+
+  <section
+    id="post-share-popover"
+    class="share-popover"
+    popover="auto"
+    role="dialog"
+    aria-labelledby="post-share-heading"
+  >
+    <p id="post-share-heading" class="share-heading">Share this post</p>
+
+    <button type="button" class="native-share" data-native-share hidden>
+      <Icon name="ph:share-network" aria-hidden="true" />
+      <span>Share...</span>
+    </button>
+
+    <p class="share-message" data-share-message aria-live="polite" hidden></p>
+
+    <div class="share-grid">
+      {
+        targets.map((target) => (
+          <a
+            class="share-destination"
+            href={target.href}
+            target={target.openInNewTab ? '_blank' : undefined}
+            rel={target.openInNewTab ? 'noopener noreferrer' : undefined}
+            data-share-target
+          >
+            <Icon name={target.icon} aria-hidden="true" />
+            <span>{target.label}</span>
+          </a>
+        ))
+      }
+    </div>
+
+    <button type="button" class="copy-link" data-copy-link data-state="idle">
+      <span class="copy-icon" data-copy-icon="idle">
+        <Icon name="ph:link" aria-hidden="true" />
+      </span>
+      <span class="copy-icon" data-copy-icon="copied" hidden>
+        <Icon name="ph:check" aria-hidden="true" />
+      </span>
+      <span class="copy-icon" data-copy-icon="error" hidden>
+        <Icon name="ph:warning" aria-hidden="true" />
+      </span>
+      <span data-copy-label aria-live="polite">Copy link</span>
+    </button>
+
+    <div class="copy-fallback" data-copy-fallback hidden>
+      <input
+        type="text"
+        readonly
+        value={url}
+        aria-label="Blog post URL"
+        data-copy-input
+      />
+    </div>
+  </section>
+</post-share>
+
+<script>
+  type CopyState = 'idle' | 'copied' | 'error'
+
+  function copyViaExecCommand(text: string): boolean {
+    const previousFocus =
+      document.activeElement instanceof HTMLElement ? document.activeElement : undefined
+    const textarea = document.createElement('textarea')
+    textarea.value = text
+    textarea.setAttribute('readonly', '')
+    textarea.style.position = 'fixed'
+    textarea.style.inset = '0 auto auto 0'
+    textarea.style.opacity = '0'
+    textarea.style.pointerEvents = 'none'
+    document.body.appendChild(textarea)
+    textarea.focus()
+    textarea.select()
+
+    let copied = false
+    try {
+      copied = document.execCommand('copy')
+    } catch {
+      copied = false
+    } finally {
+      textarea.remove()
+      previousFocus?.focus({ preventScroll: true })
+    }
+    return copied
+  }
+
+  class PostShareElement extends HTMLElement {
+    private controller?: AbortController
+    private copyResetTimer?: number
+    private positionObserver?: IntersectionObserver
+
+    connectedCallback() {
+      if (this.controller && !this.controller.signal.aborted) {
+        return
+      }
+
+      this.controller = new AbortController()
+      const { signal } = this.controller
+      const popover = this.querySelector<HTMLElement>('.share-popover')
+      const trigger = this.querySelector<HTMLButtonElement>('.share-trigger')
+      const nativeShare = this.querySelector<HTMLButtonElement>('[data-native-share]')
+      const shareMessage = this.querySelector<HTMLElement>('[data-share-message]')
+      const copyButton = this.querySelector<HTMLButtonElement>('[data-copy-link]')
+      const copyLabel = this.querySelector<HTMLElement>('[data-copy-label]')
+      const copyFallback = this.querySelector<HTMLElement>('[data-copy-fallback]')
+      const copyInput = this.querySelector<HTMLInputElement>('[data-copy-input]')
+      const copyIcons = new Map(
+        Array.from(this.querySelectorAll<HTMLElement>('[data-copy-icon]')).map((icon) => [
+          icon.dataset.copyIcon as CopyState,
+          icon,
+        ]),
+      )
+
+      if (
+        !popover ||
+        !trigger ||
+        !nativeShare ||
+        !shareMessage ||
+        !copyButton ||
+        !copyLabel ||
+        !copyFallback ||
+        !copyInput
+      ) {
+        console.error('The blog share control is missing required elements.')
+        return
+      }
+
+      if (typeof popover.showPopover !== 'function') {
+        trigger.disabled = true
+        console.error('This browser does not support the Popover API.')
+        return
+      }
+
+      const observePosition = () => {
+        this.positionObserver?.disconnect()
+        const rootFontSize = Number.parseFloat(
+          getComputedStyle(document.documentElement).fontSize,
+        )
+        const headerBottom =
+          document.querySelector<HTMLElement>('site-header')?.getBoundingClientRect()
+            .bottom ?? rootFontSize * 5.25
+        const stickyTop = headerBottom + rootFontSize * 0.75
+
+        this.positionObserver = new IntersectionObserver(
+          ([entry]) => {
+            const shouldFloat =
+              entry.intersectionRatio < 1 && entry.boundingClientRect.top < stickyTop
+            this.classList.toggle('is-floating', shouldFloat)
+          },
+          {
+            rootMargin: `-${stickyTop}px 0px 0px 0px`,
+            threshold: 1,
+          },
+        )
+        this.positionObserver.observe(this)
+      }
+
+      observePosition()
+      window.addEventListener('resize', observePosition, { signal })
+
+      const resetShareMessage = () => {
+        shareMessage.textContent = ''
+        shareMessage.hidden = true
+      }
+
+      const setCopyState = (state: CopyState) => {
+        if (this.copyResetTimer) {
+          window.clearTimeout(this.copyResetTimer)
+          this.copyResetTimer = undefined
+        }
+
+        copyButton.dataset.state = state
+        copyLabel.textContent =
+          state === 'copied'
+            ? 'Link copied'
+            : state === 'error'
+              ? 'Copy blocked - select below'
+              : 'Copy link'
+
+        copyIcons.forEach((icon, iconState) => {
+          icon.hidden = iconState !== state
+        })
+        copyFallback.hidden = state !== 'error'
+
+        if (state === 'copied') {
+          this.copyResetTimer = window.setTimeout(() => setCopyState('idle'), 2200)
+        } else if (state === 'error') {
+          requestAnimationFrame(() => {
+            copyInput.focus()
+            copyInput.select()
+          })
+        }
+      }
+
+      const hidePopover = () => {
+        if (popover.matches(':popover-open')) {
+          popover.hidePopover()
+        }
+      }
+
+      if (typeof navigator.share === 'function') {
+        nativeShare.hidden = false
+        nativeShare.addEventListener(
+          'click',
+          async () => {
+            resetShareMessage()
+            try {
+              await navigator.share({
+                title: this.dataset.shareTitle,
+                text: this.dataset.shareText,
+                url: this.dataset.shareUrl,
+              })
+              hidePopover()
+            } catch (error) {
+              if (error instanceof DOMException && error.name === 'AbortError') {
+                return
+              }
+              shareMessage.textContent = 'Unable to open the system share menu.'
+              shareMessage.hidden = false
+            }
+          },
+          { signal },
+        )
+      }
+
+      copyButton.addEventListener(
+        'click',
+        async () => {
+          const shareUrl = this.dataset.shareUrl
+          if (!shareUrl) {
+            console.error('The blog share URL is missing.')
+            setCopyState('error')
+            return
+          }
+
+          let copied = false
+          try {
+            if (navigator.clipboard?.writeText) {
+              await navigator.clipboard.writeText(shareUrl)
+              copied = true
+            }
+          } catch {
+            copied = false
+          }
+
+          if (!copied) {
+            copied = copyViaExecCommand(shareUrl)
+          }
+          setCopyState(copied ? 'copied' : 'error')
+        },
+        { signal },
+      )
+
+      this.querySelectorAll<HTMLAnchorElement>('[data-share-target]').forEach((link) => {
+        link.addEventListener('click', hidePopover, { signal })
+      })
+
+      popover.addEventListener(
+        'toggle',
+        () => {
+          if (popover.matches(':popover-open')) {
+            const firstAction = nativeShare.hidden
+              ? this.querySelector<HTMLAnchorElement>('[data-share-target]')
+              : nativeShare
+            requestAnimationFrame(() => firstAction?.focus())
+            return
+          }
+
+          setCopyState('idle')
+          resetShareMessage()
+          if (popover.contains(document.activeElement)) {
+            trigger.focus({ preventScroll: true })
+          }
+        },
+        { signal },
+      )
+    }
+
+    disconnectedCallback() {
+      this.controller?.abort()
+      this.positionObserver?.disconnect()
+      if (this.copyResetTimer) {
+        window.clearTimeout(this.copyResetTimer)
+      }
+    }
+  }
+
+  if (!customElements.get('post-share')) {
+    customElements.define('post-share', PostShareElement)
+  }
+</script>
+
+<style>
+  post-share {
+    position: relative;
+    display: block;
+    width: 3.1rem;
+    height: 3.1rem;
+  }
+
+  .share-trigger {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: grid;
+    width: 3.1rem;
+    height: 3.1rem;
+    min-height: 0;
+    padding: 0;
+    place-items: center;
+    border: 1px solid var(--theme-border-strong);
+    border-radius: 50%;
+    color: var(--theme-foreground);
+    background: color-mix(in oklab, var(--theme-surface-raised) 92%, transparent);
+    box-shadow: 0 0.8rem 2.4rem var(--theme-shadow);
+    backdrop-filter: blur(16px);
+    transition:
+      color var(--duration-fast) var(--ease-out-expo),
+      background-color var(--duration-fast) var(--ease-out-expo),
+      border-color var(--duration-fast) var(--ease-out-expo),
+      transform var(--duration-fast) var(--ease-out-expo);
+  }
+
+  post-share.is-floating .share-trigger {
+    position: fixed;
+    z-index: calc(var(--z-sticky) - 1);
+    top: 6rem;
+    right: clamp(1rem, 3vw, 2rem);
+  }
+
+  .share-trigger:hover,
+  .share-trigger:focus-visible,
+  post-share:has(.share-popover:popover-open) .share-trigger {
+    border-color: var(--theme-accent);
+    color: var(--theme-on-accent);
+    background: var(--theme-accent);
+    transform: translateY(-2px);
+  }
+
+  .share-trigger:active {
+    transform: scale(0.94);
+  }
+
+  .share-trigger svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .share-popover {
+    position: fixed;
+    inset: 6.75rem clamp(1rem, 3vw, 2rem) auto auto;
+    width: min(21.5rem, calc(100vw - 2.5rem));
+    max-height: calc(100dvh - 10rem);
+    box-sizing: border-box;
+    margin: 0;
+    padding: 1rem;
+    overflow-y: auto;
+    border: 1px solid var(--theme-border-strong);
+    border-radius: var(--radius-panel);
+    color: var(--theme-overlay-text, var(--theme-foreground));
+    background: color-mix(
+      in oklab,
+      var(--theme-overlay-surface, var(--theme-surface-raised)) 94%,
+      transparent
+    );
+    box-shadow: 0 1.5rem 5rem var(--theme-shadow);
+    opacity: 0;
+    transform: translateY(0.6rem) scale(0.98);
+    backdrop-filter: blur(22px);
+    transition:
+      opacity var(--duration-fast) var(--ease-out-expo),
+      transform var(--duration-fast) var(--ease-out-expo),
+      overlay var(--duration-fast) allow-discrete,
+      display var(--duration-fast) allow-discrete;
+  }
+
+  @supports (anchor-name: --post-share-trigger) {
+    .share-trigger {
+      anchor-name: --post-share-trigger;
+    }
+
+    .share-popover {
+      position-anchor: --post-share-trigger;
+      inset: auto;
+      top: anchor(bottom);
+      right: anchor(right);
+      margin-top: 0.75rem;
+    }
+  }
+
+  .share-popover:popover-open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  @starting-style {
+    .share-popover:popover-open {
+      opacity: 0;
+      transform: translateY(0.6rem) scale(0.98);
+    }
+  }
+
+  .share-popover::backdrop {
+    background: color-mix(in oklab, var(--theme-background) 42%, transparent);
+    backdrop-filter: blur(2px);
+  }
+
+  .share-heading {
+    margin: 0.1rem 0.2rem 0.8rem;
+    color: var(--theme-overlay-accent, var(--theme-accent));
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .native-share,
+  .copy-link {
+    display: flex;
+    width: 100%;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--theme-border-strong);
+    border-radius: var(--radius-control);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-align: left;
+    transition:
+      color var(--duration-fast) var(--ease-out-expo),
+      background-color var(--duration-fast) var(--ease-out-expo),
+      border-color var(--duration-fast) var(--ease-out-expo),
+      transform var(--duration-fast) var(--ease-out-expo);
+  }
+
+  .native-share {
+    margin-bottom: 0.75rem;
+    border-color: var(--theme-accent);
+    color: var(--theme-on-accent);
+    background: var(--theme-accent);
+  }
+
+  .copy-link {
+    margin-top: 0.75rem;
+    color: var(--theme-overlay-text, var(--theme-foreground));
+    background: color-mix(in oklab, var(--theme-overlay-text) 4%, transparent);
+  }
+
+  .native-share:hover {
+    border-color: var(--theme-foreground);
+    color: var(--theme-background);
+    background: var(--theme-foreground);
+    transform: translateY(-1px);
+  }
+
+  .copy-link:hover,
+  .copy-link:focus-visible {
+    border-color: var(--theme-accent);
+    background: var(--theme-accent-soft);
+    transform: translateY(-1px);
+  }
+
+  .native-share:active,
+  .copy-link:active {
+    transform: scale(0.98);
+  }
+
+  .native-share[hidden],
+  .share-message[hidden],
+  .copy-icon[hidden],
+  .copy-fallback[hidden] {
+    display: none;
+  }
+
+  .share-message {
+    margin: -0.2rem 0.2rem 0.75rem;
+    color: var(--theme-warning);
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
+
+  .share-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+
+  .share-destination {
+    display: flex;
+    min-width: 0;
+    min-height: 5rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.65rem 0.35rem;
+    border: 1px solid var(--theme-border);
+    border-radius: 0.85rem;
+    color: var(--theme-overlay-text, var(--theme-foreground));
+    background: color-mix(in oklab, var(--theme-overlay-text) 4%, transparent);
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    transition:
+      color var(--duration-fast) var(--ease-out-expo),
+      background-color var(--duration-fast) var(--ease-out-expo),
+      border-color var(--duration-fast) var(--ease-out-expo),
+      transform var(--duration-fast) var(--ease-out-expo);
+  }
+
+  .share-destination svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .share-destination:hover,
+  .share-destination:focus-visible {
+    border-color: var(--theme-accent-medium);
+    color: var(--theme-overlay-accent, var(--theme-accent));
+    background: var(--theme-accent-soft);
+    transform: translateY(-2px);
+  }
+
+  .share-destination:active {
+    transform: scale(0.98);
+  }
+
+  .copy-icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+  }
+
+  .copy-link[data-state='copied'] {
+    border-color: var(--theme-green);
+    background: color-mix(in oklab, var(--theme-green) 14%, transparent);
+  }
+
+  .copy-link[data-state='error'] {
+    border-color: var(--theme-warning);
+    background: color-mix(in oklab, var(--theme-warning) 14%, transparent);
+  }
+
+  .copy-fallback {
+    margin-top: 0.5rem;
+  }
+
+  .copy-fallback input {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--theme-warning);
+    border-radius: 0.75rem;
+    background: var(--theme-overlay-surface, var(--theme-surface));
+    padding: 0.55rem 0.625rem;
+    color: var(--theme-overlay-text, var(--theme-foreground));
+    font: inherit;
+    font-size: 0.75rem;
+  }
+
+  .native-share svg,
+  .copy-link svg {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .share-trigger,
+    .native-share,
+    .copy-link,
+    .share-destination {
+      transition: none;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .share-trigger,
+    .share-popover {
+      background: var(--theme-surface-raised);
+      backdrop-filter: none;
+    }
+  }
+</style>

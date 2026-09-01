@@ -13,6 +13,7 @@ import GiscusLoader from '~/components/GiscusLoader.astro'
 import siteConfig from '~/site.config'
 import Tags from '~/components/Tags.astro'
 import PostInfo from '~/components/PostInfo.astro'
+import ShareButton from '~/components/ShareButton.astro'
 import ThemeImage from '~/components/ThemeImage.astro'
 import type { Collation } from '~/types'
 
@@ -63,6 +64,8 @@ if (postData.tags?.length) {
 const relatedPosts = series
   ? series.entries.filter((entry) => entry.id !== post.id).slice(0, 3)
   : [prev, next].filter((entry): entry is CollectionEntry<'posts'> => Boolean(entry))
+const postUrl = new URL(`/posts/${post.id}`, Astro.site).href.replace(/\/$/, '')
+const socialCardUrl = new URL(`/social-cards/${post.id}.png`, Astro.site).href
 ---
 
 <Layout
@@ -72,6 +75,14 @@ const relatedPosts = series
   tags={postData.tags}
 >
   <article class="article-page" data-pagefind-body>
+    <div class="article-share-position">
+      <ShareButton
+        title={postData.title}
+        description={description}
+        url={postUrl}
+        imageUrl={socialCardUrl}
+      />
+    </div>
     <LightGallery
       class="article-gallery"
       options={{
@@ -81,7 +92,7 @@ const relatedPosts = series
       addPlugins={['zoom']}
     >
       <header class="article-header" data-reveal>
-        <PostInfo post={post} />
+        <PostInfo post={post} class="article-post-info" />
         <h1 id={post.id}>{postData.title}</h1>
         {description && <p>{description}</p>}
         {tags && <Tags tags={tags} />}
@@ -169,11 +180,26 @@ const relatedPosts = series
 </Layout>
 
 <style>
+  .article-page {
+    position: relative;
+  }
+
+  .article-share-position {
+    position: absolute;
+    z-index: calc(var(--z-sticky) - 1);
+    top: clamp(3.5rem, 7vw, 6rem);
+    right: 0;
+  }
+
   .article-header {
     display: grid;
     gap: 1.25rem;
     max-width: 68rem;
     padding-block: clamp(3.5rem, 7vw, 6rem);
+  }
+
+  :global(.article-post-info) {
+    padding-right: 4.5rem;
   }
 
   .article-header h1 {
