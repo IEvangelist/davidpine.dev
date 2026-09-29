@@ -51,7 +51,10 @@ export default defineConfig({
       [
         rehypeExternalLinks,
         {
-          rel: ['noreferrer', 'noopener'],
+          rel: (element) =>
+            String(element.properties?.href ?? '').includes('dometrain.com')
+              ? ['sponsored', 'noreferrer', 'noopener']
+              : ['noreferrer', 'noopener'],
           target: '_blank',
         },
       ],

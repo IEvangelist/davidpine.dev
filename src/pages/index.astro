@@ -13,6 +13,7 @@ import GitHubMark from '~/icons/github.svg'
 import photoStage from '~/assets/pics/70.jpg'
 import photoConference from '~/assets/pics/128.jpg'
 import photoCommunity from '~/assets/pics/60.jpg'
+import { dometrain } from '~/data/dometrain'
 
 const home = await getCollection('home')
 let HomeContent
@@ -46,6 +47,13 @@ const credentials = [
     icon: 'ph:book-open-text',
   },
   {
+    label: 'Course',
+    value: 'Dometrain',
+    url: dometrain.courseUrl,
+    icon: 'ph:chalkboard-teacher',
+    sponsored: true,
+  },
+  {
     label: 'Live',
     value: 'On .NET Live',
     url: 'https://dotnet.microsoft.com/en-us/live/on-dotnet-live',
@@ -73,7 +81,11 @@ const credentials = [
   <section class="credentials" aria-label="Selected credentials" data-reveal>
     {
       credentials.map((credential) => (
-        <a href={credential.url} target="_blank" rel="noopener noreferrer">
+        <a
+          href={credential.url}
+          target="_blank"
+          rel={credential.sponsored ? 'sponsored noopener noreferrer' : 'noopener noreferrer'}
+        >
           {credential.officialGitHub ? (
             <GitHubMark aria-hidden="true" />
           ) : (
@@ -254,7 +266,7 @@ const credentials = [
 
   .credentials {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     border-bottom: 1px solid var(--theme-border);
   }
 
@@ -281,10 +293,14 @@ const credentials = [
   }
 
   .credentials a:nth-child(3) {
-    --credential-color: var(--theme-magenta);
+    --credential-color: var(--theme-yellow);
   }
 
   .credentials a:nth-child(4) {
+    --credential-color: var(--theme-magenta);
+  }
+
+  .credentials a:nth-child(5) {
     --credential-color: var(--theme-green);
   }
 
@@ -472,13 +488,17 @@ const credentials = [
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .credentials a:nth-child(2) {
+    .credentials a:nth-child(2n) {
       border-right: 0;
     }
 
-    .credentials a:first-child,
-    .credentials a:nth-child(2) {
+    .credentials a:not(:last-child) {
       border-bottom: 1px solid var(--theme-border);
+    }
+
+    .credentials a:last-child {
+      grid-column: 1 / -1;
+      padding-left: 0;
     }
 
     .recent-writing {

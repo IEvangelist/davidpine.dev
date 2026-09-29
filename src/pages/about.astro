@@ -9,6 +9,7 @@ import SocialLinks from '~/components/SocialLinks.astro'
 import siteConfig from '~/site.config'
 import aboutPhoto from '~/assets/pics/132.jpg'
 import bookCover from '~/content/posts/learning-blazor/full-book-cover.png'
+import { dometrain } from '~/data/dometrain'
 
 const testimonials = [
   "You are a beacon of light in a grumpy world of developers. Your excitement is infectious. I'm so blessed to know you!",
@@ -95,9 +96,9 @@ const featuredQuote =
         > and <a href="https://learn.microsoft.com/azure">Azure</a>. He is the O'Reilly
         Media author of <em
           >Learning Blazor: Build Single-Page Apps with WebAssembly and C#</em
-        > and a <a
-          href="https://dometrain.com/course/from-zero-to-hero-configuration-and-options-in-dotnet/?ref=david-pine"
-          >Dometrain author</a
+        > and a <a href={dometrain.authorUrl} rel="sponsored">Dometrain author</a> of <a
+          href={dometrain.courseUrl}
+          rel="sponsored"><em>{dometrain.courseTitle}</em></a
         >.
       </p>
       <p>

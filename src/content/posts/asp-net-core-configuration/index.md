@@ -19,6 +19,10 @@ Being a software developer, it's in our nature to configure various aspects of t
 
 However, there is still room for improvement. I've prepared a few tips that can enhance developer productivity by taking advantage of various C# features.
 
+:::tip{title="🎓 Go deeper"}
+Want the full story on configuration and options? Check out my Dometrain course, [From Zero to Hero: Configuration and Options in .NET](https://dometrain.com/course/from-zero-to-hero-configuration-and-options-in-dotnet/?ref=david-pine).
+:::
+
 ## C# Class < -- > JSON
 
 __ASP.NET Core__ configuration via the `IOptions<T>` and `IOptionsSnapshot<T>` have been around for a long time. Their usage is a first class citizen within __ASP.NET Core__ applications, and work to tie `appsettings.json` values to corresponding configuration [POCO's](https://en.wikipedia.org/wiki/Plain_old_CLR_object). As a refresher on configuration, there is a one-to-one relationship between a JSON object in the `appsettings.json` and the C# class that represents it.
