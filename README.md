@@ -39,11 +39,22 @@ npm run dev
 npm run build
 ```
 
+**Check Speaking and Slide Behavior** (after building):
+
+```bash
+node --test test/*.test.js
+```
+
 ## 📝 Content
 
 Blog posts are located in `src/content/posts/`. Each post is a markdown or MDX file with frontmatter for metadata.
 
 Site configuration is in `src/site.config.ts`.
+
+Presentation decks are located in `src/content/slides/`. Entries without `externalUrl`
+render at `/slides/<filename>`. To link a deck hosted elsewhere, add an absolute
+HTTP(S) `externalUrl` to its frontmatter. External decks remain listed and filterable
+by tag on `/slides`, but do not generate an internal deck page.
 
 ## 📄 License
 
