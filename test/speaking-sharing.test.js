@@ -152,6 +152,31 @@ test(
 )
 
 test(
+  'trailing-slash speaking URLs retain the overview and selected-event metadata',
+  { skip: !origin },
+  async () => {
+    const event = speakingJourney[0]
+    const share = getSpeakingShare(event)
+    for (const path of ['/speaking/', `/speaking/?event=${event.id}`]) {
+      const response = await fetch(new URL(path, origin), { redirect: 'manual' })
+      assert.equal(response.status, 200, `${path} remains available`)
+      const html = await response.text()
+      assert.match(html, /rel="canonical" href="https:\/\/davidpine.dev\/speaking"/)
+      if (path.includes('?')) {
+        assert.equal(meta(html, 'og:url'), share.url)
+        assert.equal(meta(html, 'og:description'), share.description)
+        assert.match(
+          html,
+          new RegExp(`data-gallery-item-id="${event.id}"[^>]*data-active`),
+        )
+      } else {
+        assert.match(meta(html, 'og:image'), /\/social-cards\/__default\.png$/)
+      }
+    }
+  },
+)
+
+test(
   'overview stays generic; bad event links redirect and unknown images return 404',
   { skip: !origin },
   async () => {

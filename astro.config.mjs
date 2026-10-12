@@ -31,7 +31,7 @@ import icon from 'astro-icon'
 // https://astro.build/config
 export default defineConfig({
   site: siteConfig.site,
-  trailingSlash: siteConfig.trailingSlashes ? 'always' : 'never',
+  trailingSlash: 'ignore',
   adapter: netlify({ imageCDN: false, devFeatures: false }),
   prefetch: true,
   markdown: {

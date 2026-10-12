@@ -56,6 +56,8 @@ Only `/speaking` is rendered on request by the Astro Netlify adapter. This lets
 social crawlers read the selected event's title, description, and artwork directly
 from the HTML, without JavaScript. Other pages remain static. Invalid event IDs
 redirect to `/speaking`, and the canonical URL remains the speaking overview.
+Both `/speaking` and `/speaking/` are accepted, including event query parameters,
+so existing trailing-slash links continue to work without changing canonical URLs.
 
 The Astro endpoint `src/pages/og/speaking/[id].png.ts` generates a 1200 x 630 PNG for
 each event during `npm run build`, using local fonts, the configured portrait, and
