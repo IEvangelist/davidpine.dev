@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets'
 import { Icon } from 'astro-icon/components'
+import ShareButton from '~/components/ShareButton.astro'
 import type { SpatialGalleryItem } from '~/types/showcase'
 import '~/styles/spatial-showcase.css'
 
@@ -11,6 +12,7 @@ interface Props {
   items: SpatialGalleryItem[]
   variant?: 'media' | 'speaking'
   showHeader?: boolean
+  initialItemId?: string
 }
 
 const {
@@ -20,7 +22,12 @@ const {
   items,
   variant = 'media',
   showHeader = true,
+  initialItemId,
 } = Astro.props
+const initialIndex = Math.max(
+  0,
+  items.findIndex((item) => item.id === initialItemId),
+)
 const titleId = `${id}-title`
 const statusId = `${id}-status`
 const imageSizes =
@@ -49,6 +56,7 @@ if (variant === 'media') {
   id={id}
   class:list={['spatial-gallery', `spatial-gallery--${variant}`]}
   data-spatial-gallery
+  data-initial-item-id={items[initialIndex]?.id}
 >
   <section
     aria-labelledby={showHeader ? titleId : undefined}
@@ -121,13 +129,16 @@ if (variant === 'media') {
                 data-gallery-item-id={item.id}
                 data-gallery-index={index}
                 data-gallery-announcement={`${item.meta}. ${item.title}. ${item.label}.`}
-                data-active={index === 0 ? '' : undefined}
-                aria-current={index === 0 ? 'true' : undefined}
+                data-active={index === initialIndex ? '' : undefined}
+                aria-current={index === initialIndex ? 'true' : undefined}
                 {...dataAttributes}
               >
                 <div class="spatial-gallery__cover" data-gallery-cover>
                   <div class="spatial-gallery__cover-inner">
-                    <article class="spatial-gallery__card">
+                    <article
+                      class="spatial-gallery__card"
+                      data-gallery-share={item.share ? '' : undefined}
+                    >
                       <div class="spatial-gallery__art">
                         {isLocalImage && (
                           <Image
@@ -217,7 +228,7 @@ if (variant === 'media') {
                           target="_blank"
                           rel="noopener noreferrer"
                           aria-label={actionLabel}
-                          tabindex={index === 0 ? 0 : -1}
+                          tabindex={index === initialIndex ? 0 : -1}
                           draggable="false"
                         >
                           {variant === 'media' && (
@@ -234,7 +245,7 @@ if (variant === 'media') {
                           data-gallery-action="activate"
                           type="button"
                           aria-label={actionLabel}
-                          tabindex={index === 0 ? 0 : -1}
+                          tabindex={index === initialIndex ? 0 : -1}
                         >
                           {variant === 'media' && (
                             <>
@@ -243,6 +254,17 @@ if (variant === 'media') {
                             </>
                           )}
                         </button>
+                      )}
+                      {variant === 'speaking' && item.share && (
+                        <div class="spatial-gallery__share" data-gallery-control>
+                          <ShareButton
+                            {...item.share}
+                            id={`${id}-${item.id}-share`}
+                            label="Share this event"
+                            inline
+                            tabindex={index === initialIndex ? 0 : -1}
+                          />
+                        </div>
                       )}
                     </article>
 
@@ -312,7 +334,7 @@ if (variant === 'media') {
               data-gallery-index={index}
               data-major-tick={isMajorTick ? '' : undefined}
               aria-label={`Show ${item.title}`}
-              aria-current={index === 0 ? 'true' : undefined}
+              aria-current={index === initialIndex ? 'true' : undefined}
             >
               <span class="spatial-gallery__tick-mark" aria-hidden="true" />
               {isMajorTick && (
@@ -327,15 +349,17 @@ if (variant === 'media') {
     </nav>
 
     <p class="spatial-gallery__position" aria-hidden="true">
-      <span data-gallery-position-current>01</span>
+      <span data-gallery-position-current
+        >{String(initialIndex + 1).padStart(2, '0')}</span
+      >
       <span>/</span>
       <span>{String(items.length).padStart(2, '0')}</span>
     </p>
 
     <p id={statusId} class="sr-only" data-gallery-status aria-live="polite">
       {
-        items[0]
-          ? `1 of ${items.length}. ${items[0].meta}. ${items[0].title}.`
+        items[initialIndex]
+          ? `${initialIndex + 1} of ${items.length}. ${items[initialIndex].meta}. ${items[initialIndex].title}.`
           : 'No items.'
       }
     </p>

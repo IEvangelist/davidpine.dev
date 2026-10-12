@@ -1,0 +1,15 @@
+/speaking
+  Cache-Control: no-store
+  CDN-Cache-Control: no-store
+
+/speaking/
+  Cache-Control: no-store
+  CDN-Cache-Control: no-store
+
+/speaking-share/*
+  Cache-Control: no-store
+  CDN-Cache-Control: no-store
+  X-Robots-Tag: noindex
+
+/og/speaking/*
+  Cache-Control: public, max-age=0, must-revalidate

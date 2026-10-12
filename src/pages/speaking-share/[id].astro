@@ -1,0 +1,15 @@
+---
+import type { GetStaticPaths } from 'astro'
+import SpeakingPage from '~/components/showcase/SpeakingPage.astro'
+import { speakingJourney } from '~/data/speaking'
+
+export const getStaticPaths = (() =>
+  speakingJourney.map(({ id }) => ({
+    params: { id },
+    props: { selectedEventId: id },
+  }))) satisfies GetStaticPaths
+
+const { selectedEventId } = Astro.props
+---
+
+<SpeakingPage selectedEventId={selectedEventId} />

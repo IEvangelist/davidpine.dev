@@ -70,7 +70,9 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   integrations: [
-    sitemap(), // Must come after expressive-code integration
+    sitemap({
+      filter: (page) => !new URL(page).pathname.startsWith('/speaking-share/'),
+    }), // Must come after expressive-code integration
     expressiveCode({
       themes: siteConfig.themes.include,
       useDarkModeMediaQuery: false,
