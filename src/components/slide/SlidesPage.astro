@@ -50,7 +50,7 @@ const { slides, tags, tag } = Astro.props
     {
       slides.map((slide) => (
         <a
-          href={`/slides/${slide.id}`}
+          href={slide.externalUrl ?? `/slides/${slide.id}`}
           class="slide-card-link"
           data-slide-card
           data-tags={JSON.stringify(slide.tags ?? [])}
