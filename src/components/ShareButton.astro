@@ -6,10 +6,6 @@ interface Props {
   description?: string
   url: string
   imageUrl: string
-  id?: string
-  label?: string
-  inline?: boolean
-  tabindex?: number
 }
 
 interface ShareTarget {
@@ -19,18 +15,7 @@ interface ShareTarget {
   openInNewTab?: boolean
 }
 
-const {
-  title,
-  description = '',
-  url,
-  imageUrl,
-  id = 'post-share',
-  label = 'Share this post',
-  inline = false,
-  tabindex,
-} = Astro.props
-const popoverId = `${id}-popover`
-const headingId = `${id}-heading`
+const { title, description = '', url, imageUrl } = Astro.props
 const shareText = description || title
 const encodedUrl = encodeURIComponent(url)
 const encodedTitle = encodeURIComponent(title)
@@ -95,34 +80,26 @@ const targets: ShareTarget[] = [
 ]
 ---
 
-<post-share
-  data-share-title={title}
-  data-share-text={shareText}
-  data-share-url={url}
-  data-inline={inline || undefined}
-  style={`--share-anchor: --${id}-trigger`}
->
+<post-share data-share-title={title} data-share-text={shareText} data-share-url={url}>
   <button
     type="button"
     class="share-trigger"
     aria-label={`Share ${title}`}
-    title={label}
-    popovertarget={popoverId}
-    tabindex={tabindex}
-    data-magnetic={!inline || undefined}
+    title="Share this post"
+    popovertarget="post-share-popover"
+    data-magnetic
   >
-    <Icon name={inline ? 'ph:export' : 'ph:share-network'} aria-hidden="true" />
-    {inline && <span>Share</span>}
+    <Icon name="ph:share-network" aria-hidden="true" />
   </button>
 
   <section
-    id={popoverId}
+    id="post-share-popover"
     class="share-popover"
     popover="auto"
     role="dialog"
-    aria-labelledby={headingId}
+    aria-labelledby="post-share-heading"
   >
-    <p id={headingId} class="share-heading">{label}</p>
+    <p id="post-share-heading" class="share-heading">Share this post</p>
 
     <button type="button" class="native-share" data-native-share hidden>
       <Icon name="ph:share-network" aria-hidden="true" />
@@ -166,7 +143,7 @@ const targets: ShareTarget[] = [
         type="text"
         readonly
         value={url}
-        aria-label="Link to share"
+        aria-label="Blog post URL"
         data-copy-input
       />
     </div>
@@ -239,7 +216,7 @@ const targets: ShareTarget[] = [
         !copyFallback ||
         !copyInput
       ) {
-        console.error('The share control is missing required elements.')
+        console.error('The blog share control is missing required elements.')
         return
       }
 
@@ -273,10 +250,8 @@ const targets: ShareTarget[] = [
         this.positionObserver.observe(this)
       }
 
-      if (!this.hasAttribute('data-inline')) {
-        observePosition()
-        window.addEventListener('resize', observePosition, { signal })
-      }
+      observePosition()
+      window.addEventListener('resize', observePosition, { signal })
 
       const resetShareMessage = () => {
         shareMessage.textContent = ''
@@ -318,32 +293,6 @@ const targets: ShareTarget[] = [
         }
       }
 
-      const positionPopover = () => {
-        if (!this.hasAttribute('data-inline') || !popover.matches(':popover-open')) {
-          return
-        }
-        const triggerBounds = trigger.getBoundingClientRect()
-        const margin = 16
-        const gap = 12
-        const width = popover.offsetWidth
-        const height = popover.offsetHeight
-        const left = Math.max(
-          margin,
-          Math.min(triggerBounds.right - width, window.innerWidth - width - margin),
-        )
-        const below = triggerBounds.bottom + gap
-        const top = Math.max(
-          margin,
-          Math.min(
-            below + height <= window.innerHeight - margin
-              ? below
-              : triggerBounds.top - height - gap,
-            window.innerHeight - height - margin,
-          ),
-        )
-        popover.style.inset = `${top}px auto auto ${left}px`
-      }
-
       if (typeof navigator.share === 'function') {
         nativeShare.hidden = false
         nativeShare.addEventListener(
@@ -374,7 +323,7 @@ const targets: ShareTarget[] = [
         async () => {
           const shareUrl = this.dataset.shareUrl
           if (!shareUrl) {
-            console.error('The share URL is missing.')
+            console.error('The blog share URL is missing.')
             setCopyState('error')
             return
           }
@@ -405,10 +354,6 @@ const targets: ShareTarget[] = [
         'toggle',
         () => {
           if (popover.matches(':popover-open')) {
-            positionPopover()
-            if (this.hasAttribute('data-inline')) {
-              window.addEventListener('resize', positionPopover, { signal })
-            }
             const firstAction = nativeShare.hidden
               ? this.querySelector<HTMLAnchorElement>('[data-share-target]')
               : nativeShare
@@ -418,8 +363,7 @@ const targets: ShareTarget[] = [
 
           setCopyState('idle')
           resetShareMessage()
-          window.removeEventListener('resize', positionPopover)
-          if (popover.contains(document.activeElement) && trigger.tabIndex !== -1) {
+          if (popover.contains(document.activeElement)) {
             trigger.focus({ preventScroll: true })
           }
         },
@@ -479,68 +423,6 @@ const targets: ShareTarget[] = [
     right: clamp(1rem, 3vw, 2rem);
   }
 
-  post-share[data-inline] {
-    width: max-content;
-    height: auto;
-  }
-
-  post-share[data-inline] .share-trigger {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    width: auto;
-    height: 2.75rem;
-    min-height: 2.75rem;
-    padding: 0.5rem 0.65rem;
-    border-color: transparent;
-    border-radius: 0.5rem;
-    color: var(--theme-overlay-text, var(--theme-foreground));
-    background: transparent;
-    font-size: 0.78rem;
-    font-weight: 650;
-    box-shadow: none;
-    backdrop-filter: none;
-    translate: none;
-    transform: none;
-  }
-
-  post-share[data-inline] .share-trigger:hover,
-  post-share[data-inline] .share-trigger:focus-visible,
-  post-share[data-inline]:has(.share-popover:popover-open) .share-trigger {
-    border-color: var(--theme-border);
-    color: var(--theme-overlay-accent, var(--theme-accent));
-    background: color-mix(in oklab, var(--theme-overlay-text) 6%, transparent);
-    transform: none;
-  }
-
-  post-share[data-inline] .share-trigger:focus-visible {
-    outline: 2px solid var(--theme-accent);
-    outline-offset: 2px;
-  }
-
-  post-share[data-inline] .share-trigger:active {
-    outline: none;
-    transform: none;
-  }
-
-  post-share[data-inline] .share-trigger svg {
-    width: 1rem;
-    height: 1rem;
-  }
-
-  post-share[data-inline] .share-trigger span {
-    color: inherit;
-    font: inherit;
-    line-height: 1;
-  }
-
-  post-share[data-inline] .share-popover {
-    position-anchor: auto;
-    inset: 1rem 1rem auto auto;
-    margin: 0;
-  }
-
   .share-trigger:hover,
   .share-trigger:focus-visible,
   post-share:has(.share-popover:popover-open) .share-trigger {
@@ -589,16 +471,15 @@ const targets: ShareTarget[] = [
 
   @supports (anchor-name: --post-share-trigger) {
     .share-trigger {
-      anchor-name: var(--share-anchor);
+      anchor-name: --post-share-trigger;
     }
 
     .share-popover {
-      position-anchor: var(--share-anchor);
+      position-anchor: --post-share-trigger;
       inset: auto;
       top: anchor(bottom);
       right: anchor(right);
       margin-top: 0.75rem;
-      position-try-fallbacks: flip-block, flip-inline;
     }
   }
 

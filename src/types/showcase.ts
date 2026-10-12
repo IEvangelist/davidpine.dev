@@ -13,11 +13,5 @@ export interface SpatialGalleryItem {
   href?: string
   action?: SpatialGalleryAction
   actionLabel?: string
-  share?: {
-    title: string
-    description: string
-    url: string
-    imageUrl: string
-  }
   data?: Record<string, boolean | number | string>
 }

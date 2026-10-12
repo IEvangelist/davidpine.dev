@@ -134,12 +134,6 @@ class SpeakingGlobeElement extends HTMLElement {
     this.destinationMarker =
       this.querySelector<HTMLElement>('[data-globe-destination]') ?? undefined
     this.galleryId = this.dataset.galleryId ?? ''
-    this.activeStopId =
-      this.dataset.initialStopId ??
-      document
-        .getElementById(this.galleryId)
-        ?.querySelector<HTMLElement>('[data-gallery-item][data-active]')?.dataset
-        .galleryItemId
 
     try {
       this.stops = JSON.parse(this.dataset.stops ?? '[]') as GlobeStop[]

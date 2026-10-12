@@ -4,10 +4,9 @@ import type { SpeakingStoryStop } from '~/data/speaking'
 interface Props {
   galleryId: string
   stops: SpeakingStoryStop[]
-  initialStopId?: string
 }
 
-const { galleryId, stops, initialStopId } = Astro.props
+const { galleryId, stops } = Astro.props
 const remoteStopIds = stops
   .filter(({ format, location }) => format === 'online' && !location)
   .map(({ id }) => id)
@@ -36,7 +35,6 @@ const globeStops = stops.flatMap(({ id, location }) =>
 <speaking-globe
   class="speaking-globe"
   data-gallery-id={galleryId}
-  data-initial-stop-id={initialStopId}
   data-stops={JSON.stringify(globeStops)}
   data-remote-stop-ids={JSON.stringify(remoteStopIds)}
   data-remote-origin={JSON.stringify(remoteOrigin)}

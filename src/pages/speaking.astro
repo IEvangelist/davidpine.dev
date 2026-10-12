@@ -6,32 +6,8 @@ import SpeakingArchive from '~/components/showcase/SpeakingArchive.astro'
 import SpeakingGlobe from '~/components/showcase/SpeakingGlobe.astro'
 import SpatialGallery from '~/components/showcase/SpatialGallery.astro'
 import { speakingEvents, speakingJourney, type SpeakingStoryStop } from '~/data/speaking'
-import { getSharedSpeakingEvent, getSpeakingShare } from '~/data/speaking-sharing'
 import Layout from '~/layouts/Layout.astro'
 import type { SpatialGalleryItem } from '~/types/showcase'
-
-export const prerender = false
-
-Astro.response.headers.set('Cache-Control', 'no-store')
-Astro.response.headers.set('CDN-Cache-Control', 'no-store')
-Astro.response.headers.set('Netlify-CDN-Cache-Control', 'no-store')
-
-const eventIds = Astro.url.searchParams.getAll('event')
-const selectedEvent = getSharedSpeakingEvent(eventIds[0] ?? null)
-if (eventIds.length > 1 || (eventIds.length === 1 && !selectedEvent)) {
-  return Astro.redirect('/speaking', 302)
-}
-const selectedShare = selectedEvent ? getSpeakingShare(selectedEvent) : undefined
-const socialImage = selectedShare
-  ? {
-      url: import.meta.env.DEV
-        ? new URL(new URL(selectedShare.imageUrl).pathname, Astro.url.origin).href
-        : selectedShare.imageUrl,
-      alt: selectedShare.imageAlt,
-      width: 1200,
-      height: 630,
-    }
-  : undefined
 
 const pageTitle = 'Speaking'
 const pageDescription =
@@ -57,7 +33,6 @@ const galleryItems: SpatialGalleryItem[] = speakingJourney.map((stop) => ({
   actionLabel: stop.talkUrl ? 'Open talk' : 'Open event',
   action: stop.talkUrl || stop.eventUrl ? 'link' : undefined,
   tickLabel: stop.date.slice(0, 4),
-  share: getSpeakingShare(stop),
   data: {
     'speaking-date': stop.displayDate,
     'speaking-date-time': stop.date,
@@ -73,21 +48,12 @@ const galleryItems: SpatialGalleryItem[] = speakingJourney.map((stop) => ({
 }))
 ---
 
-<Layout
-  title={selectedShare?.title ?? pageTitle}
-  description={selectedShare?.description ?? pageDescription}
-  ogUrl={selectedShare?.url}
-  socialImage={socialImage}
->
+<Layout title={pageTitle} description={pageDescription}>
   <PageHeader title={pageTitle} description={pageDescription} />
 
   <section class="speaking-journey" aria-label="Speaking timeline">
     <div class="speaking-stage reveal-on-scroll">
-      <SpeakingGlobe
-        galleryId={galleryId}
-        stops={speakingJourney}
-        initialStopId={selectedEvent?.id}
-      />
+      <SpeakingGlobe galleryId={galleryId} stops={speakingJourney} />
       <div class="speaking-stage__gallery">
         <SpatialGallery
           id={galleryId}
@@ -95,7 +61,6 @@ const galleryItems: SpatialGalleryItem[] = speakingJourney.map((stop) => ({
           variant="speaking"
           title="Speaking through time"
           showHeader={false}
-          initialItemId={selectedEvent?.id}
         />
       </div>
     </div>

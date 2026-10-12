@@ -12,8 +12,6 @@ class SpatialGalleryElement extends HTMLElement {
   private positionCurrent?: HTMLElement
   private status?: HTMLElement
   private activeIndex = 0
-  private selectionReady = false
-  private restoringSelection = false
   private animationFrame = 0
   private scrollAnimationFrame = 0
   private pointerStartX = 0
@@ -26,7 +24,7 @@ class SpatialGalleryElement extends HTMLElement {
   private reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 
   private readonly scheduleUpdate = () => {
-    if (!this.selectionReady || this.animationFrame) {
+    if (this.animationFrame) {
       return
     }
 
@@ -37,13 +35,6 @@ class SpatialGalleryElement extends HTMLElement {
   }
 
   private readonly handleKeydown = (event: KeyboardEvent) => {
-    if (
-      event.target instanceof Element &&
-      event.target.closest('[data-gallery-control]')
-    ) {
-      return
-    }
-
     if (event.key === 'ArrowLeft') {
       event.preventDefault()
       this.goTo(this.activeIndex - 1)
@@ -65,7 +56,7 @@ class SpatialGalleryElement extends HTMLElement {
       !event.isPrimary ||
       (event.pointerType === 'mouse' && event.button !== 0) ||
       (event.target instanceof Element &&
-        event.target.closest('[data-gallery-inline-player], [data-gallery-control]'))
+        event.target.closest('[data-gallery-inline-player]'))
     ) {
       return
     }
@@ -138,10 +129,6 @@ class SpatialGalleryElement extends HTMLElement {
       return
     }
 
-    if (target.closest('[data-gallery-control]')) {
-      return
-    }
-
     if (this.pointerMoved) {
       event.preventDefault()
       event.stopPropagation()
@@ -190,22 +177,6 @@ class SpatialGalleryElement extends HTMLElement {
 
   private readonly handlePrevious = () => this.goTo(this.activeIndex - 1)
   private readonly handleNext = () => this.goTo(this.activeIndex + 1)
-  private readonly handlePopState = () => {
-    const eventIds = new URL(window.location.href).searchParams.getAll('event')
-    const eventId = eventIds[0] ?? null
-    const index =
-      eventId === null
-        ? 0
-        : this.items.findIndex((item) => item.dataset.galleryItemId === eventId)
-    if (eventIds.length > 1 || index < 0) {
-      window.location.replace('/speaking')
-      return
-    }
-
-    this.restoringSelection = true
-    this.goTo(index, false)
-    this.restoringSelection = false
-  }
   private readonly handleImageError = (event: Event) => {
     if (!(event.target instanceof HTMLImageElement)) {
       return
@@ -243,12 +214,6 @@ class SpatialGalleryElement extends HTMLElement {
       return
     }
 
-    this.activeIndex = Math.max(
-      0,
-      this.items.findIndex(
-        (item) => item.dataset.galleryItemId === this.dataset.initialItemId,
-      ),
-    )
     this.dataset.initialized = 'true'
     this.track.addEventListener('scroll', this.scheduleUpdate, { passive: true })
     this.track.addEventListener('keydown', this.handleKeydown)
@@ -261,26 +226,14 @@ class SpatialGalleryElement extends HTMLElement {
     this.previousButton?.addEventListener('click', this.handlePrevious)
     this.nextButton?.addEventListener('click', this.handleNext)
     this.reduceMotion.addEventListener('change', this.scheduleUpdate)
-    if (this.classList.contains('spatial-gallery--speaking')) {
-      window.addEventListener('popstate', this.handlePopState)
-    }
 
     this.resizeObserver = new ResizeObserver(this.scheduleUpdate)
     this.resizeObserver.observe(this.track)
     this.items.forEach((item) => this.resizeObserver?.observe(item))
 
     window.requestAnimationFrame(() => {
-      if (!this.isConnected) {
-        return
-      }
-      if (this.classList.contains('spatial-gallery--speaking')) {
-        this.goTo(this.activeIndex, false)
-        this.setActive(this.activeIndex, true)
-      } else {
-        this.updateTransforms()
-        this.setActive(0, true)
-      }
-      this.selectionReady = true
+      this.updateTransforms()
+      this.setActive(0, true)
     })
   }
 
@@ -300,12 +253,10 @@ class SpatialGalleryElement extends HTMLElement {
     this.previousButton?.removeEventListener('click', this.handlePrevious)
     this.nextButton?.removeEventListener('click', this.handleNext)
     this.reduceMotion.removeEventListener('change', this.scheduleUpdate)
-    window.removeEventListener('popstate', this.handlePopState)
     this.resizeObserver?.disconnect()
     window.cancelAnimationFrame(this.animationFrame)
     this.stopInlinePlayback()
     this.cancelScrollAnimation()
-    this.selectionReady = false
     delete this.dataset.initialized
   }
 
@@ -425,7 +376,6 @@ class SpatialGalleryElement extends HTMLElement {
       this.track.scrollLeft = left
       this.updateTransforms()
       this.setActive(nextIndex)
-      this.syncSelectionUrl()
       return
     }
 
@@ -454,7 +404,6 @@ class SpatialGalleryElement extends HTMLElement {
         this.track.style.removeProperty('scroll-snap-type')
         this.updateTransforms()
         this.setActive(nextIndex)
-        this.syncSelectionUrl()
       }
     }
 
@@ -530,23 +479,15 @@ class SpatialGalleryElement extends HTMLElement {
       index === previousIndex ? 'none' : index > previousIndex ? 'next' : 'previous'
     this.items.forEach((item, itemIndex) => {
       const active = itemIndex === index
-      const actions = item.querySelectorAll<HTMLElement>(
-        '[data-gallery-action], .share-trigger',
-      )
+      const action = item.querySelector<HTMLElement>('[data-gallery-action]')
       item.toggleAttribute('data-active', active)
       if (active) {
         item.setAttribute('aria-current', 'true')
+        action?.setAttribute('tabindex', '0')
       } else {
         item.removeAttribute('aria-current')
-        const popover = item.querySelector<HTMLElement>('.share-popover')
-        if (popover?.hidePopover && popover.matches(':popover-open')) {
-          popover.hidePopover()
-          if (item.contains(document.activeElement)) {
-            this.track?.focus({ preventScroll: true })
-          }
-        }
+        action?.setAttribute('tabindex', '-1')
       }
-      actions.forEach((action) => action.setAttribute('tabindex', active ? '0' : '-1'))
     })
     this.ticks.forEach((tick, tickIndex) => {
       if (tickIndex === index) {
@@ -578,7 +519,6 @@ class SpatialGalleryElement extends HTMLElement {
     }
 
     const activeItem = this.items[index]
-    this.syncSelectionUrl()
     if (this.status && activeItem) {
       this.status.textContent = `${index + 1} of ${this.items.length}. ${activeItem.dataset.galleryAnnouncement ?? ''}`
     }
@@ -594,24 +534,6 @@ class SpatialGalleryElement extends HTMLElement {
           },
         }),
       )
-    }
-  }
-
-  private syncSelectionUrl() {
-    const activeItem = this.items[this.activeIndex]
-    if (
-      activeItem?.dataset.galleryItemId &&
-      this.selectionReady &&
-      !this.restoringSelection &&
-      !this.scrollAnimationFrame &&
-      !this.hasAttribute('data-dragging') &&
-      this.classList.contains('spatial-gallery--speaking')
-    ) {
-      const url = new URL(window.location.href)
-      if (url.searchParams.get('event') !== activeItem.dataset.galleryItemId) {
-        url.searchParams.set('event', activeItem.dataset.galleryItemId)
-        window.history.replaceState(window.history.state, '', url)
-      }
     }
   }
 }
