@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config'
 import tailwindcss from '@tailwindcss/vite'
 import sitemap from '@astrojs/sitemap'
 import mdx from '@astrojs/mdx'
+import netlify from '@astrojs/netlify'
 import react from '@astrojs/react'
 import { rehypeHeadingIds } from '@astrojs/markdown-remark'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
@@ -31,6 +32,7 @@ import icon from 'astro-icon'
 export default defineConfig({
   site: siteConfig.site,
   trailingSlash: siteConfig.trailingSlashes ? 'always' : 'never',
+  adapter: netlify({ imageCDN: false, devFeatures: false }),
   prefetch: true,
   markdown: {
     remarkPlugins: [
@@ -70,7 +72,7 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   integrations: [
-    sitemap(), // Must come after expressive-code integration
+    sitemap({ customPages: [new URL('/speaking', siteConfig.site).href] }), // Must come after expressive-code integration
     expressiveCode({
       themes: siteConfig.themes.include,
       useDarkModeMediaQuery: false,

@@ -45,6 +45,34 @@ Blog posts are located in `src/content/posts/`. Each post is a markdown or MDX f
 
 Site configuration is in `src/site.config.ts`.
 
+### Speaking event sharing
+
+Speaking events live in `src/data/speaking.ts`. Keep an event's `id` unchanged when
+editing it: shared links use `/speaking?event={id}` to reopen the same speaking page
+with that card selected. Selecting another card updates the URL without reloading.
+Every timeline card and archive entry includes the event's share menu.
+
+Only `/speaking` is rendered on request by the Astro Netlify adapter. This lets
+social crawlers read the selected event's title, description, and artwork directly
+from the HTML, without JavaScript. Other pages remain static. Invalid event IDs
+redirect to `/speaking`, and the canonical URL remains the speaking overview.
+
+The Astro endpoint `src/pages/og/speaking/[id].png.ts` generates a 1200 x 630 PNG for
+each event during `npm run build`, using local fonts, the configured portrait, and
+the site's colors. No runtime image service is needed. Event-data changes take
+effect on the next deployment; social platforms may require a preview re-scrape
+to refresh their own caches.
+
+Use `npm run dev` for local interaction and OG-preview checks. Verify built
+request-time routing with Netlify's local runtime or a deploy preview, not a
+static-only file server. Run `node --test test/speaking-sharing.test.js` for the
+share-data checks (Node 22.15+); set `SPEAKING_TEST_URL` to a running local/preview origin to
+also check crawler HTML, redirects, and PNG responses.
+
+Exercise Share with normal animation as well as reduced motion: mouse clicks,
+touch, and keyboard activation must open the menu without moving the timeline
+or following the card's external link.
+
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE.txt).

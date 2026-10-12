@@ -238,8 +238,8 @@
 
 .spatial-gallery--speaking .spatial-gallery__stage {
   min-height: calc(var(--gallery-card-height) + 4.75rem);
-  perspective: 1400px;
-  perspective-origin: 50% 44%;
+  /* Keep visible controls in the scrolling track's hit-testing plane. */
+  perspective: none;
 }
 
 .spatial-gallery--speaking .spatial-gallery__track {
@@ -416,6 +416,25 @@
   width: 1rem;
   height: 1rem;
   color: var(--theme-overlay-accent);
+}
+
+.spatial-gallery--speaking [data-gallery-share] .spatial-gallery__speaking-location {
+  min-height: 3.5rem;
+  padding-right: 5.5rem;
+}
+
+.spatial-gallery__share {
+  position: absolute;
+  z-index: 5;
+  right: 1rem;
+  bottom: 1rem;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.spatial-gallery__item[data-active] .spatial-gallery__share {
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .spatial-gallery__speaking-location span {
