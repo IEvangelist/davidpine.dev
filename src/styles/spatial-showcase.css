@@ -238,6 +238,11 @@
 
 .spatial-gallery--speaking .spatial-gallery__stage {
   min-height: calc(var(--gallery-card-height) + 4.75rem);
+  perspective: 1400px;
+  perspective-origin: 50% 44%;
+}
+
+.spatial-gallery--speaking[data-sharing-enabled] .spatial-gallery__stage {
   /* Keep visible controls in the scrolling track's hit-testing plane. */
   perspective: none;
 }

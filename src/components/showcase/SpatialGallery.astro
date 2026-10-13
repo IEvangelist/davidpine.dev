@@ -13,6 +13,7 @@ interface Props {
   variant?: 'media' | 'speaking'
   showHeader?: boolean
   initialItemId?: string
+  sharingEnabled?: boolean
 }
 
 const {
@@ -23,6 +24,7 @@ const {
   variant = 'media',
   showHeader = true,
   initialItemId,
+  sharingEnabled = false,
 } = Astro.props
 const initialIndex = Math.max(
   0,
@@ -57,17 +59,20 @@ if (variant === 'media') {
   class:list={['spatial-gallery', `spatial-gallery--${variant}`]}
   data-spatial-gallery
   data-initial-item-id={items[initialIndex]?.id}
+  data-sharing-enabled={sharingEnabled || undefined}
 >
   <section
     aria-labelledby={showHeader ? titleId : undefined}
     aria-label={!showHeader ? title : undefined}
   >
-    {showHeader && (
-      <header class="spatial-gallery__header">
-        <h2 id={titleId}>{title}</h2>
-        {description && <p>{description}</p>}
-      </header>
-    )}
+    {
+      showHeader && (
+        <header class="spatial-gallery__header">
+          <h2 id={titleId}>{title}</h2>
+          {description && <p>{description}</p>}
+        </header>
+      )
+    }
 
     <div class="spatial-gallery__stage">
       <button
@@ -114,10 +119,7 @@ if (variant === 'media') {
                     : 'ph:star-four'
             const speakingMode = item.data?.['speaking-mode']
             const speakingStatus = item.data?.['speaking-status']
-            const speakingIcon =
-              speakingMode === 'online'
-                ? 'ph:broadcast'
-                : 'ph:map-pin'
+            const speakingIcon = speakingMode === 'online' ? 'ph:broadcast' : 'ph:map-pin'
             const fallbackImage = item.data?.['media-youtube-id']
               ? `https://i.ytimg.com/vi/${item.data['media-youtube-id']}/hqdefault.jpg`
               : undefined
@@ -137,7 +139,7 @@ if (variant === 'media') {
                   <div class="spatial-gallery__cover-inner">
                     <article
                       class="spatial-gallery__card"
-                      data-gallery-share={item.share ? '' : undefined}
+                      data-gallery-share={sharingEnabled && item.share ? '' : undefined}
                     >
                       <div class="spatial-gallery__art">
                         {isLocalImage && (
@@ -255,7 +257,7 @@ if (variant === 'media') {
                           )}
                         </button>
                       )}
-                      {variant === 'speaking' && item.share && (
+                      {variant === 'speaking' && sharingEnabled && item.share && (
                         <div class="spatial-gallery__share" data-gallery-control>
                           <ShareButton
                             {...item.share}

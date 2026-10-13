@@ -198,7 +198,7 @@ class SpatialGalleryElement extends HTMLElement {
         ? 0
         : this.items.findIndex((item) => item.dataset.galleryItemId === eventId)
     if (eventIds.length > 1 || index < 0) {
-      window.location.replace('/speaking')
+      window.location.replace(window.location.pathname.replace(/\/$/, ''))
       return
     }
 
@@ -248,7 +248,7 @@ class SpatialGalleryElement extends HTMLElement {
       this.items.findIndex(
         (item) =>
           item.dataset.galleryItemId ===
-          (this.classList.contains('spatial-gallery--speaking')
+          (this.hasAttribute('data-sharing-enabled')
             ? (new URL(window.location.href).searchParams.get('event') ??
               this.dataset.initialItemId)
             : this.dataset.initialItemId),
@@ -266,7 +266,7 @@ class SpatialGalleryElement extends HTMLElement {
     this.previousButton?.addEventListener('click', this.handlePrevious)
     this.nextButton?.addEventListener('click', this.handleNext)
     this.reduceMotion.addEventListener('change', this.scheduleUpdate)
-    if (this.classList.contains('spatial-gallery--speaking')) {
+    if (this.hasAttribute('data-sharing-enabled')) {
       window.addEventListener('popstate', this.handlePopState)
     }
 
@@ -278,7 +278,7 @@ class SpatialGalleryElement extends HTMLElement {
       if (!this.isConnected) {
         return
       }
-      if (this.classList.contains('spatial-gallery--speaking')) {
+      if (this.hasAttribute('data-sharing-enabled')) {
         this.goTo(this.activeIndex, false)
         this.setActive(this.activeIndex, true)
       } else {
@@ -610,7 +610,7 @@ class SpatialGalleryElement extends HTMLElement {
       !this.restoringSelection &&
       !this.scrollAnimationFrame &&
       !this.hasAttribute('data-dragging') &&
-      this.classList.contains('spatial-gallery--speaking')
+      this.hasAttribute('data-sharing-enabled')
     ) {
       const url = new URL(window.location.href)
       if (url.searchParams.get('event') !== activeItem.dataset.galleryItemId) {

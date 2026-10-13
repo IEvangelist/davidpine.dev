@@ -71,6 +71,11 @@ Netlify preview, both speaking URL forms, and alternating/concurrent event links
 before publishing to the live site. Do not replace the static page with full-page
 SSR based solely on a successful local build.
 
+The initial rollout is isolated at `/speaking-preview`: the live overview's share
+controls and URL synchronization remain disabled, and the edge router only matches
+the preview path. Set `SPEAKING_TEST_PATH=/speaking-preview` to verify that hosted
+path before enabling the feature on `/speaking`.
+
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE.txt).

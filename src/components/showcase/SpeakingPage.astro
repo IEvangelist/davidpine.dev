@@ -12,9 +12,10 @@ import type { SpatialGalleryItem } from '~/types/showcase'
 
 interface Props {
   selectedEventId?: string
+  sharingEnabled?: boolean
 }
 
-const { selectedEventId } = Astro.props
+const { selectedEventId, sharingEnabled = true } = Astro.props
 const selectedEvent = getSharedSpeakingEvent(selectedEventId ?? null)
 if (selectedEventId && !selectedEvent) {
   throw new Error(`Speaking share event not found: ${selectedEventId}`)
@@ -62,7 +63,7 @@ const galleryItems: SpatialGalleryItem[] = speakingJourney.map((stop) => ({
   actionLabel: stop.talkUrl ? 'Open talk' : 'Open event',
   action: stop.talkUrl || stop.eventUrl ? 'link' : undefined,
   tickLabel: stop.date.slice(0, 4),
-  share: getSpeakingShare(stop),
+  share: sharingEnabled ? getSpeakingShare(stop) : undefined,
   data: {
     'speaking-date': stop.displayDate,
     'speaking-date-time': stop.date,
@@ -106,6 +107,7 @@ const galleryItems: SpatialGalleryItem[] = speakingJourney.map((stop) => ({
           title="Speaking through time"
           showHeader={false}
           initialItemId={selectedEvent?.id}
+          sharingEnabled={sharingEnabled}
         />
       </div>
     </div>
@@ -132,7 +134,7 @@ const galleryItems: SpatialGalleryItem[] = speakingJourney.map((stop) => ({
     </a>
   </section>
 
-  <SpeakingArchive events={speakingEvents} />
+  <SpeakingArchive events={speakingEvents} sharingEnabled={sharingEnabled} />
 </Layout>
 
 <style>

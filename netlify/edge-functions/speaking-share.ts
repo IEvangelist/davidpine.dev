@@ -10,7 +10,7 @@ export default function speakingShare(request: Request) {
   }
 
   if (selectedIds.length !== 1 || !eventIds.has(selectedIds[0])) {
-    return Response.redirect(new URL('/speaking', url), 302)
+    return Response.redirect(new URL(url.pathname.replace(/\/$/, ''), url.origin), 302)
   }
 
   return new URL(
@@ -20,7 +20,7 @@ export default function speakingShare(request: Request) {
 }
 
 export const config = {
-  path: ['/speaking', '/speaking/'],
+  path: ['/speaking-preview', '/speaking-preview/'],
   method: ['GET', 'HEAD'],
   onError: 'bypass',
 }

@@ -36,18 +36,19 @@ const { getSharedSpeakingEvent, getSpeakingLocationLabel, getSpeakingShare } =
   await import('../src/data/speaking-sharing.ts')
 const { default: routeSpeakingShare, config: edgeConfig } =
   await import('../netlify/edge-functions/speaking-share.ts')
+const routedPath = edgeConfig.path[0]
 
 test('the overview always bypasses edge routing and remains a static page', () => {
-  for (const path of ['/speaking', '/speaking/', '/speaking?utm_source=test']) {
+  for (const path of [routedPath, `${routedPath}/`, `${routedPath}?utm_source=test`]) {
     assert.equal(routeSpeakingShare(new Request(`https://example.net${path}`)), undefined)
   }
-  assert.deepEqual(edgeConfig.path, ['/speaking', '/speaking/'])
+  assert.deepEqual(edgeConfig.path, [routedPath, `${routedPath}/`])
   assert.equal(edgeConfig.onError, 'bypass')
 })
 
 test('edge routing selects only a known local static overview variant', () => {
   for (const event of speakingJourney) {
-    for (const path of ['/speaking', '/speaking/']) {
+    for (const path of edgeConfig.path) {
       const request = new Request(
         `https://preview.example${path}?utm_source=test&event=${encodeURIComponent(event.id)}`,
       )
@@ -69,11 +70,11 @@ test('invalid or repeated selections redirect before any variant is loaded', () 
     `event=${speakingJourney[0].id}&event=${speakingJourney[1].id}`,
   ]) {
     const result = routeSpeakingShare(
-      new Request(`https://preview.example/speaking/?${query}`),
+      new Request(`https://preview.example${routedPath}/?${query}`),
     )
     assert.ok(result instanceof Response)
     assert.equal(result.status, 302)
-    assert.equal(result.headers.get('location'), 'https://preview.example/speaking')
+    assert.equal(result.headers.get('location'), `https://preview.example${routedPath}`)
   }
 })
 
@@ -140,6 +141,7 @@ test('location metadata uses known facts and does not invent a venue', () => {
 })
 
 const origin = process.env.SPEAKING_TEST_URL
+const speakingPath = process.env.SPEAKING_TEST_PATH ?? routedPath
 
 function meta(html, key) {
   const tag = html.match(
@@ -166,7 +168,7 @@ test(
     await Promise.all(
       [...events, ...events].map(async (event) => {
         const share = getSpeakingShare(event)
-        const response = await fetch(new URL(`/speaking?event=${event.id}`, origin))
+        const response = await fetch(new URL(`${speakingPath}?event=${event.id}`, origin))
         assert.equal(response.status, 200)
         assert.match(response.headers.get('cache-control'), /no-store|max-age=0/)
         assert.doesNotMatch(response.headers.get('cache-control'), /immutable/)
@@ -209,7 +211,7 @@ test(
   async () => {
     const event = speakingJourney[0]
     const share = getSpeakingShare(event)
-    for (const path of ['/speaking/', `/speaking/?event=${event.id}`]) {
+    for (const path of [`${speakingPath}/`, `${speakingPath}/?event=${event.id}`]) {
       const response = await fetch(new URL(path, origin), { redirect: 'manual' })
       assert.equal(response.status, 200, `${path} remains available`)
       const html = await response.text()
@@ -232,20 +234,20 @@ test(
   'overview stays generic; bad event links redirect and unknown images return 404',
   { skip: !origin },
   async () => {
-    const overview = await fetch(new URL('/speaking', origin))
+    const overview = await fetch(new URL(speakingPath, origin))
     assert.equal(overview.status, 200)
     assert.match(
       meta(await overview.text(), 'og:image'),
       /\/social-cards\/__default\.png$/,
     )
     for (const query of ['event=unknown', 'event=', 'event=unknown&event=duplicate']) {
-      const response = await fetch(new URL(`/speaking?${query}`, origin), {
+      const response = await fetch(new URL(`${speakingPath}?${query}`, origin), {
         redirect: 'manual',
       })
       assert.equal(response.status, 302)
       assert.equal(
         new URL(response.headers.get('location'), origin).pathname,
-        '/speaking',
+        speakingPath,
       )
     }
     const missing = await fetch(new URL('/og/speaking/unknown.png', origin))
@@ -277,7 +279,7 @@ test(
   { skip: !origin },
   async () => {
     const response = await fetch(
-      new URL(`/speaking?event=${speakingJourney[0].id}`, origin),
+      new URL(`${speakingPath}?event=${speakingJourney[0].id}`, origin),
     )
     const html = await response.text()
     const source = html.match(/<img\b[^>]*\bsrc="([^"]+)"/)?.[1]
@@ -292,7 +294,7 @@ test(
   'archive sharing preserves the original event order and every event control',
   { skip: !origin },
   async () => {
-    const response = await fetch(new URL('/speaking', origin))
+    const response = await fetch(new URL(speakingPath, origin))
     const html = await response.text()
     const archive = html.slice(html.indexOf('<speaking-archive'))
     const sharedIds = [
@@ -321,7 +323,7 @@ test(
   { skip: !origin },
   async () => {
     const event = speakingJourney[0]
-    const path = `/speaking/?utm_source=check&event=${event.id}`
+    const path = `${speakingPath}/?utm_source=check&event=${event.id}`
     const head = await fetch(new URL(path, origin), { method: 'HEAD' })
     assert.equal(head.status, 200)
     assert.equal(await head.text(), '')
@@ -333,9 +335,33 @@ test(
     const internal = await fetch(
       new URL(`/speaking-share/${event.id}/index.html`, origin),
     )
+
     assert.equal(internal.status, 200)
     assert.match(internal.headers.get('x-robots-tag'), /noindex/)
     const sitemap = await fetch(new URL('/sitemap-0.xml', origin))
     assert.doesNotMatch(await sitemap.text(), /speaking-share/)
+  },
+)
+
+test(
+  'the staged preview does not change the live speaking overview',
+  { skip: !origin || routedPath === '/speaking' },
+  async () => {
+    for (const path of [
+      '/speaking',
+      '/speaking/',
+      `/speaking/?event=${speakingJourney[1].id}`,
+    ]) {
+      const response = await fetch(new URL(path, origin))
+      assert.equal(response.status, 200)
+      const html = await response.text()
+      assert.match(meta(html, 'og:title'), /^Speaking - David Pine/)
+      assert.match(meta(html, 'og:image'), /\/social-cards\/__default\.png$/)
+      assert.doesNotMatch(html, /<post-share\b|data-sharing-enabled/)
+      assert.match(
+        html,
+        new RegExp(`data-gallery-item-id="${speakingJourney[0].id}"[^>]*data-active`),
+      )
+    }
   },
 )
