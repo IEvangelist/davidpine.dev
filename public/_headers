@@ -1,8 +1,8 @@
-/speaking-preview
+/speaking
   Cache-Control: no-store
   CDN-Cache-Control: no-store
 
-/speaking-preview/
+/speaking/
   Cache-Control: no-store
   CDN-Cache-Control: no-store
 
@@ -13,6 +13,3 @@
 
 /og/speaking/*
   Cache-Control: public, max-age=0, must-revalidate
-
-/speaking-preview*
-  X-Robots-Tag: noindex

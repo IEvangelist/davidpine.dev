@@ -71,13 +71,7 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      filter: (page) => {
-        const pathname = new URL(page).pathname
-        return (
-          !pathname.startsWith('/speaking-share/') &&
-          !pathname.startsWith('/speaking-preview')
-        )
-      },
+      filter: (page) => !new URL(page).pathname.startsWith('/speaking-share/'),
     }), // Must come after expressive-code integration
     expressiveCode({
       themes: siteConfig.themes.include,

@@ -3,6 +3,7 @@ import { speakingEvents } from '../../src/data/speaking.ts'
 const eventIds = new Set(speakingEvents.map(({ id }) => id))
 
 export default function speakingShare(request: Request) {
+  // Netlify's manifest does not accept HEAD in an explicit method filter.
   if (request.method !== 'GET' && request.method !== 'HEAD') {
     return
   }
@@ -24,6 +25,6 @@ export default function speakingShare(request: Request) {
 }
 
 export const config = {
-  path: ['/speaking-preview', '/speaking-preview/'],
+  path: ['/speaking', '/speaking/'],
   onError: 'bypass',
 }
