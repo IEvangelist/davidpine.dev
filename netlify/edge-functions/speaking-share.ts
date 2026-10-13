@@ -3,6 +3,10 @@ import { speakingEvents } from '../../src/data/speaking.ts'
 const eventIds = new Set(speakingEvents.map(({ id }) => id))
 
 export default function speakingShare(request: Request) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    return
+  }
+
   const url = new URL(request.url)
   const selectedIds = url.searchParams.getAll('event')
   if (selectedIds.length === 0) {
@@ -21,6 +25,5 @@ export default function speakingShare(request: Request) {
 
 export const config = {
   path: ['/speaking-preview', '/speaking-preview/'],
-  method: ['GET', 'HEAD'],
   onError: 'bypass',
 }

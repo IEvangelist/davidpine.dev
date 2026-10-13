@@ -44,6 +44,17 @@ test('the overview always bypasses edge routing and remains a static page', () =
   }
   assert.deepEqual(edgeConfig.path, [routedPath, `${routedPath}/`])
   assert.equal(edgeConfig.onError, 'bypass')
+  assert.equal('method' in edgeConfig, false)
+})
+
+test('edge routing ignores write methods without configuring unsupported HEAD filters', () => {
+  for (const method of ['POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']) {
+    const request = new Request(
+      `https://preview.example${routedPath}?event=${speakingJourney[0].id}`,
+      { method },
+    )
+    assert.equal(routeSpeakingShare(request), undefined)
+  }
 })
 
 test('edge routing selects only a known local static overview variant', () => {
