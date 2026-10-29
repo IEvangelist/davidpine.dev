@@ -20,5 +20,11 @@ jobs:
         with:
           node-version: 22
 
+      - name: Restore dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build site
+        run: npm run build
+
       - name: Run tests
         run: node --test test/*.test.js

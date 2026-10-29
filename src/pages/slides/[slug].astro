@@ -11,7 +11,7 @@ const slideImageAssets = import.meta.glob<{ default: ImageMetadata }>(
 )
 
 export async function getStaticPaths() {
-  const slides = await getCollection('slides')
+  const slides = await getCollection('slides', ({ data }) => !data.externalUrl)
 
   return slides.map((slide) => {
     // Extract just the filename without the folder path for cleaner URLs

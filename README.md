@@ -39,6 +39,12 @@ npm run dev
 npm run build
 ```
 
+**Check Speaking and Slide Behavior** (after building):
+
+```bash
+node --test test/*.test.js
+```
+
 The build crawls generated HTML for missing local images, responsive image
 candidates, video posters, and audio/video sources before indexing search.
 Run `npm run check:media` to repeat the check against an existing `dist` build.

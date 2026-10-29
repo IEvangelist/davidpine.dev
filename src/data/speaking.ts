@@ -33,7 +33,7 @@ const speakingEventRecords: SpeakingEvent[] = [
     displayDate: 'Nov 17, 2026',
     event: 'WI .NET User Group - 2026',
     eventUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/',
-    talk: 'Aspire Talk with David Pine',
+    talk: 'Inside Aspire: The Architecture Behind the AI Loop',
     talkUrl: 'https://www.meetup.com/wisconsin-net-users-group/events/316176923',
     status: 'upcoming',
   },

@@ -57,6 +57,11 @@ const slidesCollection = defineCollection({
     title: z.string(),
     author: z.string().optional(),
     description: z.string(),
+    externalUrl: z
+      .string()
+      .url()
+      .regex(/^https?:\/\//i, 'External slide URLs must use HTTP or HTTPS')
+      .optional(),
     tags: z.array(z.string()).optional().default([]),
     pubDate: z.coerce.date(),
     theme: z
