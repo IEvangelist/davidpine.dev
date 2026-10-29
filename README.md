@@ -39,6 +39,12 @@ npm run dev
 npm run build
 ```
 
+The build crawls generated HTML for missing local images, responsive image
+candidates, video posters, and audio/video sources before indexing search.
+Run `npm run check:media` to repeat the check against an existing `dist` build.
+External media hosts are not checked. Legacy `/img/` URLs used by older posts
+are served from `public/img/`; keep those assets when editing or migrating posts.
+
 ## 📝 Content
 
 Blog posts are located in `src/content/posts/`. Each post is a markdown or MDX file with frontmatter for metadata.
