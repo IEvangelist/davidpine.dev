@@ -3,10 +3,11 @@ import type { NavLink } from '~/types'
 
 interface Props {
   link: NavLink
+  pathname?: string
 }
 
-const { link } = Astro.props
-const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/'
+const { link, pathname = Astro.url.pathname } = Astro.props
+const currentPath = pathname.replace(/\/$/, '') || '/'
 const targetPath = link.external ? '' : link.url.replace(/\/$/, '') || '/'
 const isCurrent =
   !link.external &&

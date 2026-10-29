@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "postbuild": "pagefind --site dist",
+    "postbuild": "npm run check:media && pagefind --site dist",
+    "check:media": "node scripts/check-media.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "format": "prettier --write ."

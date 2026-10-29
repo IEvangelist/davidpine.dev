@@ -242,6 +242,11 @@
   perspective-origin: 50% 44%;
 }
 
+.spatial-gallery--speaking[data-sharing-enabled] .spatial-gallery__stage {
+  /* Keep visible controls in the scrolling track's hit-testing plane. */
+  perspective: none;
+}
+
 .spatial-gallery--speaking .spatial-gallery__track {
   padding-inline: calc(50% - var(--gallery-slot-width) / 2);
   scroll-padding-inline: calc(50% - var(--gallery-slot-width) / 2);
@@ -416,6 +421,25 @@
   width: 1rem;
   height: 1rem;
   color: var(--theme-overlay-accent);
+}
+
+.spatial-gallery--speaking [data-gallery-share] .spatial-gallery__speaking-location {
+  min-height: 3.5rem;
+  padding-right: 5.5rem;
+}
+
+.spatial-gallery__share {
+  position: absolute;
+  z-index: 5;
+  right: 1rem;
+  bottom: 1rem;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.spatial-gallery__item[data-active] .spatial-gallery__share {
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .spatial-gallery__speaking-location span {

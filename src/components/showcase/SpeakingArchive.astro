@@ -1,11 +1,14 @@
 ---
 import type { SpeakingEvent } from '~/data/speaking'
+import { getSpeakingShare } from '~/data/speaking-sharing'
+import ShareButton from '~/components/ShareButton.astro'
 
 interface Props {
   events: SpeakingEvent[]
+  sharingEnabled?: boolean
 }
 
-const { events } = Astro.props
+const { events, sharingEnabled = false } = Astro.props
 const upcoming = events
   .filter(({ status }) => status === 'upcoming')
   .sort((a, b) => a.date.localeCompare(b.date))
@@ -65,6 +68,14 @@ const years = Object.entries(
                 <span>{event.talk}</span>
               </div>
               <div class="speaking-archive__links">
+                {sharingEnabled && (
+                  <ShareButton
+                    {...getSpeakingShare(event)}
+                    id={`archive-${event.id}-share`}
+                    label="Share this event"
+                    inline
+                  />
+                )}
                 {event.eventUrl && (
                   <a href={event.eventUrl} target="_blank" rel="noopener noreferrer">
                     Event
@@ -102,6 +113,14 @@ const years = Object.entries(
                   <span>{event.talk}</span>
                 </div>
                 <div class="speaking-archive__links">
+                  {sharingEnabled && (
+                    <ShareButton
+                      {...getSpeakingShare(event)}
+                      id={`archive-${event.id}-share`}
+                      label="Share this event"
+                      inline
+                    />
+                  )}
                   {event.eventUrl && (
                     <a href={event.eventUrl} target="_blank" rel="noopener noreferrer">
                       Event
@@ -286,6 +305,7 @@ const years = Object.entries(
   .speaking-archive__links {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 0.75rem;
   }
 

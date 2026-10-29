@@ -9,6 +9,11 @@ import NavLink from '~/components/NavLink.astro'
 import avatarImage from '~/content/avatar.png'
 import GitHubMark from '~/icons/github.svg'
 
+interface Props {
+  pathname?: string
+}
+
+const { pathname } = Astro.props
 const lightDarkAutoTheme = siteConfig.themes.mode === 'light-dark-auto'
 const selectTheme =
   siteConfig.themes.mode === 'select' && siteConfig.themes.include.length > 1
@@ -33,7 +38,7 @@ const mobileLinks = siteConfig.navLinks.filter((link) => link.name !== 'Home')
         {
           primaryLinks.map((link) => (
             <li>
-              <NavLink link={link} />
+              <NavLink link={link} pathname={pathname} />
             </li>
           ))
         }
@@ -44,7 +49,7 @@ const mobileLinks = siteConfig.navLinks.filter((link) => link.name !== 'Home')
               <Icon name="ph:caret-down" aria-hidden="true" />
             </summary>
             <div class="explore-panel">
-              {exploreLinks.map((link) => <NavLink link={link} />)}
+              {exploreLinks.map((link) => <NavLink link={link} pathname={pathname} />)}
             </div>
           </details>
         </li>
@@ -98,7 +103,7 @@ const mobileLinks = siteConfig.navLinks.filter((link) => link.name !== 'Home')
           {
             mobileLinks.map((link) => (
               <li>
-                <NavLink link={link} />
+                <NavLink link={link} pathname={pathname} />
               </li>
             ))
           }
