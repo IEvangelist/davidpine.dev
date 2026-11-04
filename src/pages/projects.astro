@@ -41,6 +41,16 @@ const projectGroups = [
         repoPath: 'IEvangelist/blazorators',
       },
       {
+        name: 'FreeDF',
+        description:
+          'A C#/.NET PDF 2.0 engine and browser editor for opening, editing, rendering, and exporting documents locally.',
+        repoUrl: 'https://github.com/IEvangelist/FreeDF',
+        pagesUrl: 'https://ievangelist.github.io/FreeDF/',
+        lightThumbnail: '/images/projects/freedf-light.webp',
+        darkThumbnail: '/images/projects/freedf-dark.webp',
+        repoPath: 'IEvangelist/FreeDF',
+      },
+      {
         name: 'Pwned Client',
         description:
           'An AOT-compatible .NET client for Have I Been Pwned, with privacy-first password checks.',
@@ -746,6 +756,11 @@ const imagePlaceholder = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAAC
     .project-grid[data-count='4'] .project-cell:not(.project-cell--lead) {
       width: 100%;
       grid-column: span 4;
+    }
+
+    .project-grid[data-count='5'] .project-cell:not(.project-cell--lead) {
+      width: 100%;
+      grid-column: span 3;
     }
 
     .project-grid[data-count='3'] .project-cell:not(.project-cell--lead) {
