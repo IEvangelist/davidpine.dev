@@ -232,7 +232,7 @@
 
 .spatial-gallery--speaking {
   --gallery-card-width: clamp(20rem, 34cqw, 25rem);
-  --gallery-card-height: calc(var(--gallery-card-width) * 0.72);
+  --gallery-card-height: calc(var(--gallery-card-width) * 0.92);
   --gallery-slot-width: clamp(12rem, 18cqw, 14rem);
 }
 
@@ -397,8 +397,9 @@
   font-family: var(--font-display);
   font-size: clamp(1.28rem, 2.25cqw, 1.65rem);
   font-weight: 600;
-  letter-spacing: -0.035em;
-  line-height: 1.05;
+  letter-spacing: -0.02em;
+  word-spacing: 0.08em;
+  line-height: 1.1;
   text-wrap: balance;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
@@ -1112,6 +1113,7 @@
 
   .spatial-gallery--speaking {
     --gallery-card-width: min(86cqw, 22rem);
+    --gallery-card-height: calc(var(--gallery-card-width) * 1.12);
     --gallery-slot-width: clamp(5.75rem, 24cqw, 7.5rem);
   }
 

@@ -276,7 +276,8 @@ body::before {
   font-size: var(--text-display-fluid);
   font-weight: 600;
   line-height: 0.84;
-  letter-spacing: -0.065em;
+  letter-spacing: -0.04em;
+  word-spacing: 0.1em;
   color: var(--theme-heading1);
   text-wrap: balance;
 }
@@ -287,7 +288,8 @@ body::before {
   font-size: var(--text-h2-fluid);
   font-weight: 600;
   line-height: 0.98;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.03em;
+  word-spacing: 0.08em;
   color: var(--theme-heading2);
   text-wrap: balance;
 }
@@ -557,7 +559,8 @@ button {
     font-family: var(--font-display);
     font-weight: 600;
     line-height: 1.05;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.025em;
+    word-spacing: 0.08em;
     text-wrap: balance;
 
     a {
