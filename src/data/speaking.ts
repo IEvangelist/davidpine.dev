@@ -35,7 +35,7 @@ const speakingEventRecords: SpeakingEvent[] = [
     eventUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/',
     talk: 'Inside Aspire: The Architecture Behind the AI Loop',
     talkUrl: 'https://www.meetup.com/wisconsin-net-users-group/events/316176923',
-    status: 'upcoming',
+    status: 'past',
   },
   {
     id: '2026-06-16-net-day-on-agentic-modernization-stop-rewriting-start-aspireifying',

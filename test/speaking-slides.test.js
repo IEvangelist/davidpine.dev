@@ -135,7 +135,7 @@ test('the Wisconsin event retains its ID, links, status, and keyed location', ()
     eventUrl: 'https://www.meetup.com/Wisconsin-Net-Users-Group/',
     talk: title,
     talkUrl: 'https://www.meetup.com/wisconsin-net-users-group/events/316176923',
-    status: 'upcoming',
+    status: 'past',
     format: 'in-person',
     location: {
       city: 'Brookfield',
